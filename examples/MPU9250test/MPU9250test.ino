@@ -2,8 +2,6 @@
 #include "MPU9250.h"
 #include "quaternionFilters.h"
 
-static bool SerialDebug = true;   // set to true to get Serial output for debugging
-
 
 // MPU9250 Configuration
 // Specify sensor full scale
@@ -27,7 +25,7 @@ static float beta = sqrtf(3.0f / 4.0f) * GyroMeasError;   // compute beta
 static int  intPin = 8;  //  MPU9250 interrupt
 static int  myLed  = 13; // red led
 
-static bool intFlag = false;
+static bool newData = false;
 static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
 static int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 static float   magCalibration[3] = {0, 0, 0};  // Factory mag calibration and mag bias
@@ -57,7 +55,7 @@ static uint8_t  yawBytes[2], pitchBytes[2], rollBytes[2]; // for writing to SPI 
 
 static void myinthandler()
 {
-    intFlag = true;
+    newData = true;
 }
 
 static void int16_t_float_to_bytes(float temp, uint8_t * dest)
@@ -136,14 +134,12 @@ void setup()
         Serial.println("AK8963 mag scale (mG)"); Serial.println(magScale[0]); Serial.println(magScale[1]); Serial.println(magScale[2]); 
         delay(2000); // add delay to see results before serial spew of data
 
-        if(SerialDebug) {
-            Serial.println("Calibration values: ");
-            Serial.print("X-Axis sensitivity adjustment value "); Serial.println(magCalibration[0], 2);
-            Serial.print("Y-Axis sensitivity adjustment value "); Serial.println(magCalibration[1], 2);
-            Serial.print("Z-Axis sensitivity adjustment value "); Serial.println(magCalibration[2], 2);
+        Serial.println("Calibration values: ");
+        Serial.print("X-Axis sensitivity adjustment value "); Serial.println(magCalibration[0], 2);
+        Serial.print("Y-Axis sensitivity adjustment value "); Serial.println(magCalibration[1], 2);
+        Serial.print("Z-Axis sensitivity adjustment value "); Serial.println(magCalibration[2], 2);
 
-            attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
-        }
+        attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
 
     }
     else
@@ -160,17 +156,9 @@ void loop()
 {  
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
-    if(intFlag == true) {   // On interrupt, read data
+    if(newData == true) {   // On interrupt, read data
 
-        intFlag = false;     // reset newData flag
-
-        //wakeup = MPU9250.checkWakeOnMotion();
-
-        // Check source of interrupt
-        //if(wakeup == true)  // wake on motion has occurred
-        //{
-        //    MPU9250.gyromagWake(Mmode); //wake up the gyro and mag
-        //}
+        newData = false;     // reset newData flag
 
 
         if(MPU9250.checkNewAccelGyroData() == true)  // data ready interrupt is detected
@@ -202,7 +190,7 @@ void loop()
         }
 
 
-        for(uint8_t i = 0; i < 50; i++) { // iterate a fixed number of times per data read cycle
+        for(uint8_t i = 0; i < 5; i++) { // iterate a fixed number of times per data read cycle
             Now = micros();
             deltat = ((Now - lastUpdate)/1000000.0f); // set integration time by time elapsed since last filter update
             lastUpdate = Now;
@@ -216,7 +204,9 @@ void loop()
         /* end of MPU9250 interrupt handling */
     }
 
-    if(SerialDebug) {
+
+    // Serial print and/or display at 0.5 s rate independent of data rates
+    if(sumCount > 500) {
 
         Serial.print("ax = "); Serial.print((int)1000*ax);  
         Serial.print(" ay = "); Serial.print((int)1000*ay); 
@@ -237,29 +227,27 @@ void loop()
 
         // Print temperature in degrees Centigrade      
         Serial.print("Gyro temperature is ");  Serial.print(temperature, 1);  Serial.println(" degrees C"); // Print T values to tenths of s degree C
-    }               
 
-    a12 =   2.0f * (q[1] * q[2] + q[0] * q[3]);
-    a22 =   q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3];
-    a31 =   2.0f * (q[0] * q[1] + q[2] * q[3]);
-    a32 =   2.0f * (q[1] * q[3] - q[0] * q[2]);
-    a33 =   q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3];
-    pitch = -asinf(a32);
-    roll  = atan2f(a31, a33);
-    yaw   = atan2f(a12, a22);
-    pitch *= 180.0f / pi;
-    int16_t_float_to_bytes(pitch, &pitchBytes[0]);
-    yaw   *= 180.0f / pi; 
-    yaw   += 13.8f; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
-    if(yaw < 0) yaw   += 360.0f; // Ensure yaw stays between 0 and 360
-    int16_t_float_to_bytes(yaw, &yawBytes[0]);
-    roll  *= 180.0f / pi;
-    int16_t_float_to_bytes(roll, &rollBytes[0]);
-    lin_ax = ax + a31;
-    lin_ay = ay + a32;
-    lin_az = az - a33;
+        a12 =   2.0f * (q[1] * q[2] + q[0] * q[3]);
+        a22 =   q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3];
+        a31 =   2.0f * (q[0] * q[1] + q[2] * q[3]);
+        a32 =   2.0f * (q[1] * q[3] - q[0] * q[2]);
+        a33 =   q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3];
+        pitch = -asinf(a32);
+        roll  = atan2f(a31, a33);
+        yaw   = atan2f(a12, a22);
+        pitch *= 180.0f / pi;
+        int16_t_float_to_bytes(pitch, &pitchBytes[0]);
+        yaw   *= 180.0f / pi; 
+        yaw   += 13.8f; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
+        if(yaw < 0) yaw   += 360.0f; // Ensure yaw stays between 0 and 360
+        int16_t_float_to_bytes(yaw, &yawBytes[0]);
+        roll  *= 180.0f / pi;
+        int16_t_float_to_bytes(roll, &rollBytes[0]);
+        lin_ax = ax + a31;
+        lin_ay = ay + a32;
+        lin_az = az - a33;
 
-    if(SerialDebug) {
         Serial.print("Yaw, Pitch, Roll: ");
         Serial.print(yaw, 2);
         Serial.print(", ");
@@ -281,11 +269,9 @@ void loop()
         Serial.print(lin_az*1000.0f, 2);  Serial.println(" mg");
 
         Serial.print("rate = "); Serial.print((float)sumCount/sum, 2); Serial.println(" Hz");
+
+        count = millis(); 
+        sumCount = 0;
+        sum = 0;    
     }
-
-    count = millis(); 
-    sumCount = 0;
-    sum = 0;    
 }
-
-
