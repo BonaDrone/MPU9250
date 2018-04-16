@@ -33,8 +33,7 @@ static float   temperature;    // Stores the MPU9250 internal chip temperature i
 static float   SelfTest[6];    // holds results of gyro and accelerometer self test
 
 // These can be measured once and entered here or can be calculated each time the device is powered on
-static float   gyroBias[3] = {1.65, 0.06, 0.51}, accelBias[3] = {-0.02197, 0.04803, 0.0725};
-static float   magBias[3] = {-23.15, 359.62, -463.05}, magScale[3]  = {1.00, 1.02, 0.98}; // Bias corrections for gyro and accelerometer
+float gyroBias[3] = {0, 0, 0}, accelBias[3] = {0, 0, 0}, magBias[3] = {0, 0, 0}, magScale[3]  = {0, 0, 0};      // Bias corrections for gyro and accelerometer
 
 
 static uint32_t count = 0, sumCount = 0;         // used to control display output rate
@@ -76,7 +75,7 @@ void setup()
     Wire.setClock(400000); // I2C frequency at 400 kHz
     delay(1000);
 
-    MPU9250.I2Cscan(); // should detect BME280 at 0x77, MPU9250 at 0x71 
+    //MPU9250.I2Cscan(); // should detect BME280 at 0x77, MPU9250 at 0x71 
 
     // Set up the interrupt pin, it's set as active high, push-pull
     pinMode(myLed, OUTPUT);
@@ -129,7 +128,7 @@ void setup()
         MPU9250.initAK8963(Mscale, Mmode, magCalibration); Serial.println("AK8963 initialized for active data mode...."); // Initialize device for active mode read of magnetometer
 
         // Comment out if using pre-measured, pre-stored offset biases
-        MPU9250.magcalMPU9250(magBias, magScale);
+        //MPU9250.magcalMPU9250(magBias, magScale);
         Serial.println("AK8963 mag biases (mG)"); Serial.println(magBias[0]); Serial.println(magBias[1]); Serial.println(magBias[2]); 
         Serial.println("AK8963 mag scale (mG)"); Serial.println(magScale[0]); Serial.println(magScale[1]); Serial.println(magScale[2]); 
         delay(2000); // add delay to see results before serial spew of data
@@ -207,6 +206,8 @@ void loop()
 
     // Serial print and/or display at 0.5 s rate independent of data rates
     if(sumCount > 500) {
+
+        return;
 
         Serial.print("ax = "); Serial.print((int)1000*ax);  
         Serial.print(" ay = "); Serial.print((int)1000*ay); 
