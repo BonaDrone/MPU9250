@@ -2,60 +2,60 @@
 #include "MPU9250.h"
 #include "quaternionFilters.h"
 
+/*
+ MPU9250 Configuration
 
-// MPU9250 Configuration
-// Specify sensor full scale
-/* Choices are:
- *  Gscale: GFS_250 == 250 dps, GFS_500 DPS == 500 dps, GFS_1000 == 1000 dps, and GFS_2000DPS == 2000 degrees per second gyro full scale
- *  Ascale: AFS_2G == 2 g, AFS_4G == 4 g, AFS_8G == 8 g, and AFS_16G == 16 g accelerometer full scale
- *  Mscale: MFS_14BITS == 0.6 mG per LSB and MFS_16BITS == 0.15 mG per LSB
- *  Mmode: Mmode == M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
- *  (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
- *  sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
- */
-static uint8_t Gscale = GFS_250DPS, Ascale = AFS_2G, Mscale = MFS_16BITS, Mmode = M_100Hz, sampleRate = 0x04;         
+ Specify sensor full scale
+
+ Choices are:
+
+  Gscale:   GFS_250 == 250 dps, 
+            GFS_500 DPS == 500 dps, 
+            GFS_1000 == 1000 dps, 
+            GFS_2000DPS == 2000 degrees per second gyro full scale
+
+  Ascale: AFS_2G == 2 g, AFS_4G == 4 g, AFS_8G == 8 g, and AFS_16G == 16 g accelerometer full scale
+
+  Mscale: MFS_14BITS == 0.6 mG per LSB and MFS_16BITS == 0.15 mG per LSB
+
+  Mmode: Mmode == M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
+  (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
+
+  sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
+*/
+
+static const uint8_t Gscale = GFS_250DPS, Ascale = AFS_2G, Mscale = MFS_16BITS, Mmode = M_100Hz, sampleRate = 0x04;         
 static float aRes, gRes, mRes;      // scale resolutions per LSB for the sensors
+
 // global constants for 9 DoF fusion and AHRS (Attitude and Heading Reference System)
-static float pi = 3.141592653589793238462643383279502884f;
-static float GyroMeasError = pi * (40.0f / 180.0f);   // gyroscope measurement error in rads/s (start at 40 deg/s)
-static float GyroMeasDrift = pi * (0.0f  / 180.0f);   // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
-static float beta = sqrtf(3.0f / 4.0f) * GyroMeasError;   // compute beta
+static const float pi = 3.141592653589793238462643383279502884f;
+static const float GyroMeasError = pi * (40.0f / 180.0f);       // gyroscope measurement error in rads/s (start at 40 deg/s)
+static const float GyroMeasDrift = pi * (0.0f  / 180.0f);       // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
+static const float beta = sqrtf(3.0f / 4.0f) * GyroMeasError;   // compute beta
 
 // Pin definitions
-static int  intPin = 8;  //  MPU9250 interrupt
-static int  myLed  = 13; // red led
+static const uint8_t intPin = 8;   //  MPU9250 interrupt
+static const uint8_t ledPin = 13; // red led
 
+// Quaternion support
+static MadgwickQuaternion quat(beta);
+
+// Interrupt support 
 static bool newData = false;
-static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
-static int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
-static float   magCalibration[3] = {0, 0, 0};  // Factory mag calibration and mag bias
-static float   temperature;    // Stores the MPU9250 internal chip temperature in degrees Celsius
-static float   SelfTest[6];    // holds results of gyro and accelerometer self test
-
-// These can be measured once and entered here or can be calculated each time the device is powered on
-float gyroBias[3] = {0, 0, 0}, accelBias[3] = {0, 0, 0}, magBias[3] = {0, 0, 0}, magScale[3]  = {0, 0, 0};      // Bias corrections for gyro and accelerometer
-
-
-static uint32_t count = 0, sumCount = 0;         // used to control display output rate
-static float pitch, yaw, roll;                   // absolute orientation
-static float a12, a22, a31, a32, a33;            // rotation matrix coefficients for Euler angles and gravity components
-static float deltat = 0.0f, sum = 0.0f;          // integration interval for both filter schemes
-static uint32_t lastUpdate = 0;                 // used to calculate integration interval
-static uint32_t Now = 0;                         // used to calculate integration interval
-
-static float ax, ay, az, gx, gy, gz, mx, my, mz; // variables to hold latest sensor data values 
-static float lin_ax, lin_ay, lin_az;             // linear acceleration (acceleration with gravity component subtracted)
-static float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};    // vector to hold quaternion
-
-static MPU9250 MPU9250(intPin); // instantiate MPU9250 class
-
-
-static uint8_t  yawBytes[2], pitchBytes[2], rollBytes[2]; // for writing to SPI flash
-
 static void myinthandler()
 {
     newData = true;
 }
+
+static float   magCalibration[3]; // Factory mag calibration and mag bias
+
+// Bias corrections for gyro and accelerometer. These can be measured once and
+// entered here or can be calculated each time the device is powered on.
+static float gyroBias[3], accelBias[3], magBias[3], magScale[3];      
+
+static MPU9250 MPU9250(intPin); // instantiate MPU9250 class
+
+static uint8_t  yawBytes[2], pitchBytes[2], rollBytes[2]; // for writing to SPI flash
 
 static void int16_t_float_to_bytes(float temp, uint8_t * dest)
 {
@@ -63,8 +63,6 @@ static void int16_t_float_to_bytes(float temp, uint8_t * dest)
     dest[0] = (tempOut & 0xFF00) >> 8;
     dest[1] = (tempOut & 0x00FF);
 }
-
-static MadgwickQuaternion quat(beta);
 
 void setup()
 {
@@ -78,8 +76,8 @@ void setup()
     //MPU9250.I2Cscan(); // should detect BME280 at 0x77, MPU9250 at 0x71 
 
     // Set up the interrupt pin, it's set as active high, push-pull
-    pinMode(myLed, OUTPUT);
-    digitalWrite(myLed, HIGH); // start with orange led on (active HIGH)
+    pinMode(ledPin, OUTPUT);
+    digitalWrite(ledPin, HIGH); // start with orange led on (active HIGH)
 
     pinMode(intPin, INPUT);
 
@@ -95,6 +93,8 @@ void setup()
         Serial.println("MPU9250 is online...");
 
         MPU9250.resetMPU9250(); // start by resetting MPU9250
+
+        float   SelfTest[6];    // holds results of gyro and accelerometer self test
 
         MPU9250.SelfTest(SelfTest); // Start by performing self test and reporting values
         Serial.print("x-axis self test: acceleration trim within : "); Serial.print(SelfTest[0],1); Serial.println("% of factory value");
@@ -148,19 +148,27 @@ void setup()
         while(1) ; // Loop forever if communication doesn't happen
     }
 
-    digitalWrite(myLed, LOW); // turn off led when using flash memory
+    digitalWrite(ledPin, LOW); // turn off led when using flash memory
 }
 
 void loop()
 {  
+    static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
+    static float sum;
+    static uint32_t sumCount;         // used to control display output rate
+    static uint32_t lastUpdate;                 // used to calculate integration interval
+    static float ax, ay, az, gx, gy, gz, mx, my, mz;
+    static float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};    // vector to hold quaternion
+
+
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
-    if(newData == true) {   // On interrupt, read data
+    if(newData) {   // On interrupt, read data
 
         newData = false;     // reset newData flag
 
 
-        if(MPU9250.checkNewAccelGyroData() == true)  // data ready interrupt is detected
+        if(MPU9250.checkNewAccelGyroData())  // data ready interrupt is detected
         {
             MPU9250.readMPU9250Data(MPU9250Data); // INT cleared on any read
 
@@ -174,7 +182,10 @@ void loop()
             gy = (float)MPU9250Data[5]*gRes;  
             gz = (float)MPU9250Data[6]*gRes; 
 
-            if(MPU9250.checkNewMagData() == true) { // wait for magnetometer data ready bit to be set
+            if(MPU9250.checkNewMagData()) { // wait for magnetometer data ready bit to be set
+
+                int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
+
                 MPU9250.readMagData(magCount);  // Read the x/y/z adc values
 
                 // Calculate the magnetometer values in milliGauss
@@ -190,8 +201,8 @@ void loop()
 
 
         for(uint8_t i = 0; i < 5; i++) { // iterate a fixed number of times per data read cycle
-            Now = micros();
-            deltat = ((Now - lastUpdate)/1000000.0f); // set integration time by time elapsed since last filter update
+            uint32_t Now = micros();
+            float deltat = ((Now - lastUpdate)/1000000.0f); // set integration time by time elapsed since last filter update
             lastUpdate = Now;
 
             sum += deltat; // sum for averaging filter update rate
@@ -222,19 +233,19 @@ void loop()
         Serial.print(" qy = "); Serial.print(q[2]); 
         Serial.print(" qz = "); Serial.println(q[3]); 
 
-        temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
+        float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
 
         // Print temperature in degrees Centigrade      
         Serial.print("Gyro temperature is ");  Serial.print(temperature, 1);  Serial.println(" degrees C"); // Print T values to tenths of s degree C
 
-        a12 =   2.0f * (q[1] * q[2] + q[0] * q[3]);
-        a22 =   q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3];
-        a31 =   2.0f * (q[0] * q[1] + q[2] * q[3]);
-        a32 =   2.0f * (q[1] * q[3] - q[0] * q[2]);
-        a33 =   q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3];
-        pitch = -asinf(a32);
-        roll  = atan2f(a31, a33);
-        yaw   = atan2f(a12, a22);
+        float a12 =   2.0f * (q[1] * q[2] + q[0] * q[3]);
+        float a22 =   q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3];
+        float a31 =   2.0f * (q[0] * q[1] + q[2] * q[3]);
+        float a32 =   2.0f * (q[1] * q[3] - q[0] * q[2]);
+        float a33 =   q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3];
+        float pitch = -asinf(a32);
+        float roll  = atan2f(a31, a33);
+        float yaw   = atan2f(a12, a22);
         pitch *= 180.0f / pi;
         int16_t_float_to_bytes(pitch, &pitchBytes[0]);
         yaw   *= 180.0f / pi; 
@@ -243,9 +254,9 @@ void loop()
         int16_t_float_to_bytes(yaw, &yawBytes[0]);
         roll  *= 180.0f / pi;
         int16_t_float_to_bytes(roll, &rollBytes[0]);
-        lin_ax = ax + a31;
-        lin_ay = ay + a32;
-        lin_az = az - a33;
+        float lin_ax = ax + a31;
+        float lin_ay = ay + a32;
+        float lin_az = az - a33;
 
         Serial.print("Yaw, Pitch, Roll: ");
         Serial.print(yaw, 2);
@@ -269,7 +280,6 @@ void loop()
 
         Serial.print("rate = "); Serial.print((float)sumCount/sum, 2); Serial.println(" Hz");
 
-        count = millis(); 
         sumCount = 0;
         sum = 0;    
     }
