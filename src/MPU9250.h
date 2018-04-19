@@ -51,7 +51,6 @@ class MPU9250
         float   getMres(uint8_t Mscale);
         void    magcalMPU9250(float * dest1, float * dest2);
         void    calibrateMPU9250(float * dest1, float * dest2);
-        void    SelfTest(float * destination);
         void    readMPU9250Data(int16_t * destination);
         void    readAccelData(int16_t * destination);
         void    readGyroData(int16_t * destination);
@@ -64,6 +63,7 @@ class MPU9250
         void    accelWakeOnMotion(void);
         bool    checkWakeOnMotion(void);
         void    I2Cscan(void);
+        void    SelfTest(float * destination);
 
     private:
 
