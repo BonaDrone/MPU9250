@@ -128,7 +128,7 @@ void setup()
         MPU9250.initAK8963(Mscale, Mmode, magCalibration); Serial.println("AK8963 initialized for active data mode...."); // Initialize device for active mode read of magnetometer
 
         // Comment out if using pre-measured, pre-stored offset biases
-        //MPU9250.magcalMPU9250(magBias, magScale);
+        MPU9250.magcalMPU9250(magBias, magScale);
         Serial.println("AK8963 mag biases (mG)"); Serial.println(magBias[0]); Serial.println(magBias[1]); Serial.println(magBias[2]); 
         Serial.println("AK8963 mag scale (mG)"); Serial.println(magScale[0]); Serial.println(magScale[1]); Serial.println(magScale[2]); 
         delay(2000); // add delay to see results before serial spew of data
@@ -206,8 +206,6 @@ void loop()
 
     // Serial print and/or display at 0.5 s rate independent of data rates
     if(sumCount > 500) {
-
-        return;
 
         Serial.print("ax = "); Serial.print((int)1000*ax);  
         Serial.print(" ay = "); Serial.print((int)1000*ay); 
