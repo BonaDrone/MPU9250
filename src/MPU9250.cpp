@@ -14,12 +14,6 @@
 #include "MPU9250.h"
 #include "Wire.h"
 
-MPU9250::MPU9250(uint8_t intPin)
-{
-  _intPin = intPin;
-}
-
-
 uint8_t MPU9250::getMPU9250ID()
 {
   uint8_t c = readByte(MPU9250_ADDRESS, WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250

@@ -1,7 +1,7 @@
-#include "Wire.h"   
+#include <Wire.h>   
+
 #include "MPU9250.h"
 #include "quaternionFilters.h"
-
 /*
  MPU9250 Configuration
 
@@ -53,7 +53,7 @@ static float   magCalibration[3]; // Factory mag calibration and mag bias
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3], magScale[3];      
 
-static MPU9250 MPU9250(intPin); // instantiate MPU9250 class
+static MPU9250 imu; // instantiate MPU9250 class
 
 static uint8_t  yawBytes[2], pitchBytes[2], rollBytes[2]; // for writing to SPI flash
 
@@ -73,7 +73,7 @@ void setup()
     Wire.setClock(400000); // I2C frequency at 400 kHz
     delay(1000);
 
-    //MPU9250.I2Cscan(); // should detect BME280 at 0x77, MPU9250 at 0x71 
+    //imu.I2Cscan(); // should detect BME280 at 0x77, MPU9250 at 0x71 
 
     // Set up the interrupt pin, it's set as active high, push-pull
     pinMode(ledPin, OUTPUT);
@@ -84,7 +84,7 @@ void setup()
     /* Configure the MPU9250 */
     // Read the WHO_AM_I register, this is a good test of communication
     Serial.println("MPU9250 9-axis motion sensor...");
-    uint8_t c = MPU9250.getMPU9250ID();
+    uint8_t c = imu.getMPU9250ID();
     Serial.print("MPU9250 "); Serial.print("I AM "); Serial.print(c, HEX); Serial.print(" I should be "); Serial.println(0x71, HEX);
     delay(1000);
 
@@ -92,11 +92,11 @@ void setup()
     {  
         Serial.println("MPU9250 is online...");
 
-        MPU9250.resetMPU9250(); // start by resetting MPU9250
+        imu.resetMPU9250(); // start by resetting MPU9250
 
         float   SelfTest[6];    // holds results of gyro and accelerometer self test
 
-        MPU9250.SelfTest(SelfTest); // Start by performing self test and reporting values
+        imu.SelfTest(SelfTest); // Start by performing self test and reporting values
         Serial.print("x-axis self test: acceleration trim within : "); Serial.print(SelfTest[0],1); Serial.println("% of factory value");
         Serial.print("y-axis self test: acceleration trim within : "); Serial.print(SelfTest[1],1); Serial.println("% of factory value");
         Serial.print("z-axis self test: acceleration trim within : "); Serial.print(SelfTest[2],1); Serial.println("% of factory value");
@@ -106,29 +106,29 @@ void setup()
         delay(1000);
 
         // get sensor resolutions, only need to do this once
-        aRes = MPU9250.getAres(Ascale);
-        gRes = MPU9250.getGres(Gscale);
-        mRes = MPU9250.getMres(Mscale);
+        aRes = imu.getAres(Ascale);
+        gRes = imu.getGres(Gscale);
+        mRes = imu.getMres(Mscale);
 
         // Comment out if using pre-measured, pre-stored offset biases
-        MPU9250.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
+        imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
         Serial.println("accel biases (mg)"); Serial.println(1000.*accelBias[0]); Serial.println(1000.*accelBias[1]); Serial.println(1000.*accelBias[2]);
         Serial.println("gyro biases (dps)"); Serial.println(gyroBias[0]); Serial.println(gyroBias[1]); Serial.println(gyroBias[2]);
         delay(1000); 
 
-        MPU9250.initMPU9250(Ascale, Gscale, sampleRate); 
+        imu.initMPU9250(Ascale, Gscale, sampleRate); 
         Serial.println("MPU9250 initialized for active data mode...."); // Initialize device for active mode read of acclerometer, gyroscope, and temperature
 
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
-        byte d = MPU9250.getAK8963CID();  // Read WHO_AM_I register for AK8963
+        byte d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
         Serial.print("AK8963 "); Serial.print("I AM "); Serial.print(d, HEX); Serial.print(" I should be "); Serial.println(0x48, HEX);
         delay(1000); 
 
         // Get magnetometer calibration from AK8963 ROM
-        MPU9250.initAK8963(Mscale, Mmode, magCalibration); Serial.println("AK8963 initialized for active data mode...."); // Initialize device for active mode read of magnetometer
+        imu.initAK8963(Mscale, Mmode, magCalibration); Serial.println("AK8963 initialized for active data mode...."); // Initialize device for active mode read of magnetometer
 
         // Comment out if using pre-measured, pre-stored offset biases
-        MPU9250.magcalMPU9250(magBias, magScale);
+        imu.magcalMPU9250(magBias, magScale);
         Serial.println("AK8963 mag biases (mG)"); Serial.println(magBias[0]); Serial.println(magBias[1]); Serial.println(magBias[2]); 
         Serial.println("AK8963 mag scale (mG)"); Serial.println(magScale[0]); Serial.println(magScale[1]); Serial.println(magScale[2]); 
         delay(2000); // add delay to see results before serial spew of data
@@ -168,9 +168,9 @@ void loop()
         newData = false;     // reset newData flag
 
 
-        if(MPU9250.checkNewAccelGyroData())  // data ready interrupt is detected
+        if(imu.checkNewAccelGyroData())  // data ready interrupt is detected
         {
-            MPU9250.readMPU9250Data(MPU9250Data); // INT cleared on any read
+            imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
 
             // Now we'll calculate the accleration value into actual g's
             ax = (float)MPU9250Data[0]*aRes - accelBias[0];  // get actual g value, this depends on scale being set
@@ -182,11 +182,11 @@ void loop()
             gy = (float)MPU9250Data[5]*gRes;  
             gz = (float)MPU9250Data[6]*gRes; 
 
-            if(MPU9250.checkNewMagData()) { // wait for magnetometer data ready bit to be set
+            if(imu.checkNewMagData()) { // wait for magnetometer data ready bit to be set
 
                 int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 
-                MPU9250.readMagData(magCount);  // Read the x/y/z adc values
+                imu.readMagData(magCount);  // Read the x/y/z adc values
 
                 // Calculate the magnetometer values in milliGauss
                 // Include factory calibration per data sheet and user environmental corrections

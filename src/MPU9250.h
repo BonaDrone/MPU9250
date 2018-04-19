@@ -198,11 +198,9 @@ class MPU9250
 {
     public: 
 
-        MPU9250(uint8_t intPin);
-
-        uint8_t getMPU9250ID();
-        uint8_t getAK8963CID();
-        void    resetMPU9250();
+        uint8_t getMPU9250ID(void);
+        uint8_t getAK8963CID(void);
+        void    resetMPU9250(void);
         void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate);
         void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * destination);
         float   getAres(uint8_t Ascale);
@@ -214,15 +212,15 @@ class MPU9250
         void    readMPU9250Data(int16_t * destination);
         void    readAccelData(int16_t * destination);
         void    readGyroData(int16_t * destination);
-        bool    checkNewAccelGyroData();
-        bool    checkNewMagData();
+        bool    checkNewAccelGyroData(void);
+        bool    checkNewMagData(void);
         void    readMagData(int16_t * destination);
-        int16_t readGyroTempData();
-        void    gyromagSleep();
+        int16_t readGyroTempData(void);
+        void    gyromagSleep(void);
         void    gyromagWake(uint8_t Mmode);
-        void    accelWakeOnMotion();
-        bool    checkWakeOnMotion();
-        void    I2Cscan();
+        void    accelWakeOnMotion(void);
+        bool    checkWakeOnMotion(void);
+        void    I2Cscan(void);
 
     private:
 
@@ -230,7 +228,6 @@ class MPU9250
         uint8_t readByte(uint8_t address, uint8_t subAddress);
         void    readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest);
 
-        uint8_t _intPin;  
         float   _aRes;
         float   _gRes;
         float   _mRes;
