@@ -80,7 +80,7 @@ void setup()
     Serial.begin(115200);
     delay(1000);
 
-    Wire.begin(); // set master mode, default on SDA/SCL for Ladybug   
+    Wire.begin(); // set master mode, default on SDA/SCL
     Wire.setClock(400000); // I2C frequency at 400 kHz
     delay(1000);
 
