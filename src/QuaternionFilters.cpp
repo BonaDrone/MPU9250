@@ -10,7 +10,8 @@
  */
 
 #include <math.h>
-#include "quaternionFilters.h"
+
+#include "QuaternionFilters.h"
 
 #define Kp 2.0f * 5.0f // these are the free parameters in the Mahony filter and fusion scheme, Kp for proportional feedback, Ki for integral
 #define Ki 0.0f

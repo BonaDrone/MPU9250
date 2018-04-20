@@ -6,7 +6,7 @@
  *  
  * Demonstrate basic MPU-9250 functionality including parameterizing the register addresses, initializing the sensor, 
  * getting properly scaled accelerometer, gyroscope, and magnetometer data out. 
- * Addition of 9 DoF sensor fusion using open source Madgwick and Mahony filter algorithms. 
+ * Computes quaternion and roll/pitch/yaw using Madgwick's algorithm.
  *
  * SDA and SCL have 4K7 pull-up resistors (to 3.3V).
  *
@@ -17,7 +17,7 @@
 #include <math.h>
 
 #include "MPU9250.h"
-#include "quaternionFilters.h"
+#include "QuaternionFilters.h"
 
 /*
  MPU9250 Configuration
