@@ -1,4 +1,5 @@
 #include <Wire.h>   
+#include <math.h>
 
 #include "MPU9250.h"
 #include "quaternionFilters.h"
@@ -31,9 +32,8 @@ static const uint8_t sampleRate = 0x04;
 static float aRes, gRes, mRes;
 
 // global constants for 9 DoF fusion and AHRS (Attitude and Heading Reference System)
-static const float pi = 3.141592653589793238462643383279502884f;
-static const float GyroMeasError = pi * (40.0f / 180.0f);       // gyroscope measurement error in rads/s (start at 40 deg/s)
-static const float GyroMeasDrift = pi * (0.0f  / 180.0f);       // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
+static const float GyroMeasError = M_PI * (40.0f / 180.0f); // gyroscope measurement error in rads/s (start at 40 deg/s)
+static const float GyroMeasDrift = M_PI * (0.0f  / 180.0f); // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
 static const float beta = sqrtf(3.0f / 4.0f) * GyroMeasError;   // compute beta
 
 // Pin definitions
@@ -244,7 +244,7 @@ void loop()
             sum += deltat; // sum for averaging filter update rate
             sumCount++;
 
-            quat.update(-ax, ay, az, gx*pi/180.0f, -gy*pi/180.0f, -gz*pi/180.0f, my, -mx, mz, deltat, q);
+            quat.update(-ax, ay, az, gx*M_PI/180.0f, -gy*M_PI/180.0f, -gz*M_PI/180.0f, my, -mx, mz, deltat, q);
         }
 
     } // if (gotNewData)
@@ -298,11 +298,11 @@ void loop()
         float pitch = -asinf(a32);
         float roll  = atan2f(a31, a33);
         float yaw   = atan2f(a12, a22);
-        pitch *= 180.0f / pi;
-        yaw   *= 180.0f / pi; 
+        pitch *= 180.0f / M_PI;
+        yaw   *= 180.0f / M_PI; 
         yaw   += 13.8f; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
         if(yaw < 0) yaw   += 360.0f; // Ensure yaw stays between 0 and 360
-        roll  *= 180.0f / pi;
+        roll  *= 180.0f / M_PI;
         float lin_ax = ax + a31;
         float lin_ay = ay + a32;
         float lin_az = az - a33;
