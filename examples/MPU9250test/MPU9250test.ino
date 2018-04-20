@@ -220,12 +220,12 @@ void loop()
         {
             imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
 
-            // timeCurr we'll calculate the accleration value into actual g's
+            // Convert the accleration value into g's
             ax = (float)MPU9250Data[0]*aRes - accelBias[0];  // get actual g value, this depends on scale being set
             ay = (float)MPU9250Data[1]*aRes - accelBias[1];   
             az = (float)MPU9250Data[2]*aRes - accelBias[2];  
 
-            // Calculate the gyro value into actual degrees per second
+            // Convert the gyro value into degrees per second
             gx = (float)MPU9250Data[4]*gRes;  // get actual gyro value, this depends on scale being set
             gy = (float)MPU9250Data[5]*gRes;  
             gz = (float)MPU9250Data[6]*gRes; 
