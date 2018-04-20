@@ -60,15 +60,6 @@ static float gyroBias[3], accelBias[3], magBias[3], magScale[3];
 // Instantiate MPU9250 class
 static MPU9250 imu; 
 
-static uint8_t  yawBytes[2], pitchBytes[2], rollBytes[2]; // for writing to SPI flash
-
-static void int16_t_float_to_bytes(float temp, uint8_t * dest)
-{
-    int32_t tempOut = temp * 50;
-    dest[0] = (tempOut & 0xFF00) >> 8;
-    dest[1] = (tempOut & 0x00FF);
-}
-
 void setup()
 {
     Serial.begin(115200);
@@ -308,13 +299,10 @@ void loop()
         float roll  = atan2f(a31, a33);
         float yaw   = atan2f(a12, a22);
         pitch *= 180.0f / pi;
-        int16_t_float_to_bytes(pitch, &pitchBytes[0]);
         yaw   *= 180.0f / pi; 
         yaw   += 13.8f; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
         if(yaw < 0) yaw   += 360.0f; // Ensure yaw stays between 0 and 360
-        int16_t_float_to_bytes(yaw, &yawBytes[0]);
         roll  *= 180.0f / pi;
-        int16_t_float_to_bytes(roll, &rollBytes[0]);
         float lin_ax = ax + a31;
         float lin_ay = ay + a32;
         float lin_az = az - a33;
