@@ -1,3 +1,14 @@
+/*  Implementation code for Kris Winer's quaternion-filter support
+ *
+ *  Copyright 2017 Tlera Corporation
+ *  
+ *  Created by Kris Winer
+ *
+ *  Adapted by Simon D. Levy 19 April 2018
+ *  
+ *  Library may be used freely and without limit with attribution.
+ */
+
 #include <math.h>
 #include "quaternionFilters.h"
 

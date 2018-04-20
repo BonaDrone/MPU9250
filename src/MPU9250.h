@@ -1,14 +1,12 @@
-/* 06/16/2017 Copyright Tlera Corporation
+/*  Header file for MPU9250 class library
+ *
+ *  Copyright 2017 Tlera Corporation
  *  
  *  Created by Kris Winer
+ *
+ *  Adapted by Simon D. Levy 19 April 2018
  *  
- Demonstrate basic MPU-9250 functionality including parameterizing the register addresses, initializing the sensor, 
- getting properly scaled accelerometer, gyroscope, and magnetometer data out. 
- Addition of 9 DoF sensor fusion using open source Madgwick and Mahony filter algorithms. 
- Sketch runs on the 3.3 V Dragonfly STM32L476 Breakout Board.
-
- Library may be used freely and without limit with attribution.
-
+ *  Library may be used freely and without limit with attribution.
  */
 
 #pragma once

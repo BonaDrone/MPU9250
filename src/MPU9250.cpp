@@ -1,15 +1,13 @@
-/* 06/16/2017 Copyright Tlera Corporation
+/*  Implementation code for MPU9250 class library
+ *
+ *  Copyright 2017 Tlera Corporation
  *  
  *  Created by Kris Winer
+ *
+ *  Adapted by Simon D. Levy 19 April 2018
  *  
- Demonstrate basic MPU-9250 functionality including parameterizing the register addresses, initializing the sensor, 
- getting properly scaled accelerometer, gyroscope, and magnetometer data out. 
- Addition of 9 DoF sensor fusion using open source Madgwick and Mahony filter algorithms. 
- Sketch runs on the 3.3 V Dragonfly STM32L476 Breakout Board.
- 
- Library may be used freely and without limit with attribution.
- 
-*/
+ *  Library may be used freely and without limit with attribution.
+ */
 
 #include "MPU9250.h"
 
@@ -20,11 +18,11 @@
 // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
 //
 //Magnetometer Registers
-static const uint8_t AK8963_ADDRESS  = 0x0C;
+static const uint8_t AK8963_ADDRESS    = 0x0C;
 static const uint8_t WHO_AM_I_AK8963   = 0x00; // should return  = 0x48
 static const uint8_t INFO              = 0x01;
 static const uint8_t AK8963_ST1        = 0x02; // data ready status bit 0
-static const uint8_t AK8963_XOUT_L      = 0x03;  // data
+static const uint8_t AK8963_XOUT_L     = 0x03;  // data
 static const uint8_t AK8963_XOUT_H     = 0x04;
 static const uint8_t AK8963_YOUT_L     = 0x05;
 static const uint8_t AK8963_YOUT_H     = 0x06;

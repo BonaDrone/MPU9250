@@ -1,3 +1,18 @@
+/* 07/6/2017 Copyright Tlera Corporation
+ *  
+ * Created by Kris Winer
+ *
+ * Adapted by Simon D. Levy 19 April 2018
+ *  
+ * Demonstrate basic MPU-9250 functionality including parameterizing the register addresses, initializing the sensor, 
+ * getting properly scaled accelerometer, gyroscope, and magnetometer data out. 
+ * Addition of 9 DoF sensor fusion using open source Madgwick and Mahony filter algorithms. 
+ *
+ * SDA and SCL have 4K7 pull-up resistors (to 3.3V).
+ *
+ * Library may be used freely and without limit with attribution.
+ */
+
 #include <Wire.h>   
 #include <math.h>
 
