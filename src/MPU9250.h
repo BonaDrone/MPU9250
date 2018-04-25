@@ -60,7 +60,6 @@ class MPU9250
         void    gyromagWake(uint8_t Mmode);
         void    accelWakeOnMotion(void);
         bool    checkWakeOnMotion(void);
-        void    I2Cscan(void);
         void    SelfTest(float * destination);
 
     private:

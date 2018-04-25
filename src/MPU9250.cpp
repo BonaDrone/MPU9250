@@ -771,53 +771,9 @@ void MPU9250::SelfTest(float * destination) // Should return percent deviation f
 }
 
 
-// simple function to scan for I2C devices on the bus
-void MPU9250::I2Cscan() 
-{
-  // scan for i2c devices
-  byte error, address;
-  int nDevices;
+// I2C read/write functions ===============================================================================================
 
-  Serial.println("Scanning...");
-
-  nDevices = 0;
-  for(address = 1; address < 127; address++ ) 
-  {
-    // The i2c_scanner uses the return value of
-    // the Write.endTransmisstion to see if
-    // a device did acknowledge to the address.
-    Wire.beginTransmission(address);
-    error = Wire.endTransmission();
-      
-
-    if (error == 0)
-    {
-      Serial.print("I2C device found at address 0x");
-      if (address<16) 
-        Serial.print("0");
-      Serial.print(address,HEX);
-      Serial.println("  !");
-
-      nDevices++;
-    }
-    else if (error==4) 
-    {
-      Serial.print("Unknown error at address 0x");
-      if (address<16) 
-        Serial.print("0");
-      Serial.println(address,HEX);
-    }    
-  }
-  if (nDevices == 0)
-    Serial.println("No I2C devices found\n");
-  else
-    Serial.println("done\n");
-}
-
-
-// I2C read/write functions for the MPU9250 sensors
-
-  void MPU9250::writeByte(uint8_t address, uint8_t subAddress, uint8_t data)
+void MPU9250::writeByte(uint8_t address, uint8_t subAddress, uint8_t data)
 {
   Wire.beginTransmission(address);  // Initialize the Tx buffer
   Wire.write(subAddress);           // Put slave register address in Tx buffer
@@ -825,7 +781,7 @@ void MPU9250::I2Cscan()
   Wire.endTransmission();           // Send the Tx buffer
 }
 
-  uint8_t MPU9250::readByte(uint8_t address, uint8_t subAddress)
+uint8_t MPU9250::readByte(uint8_t address, uint8_t subAddress)
 {
   uint8_t data = 0;                        // `data` will store the register data   
   Wire.beginTransmission(address);         // Initialize the Tx buffer
@@ -836,7 +792,7 @@ void MPU9250::I2Cscan()
   return data;                             // Return data read from slave register
 }
 
-  void MPU9250::readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest)
+void MPU9250::readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest)
 {  
   Wire.beginTransmission(address);   // Initialize the Tx buffer
   Wire.write(subAddress);            // Put slave register address in Tx buffer

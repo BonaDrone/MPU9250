@@ -84,8 +84,6 @@ void setup()
     Wire.setClock(400000); // I2C frequency at 400 kHz
     delay(1000);
 
-    imu.I2Cscan(); // should detect BME280 at 0x77, MPU9250 at 0x71 
-
     // Set up the interrupt pin, it's set as active high, push-pull
     pinMode(intPin, INPUT);
 
