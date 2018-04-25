@@ -1,11 +1,11 @@
-/*  Code for Arduino Wire implmentation of ByteTransfer class
+/*  Code for Arduino implmentations of ByteTransfer class
  *
  *  Copyright 2018 Simon D. Levy
  *  
  *  Library may be used freely and without limit with attribution.
  */
 
-#include "ArduinoWire.h"
+#include "ArduinoTransfer.h"
 
 #include <Wire.h>
 

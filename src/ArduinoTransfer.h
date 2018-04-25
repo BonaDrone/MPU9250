@@ -1,4 +1,4 @@
-/*  Header for Arduino Wire implmentation of ByteTransfer class
+/*  Header for Arduino implmentations of ByteTransfer class
  *
  *  Copyright 2018 Simon D. Levy
  *  
