@@ -7,9 +7,11 @@
 
 #pragma once
 
+#include <stdint.h>
+
 class ByteTransfer
 {
-    protected: 
+    public: 
 
         virtual void    writeByte(uint8_t address, uint8_t subAddress, uint8_t data) = 0;
         virtual uint8_t readByte(uint8_t address, uint8_t subAddress) = 0;

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include <stdint.h>
+#include "ByteTransfer.h"
 
 enum {
   AFS_2G,
@@ -39,6 +39,7 @@ class MPU9250
 {
     public: 
 
+                MPU9250(ByteTransfer * bt);
         uint8_t getMPU9250ID(void);
         uint8_t getAK8963CID(void);
         void    resetMPU9250(void);
@@ -64,9 +65,7 @@ class MPU9250
 
     private:
 
-        void    writeByte(uint8_t address, uint8_t subAddress, uint8_t data);
-        uint8_t readByte(uint8_t address, uint8_t subAddress);
-        void    readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest);
+        ByteTransfer * _bt;
 
         float   _aRes;
         float   _gRes;

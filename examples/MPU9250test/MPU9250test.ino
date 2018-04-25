@@ -2,7 +2,7 @@
  *  
  * Created by Kris Winer
  *
- * Adapted by Simon D. Levy 19 April 2018
+ * Adapted by Simon D. Levy April 2018
  *  
  * Demonstrate basic MPU-9250 functionality including parameterizing the register addresses, initializing the sensor, 
  * getting properly scaled accelerometer, gyroscope, and magnetometer data out. 
@@ -17,6 +17,7 @@
 #include <math.h>
 
 #include "MPU9250.h"
+#include "ArduinoWire.h"
 #include "QuaternionFilters.h"
 
 /*
@@ -72,8 +73,11 @@ static float   magCalibration[3];
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3], magScale[3];      
 
+// Create a byte-transfer object for Arduino I^2C
+ArduinoWire bt;
+
 // Instantiate MPU9250 class
-static MPU9250 imu; 
+static MPU9250 imu = MPU9250(&bt); 
 
 void setup()
 {
