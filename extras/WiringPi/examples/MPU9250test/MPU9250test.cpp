@@ -47,7 +47,7 @@ static const uint8_t Mmode      = M_100Hz;
 static const uint8_t sampleRate = 0x04;         
 
 // scale resolutions per LSB for the sensors
-//static float aRes, gRes, mRes;
+static float aRes, gRes, mRes;
 
 // global constants for 9 DoF fusion and AHRS (Attitude and Heading Reference System)
 static const float GyroMeasError = M_PI * (40.0f / 180.0f); // gyroscope measurement error in rads/s (start at 40 deg/s)
@@ -93,16 +93,10 @@ int main(int argc, char ** argv)
         printf("y-axis self test: acceleration trim within %2.2f%% of factory value\n", SelfTest[1]);
         printf("z-axis self test: acceleration trim within %2.2f%% of factory value\n", SelfTest[2]);
 
-        /*
-        printf("x-axis self test: gyration trim within : "); 
-        printf(SelfTest[3],1); 
-        printf("% of factory value");
-        printf("y-axis self test: gyration trim within : "); 
-        printf(SelfTest[4],1); 
-        printf("% of factory value");
-        printf("z-axis self test: gyration trim within : "); 
-        printf(SelfTest[5],1); 
-        printf("% of factory value");
+        printf("x-axis self test: gyration trim within %2.2f%% of factory value\n", SelfTest[3]);
+        printf("y-axis self test: gyration trim within %2.2f%% of factory value\n", SelfTest[4]);
+        printf("z-axis self test: gyration trim within %2.2f%% of factory value\n", SelfTest[5]);
+
         delay(1000);
 
         // get sensor resolutions, only need to do this once
@@ -110,6 +104,7 @@ int main(int argc, char ** argv)
         gRes = imu.getGres(Gscale);
         mRes = imu.getMres(Mscale);
 
+        /*
         // Comment out if using pre-measured, pre-stored offset biases
         imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
         printf("accel biases (mg)");
