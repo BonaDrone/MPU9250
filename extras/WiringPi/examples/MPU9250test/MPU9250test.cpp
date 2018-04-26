@@ -81,7 +81,7 @@ int main(int argc, char ** argv)
 
     if (c == 0x71 ) // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
     {  
-        printf("MPU9250 is online...");
+        printf("MPU9250 is online...\n");
 
         imu.resetMPU9250(); // start by resetting MPU9250
 
@@ -89,16 +89,11 @@ int main(int argc, char ** argv)
 
         imu.SelfTest(SelfTest); // Start by performing self test and reporting values
 
+        printf("x-axis self test: acceleration trim within %2.2f%% of factory value\n", SelfTest[0]);
+        printf("y-axis self test: acceleration trim within %2.2f%% of factory value\n", SelfTest[1]);
+        printf("z-axis self test: acceleration trim within %2.2f%% of factory value\n", SelfTest[2]);
+
         /*
-        printf("x-axis self test: acceleration trim within : "); 
-        printf(SelfTest[0],1); 
-        printf("% of factory value");
-        printf("y-axis self test: acceleration trim within : "); 
-        printf(SelfTest[1],1); 
-        printf("% of factory value");
-        printf("z-axis self test: acceleration trim within : "); 
-        printf(SelfTest[2],1); 
-        printf("% of factory value");
         printf("x-axis self test: gyration trim within : "); 
         printf(SelfTest[3],1); 
         printf("% of factory value");
@@ -172,7 +167,7 @@ int main(int argc, char ** argv)
     }
     else
     {
-        printf("Could not connect to MPU9250: 0x%02x\n", c);
+        fprintf(stderr, "Could not connect to MPU9250: 0x%02x\n", c);
         exit(1);
     }
 
