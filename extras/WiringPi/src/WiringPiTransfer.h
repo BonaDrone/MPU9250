@@ -27,7 +27,7 @@ class WiringPiI2C : public WiringPiTransfer {
 };
 
 
-class WiringPiSPI : public ByteTransfer {
+class WiringPiSPI : public WiringPiTransfer {
 
     private:
 
@@ -36,7 +36,7 @@ class WiringPiSPI : public ByteTransfer {
 
 	public:
 
-                WiringPiSPI(uint8_t bus);
+                WiringPiSPI(uint8_t bus, uint32_t speed);
 
 		void    writeByte(uint8_t address, uint8_t subAddress, uint8_t data) override;
 

@@ -37,8 +37,9 @@ void WiringPiI2C::readBytes(uint8_t address, uint8_t subAddress, uint8_t count, 
     }
 } 
 
-WiringPiSPI::WiringPiSPI(uint8_t bus){
+WiringPiSPI::WiringPiSPI(uint8_t bus, uint32_t speed) {
     _bus = bus;
+    _speed = speed;
 }
 
 void WiringPiSPI::writeByte(uint8_t address, uint8_t subAddress, uint8_t data) 
