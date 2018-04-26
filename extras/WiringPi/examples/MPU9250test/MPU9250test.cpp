@@ -79,6 +79,104 @@ int main(int argc, char ** argv)
     printf("MPU9250 I AM 0x%0X I should be 0x71\n", c);
     delay(1000);
 
+    if (c == 0x71 ) // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
+    {  
+        printf("MPU9250 is online...");
+
+        imu.resetMPU9250(); // start by resetting MPU9250
+
+        float SelfTest[6];    // holds results of gyro and accelerometer self test
+
+        imu.SelfTest(SelfTest); // Start by performing self test and reporting values
+
+        /*
+        printf("x-axis self test: acceleration trim within : "); 
+        printf(SelfTest[0],1); 
+        printf("% of factory value");
+        printf("y-axis self test: acceleration trim within : "); 
+        printf(SelfTest[1],1); 
+        printf("% of factory value");
+        printf("z-axis self test: acceleration trim within : "); 
+        printf(SelfTest[2],1); 
+        printf("% of factory value");
+        printf("x-axis self test: gyration trim within : "); 
+        printf(SelfTest[3],1); 
+        printf("% of factory value");
+        printf("y-axis self test: gyration trim within : "); 
+        printf(SelfTest[4],1); 
+        printf("% of factory value");
+        printf("z-axis self test: gyration trim within : "); 
+        printf(SelfTest[5],1); 
+        printf("% of factory value");
+        delay(1000);
+
+        // get sensor resolutions, only need to do this once
+        aRes = imu.getAres(Ascale);
+        gRes = imu.getGres(Gscale);
+        mRes = imu.getMres(Mscale);
+
+        // Comment out if using pre-measured, pre-stored offset biases
+        imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
+        printf("accel biases (mg)");
+        printf(1000.*accelBias[0]);
+        printf(1000.*accelBias[1]);
+        printf(1000.*accelBias[2]);
+        printf("gyro biases (dps)");
+        printf(gyroBias[0]);
+        printf(gyroBias[1]);
+        printf(gyroBias[2]);
+        delay(1000); 
+
+        imu.initMPU9250(Ascale, Gscale, sampleRate); 
+        printf("MPU9250 initialized for active data mode...."); 
+
+        // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
+        byte d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
+        printf("AK8963 ");
+        printf("I AM ");
+        printf(d, HEX);
+        printf(" I should be ");
+        printf(0x48, HEX);
+        delay(1000); 
+
+        // Get magnetometer calibration from AK8963 ROM
+        imu.initAK8963(Mscale, Mmode, magCalibration);
+        printf("AK8963 initialized for active data mode...."); 
+
+        // Comment out if using pre-measured, pre-stored offset biases
+        printf("Mag Calibration: Wave device in a figure eight until done!");
+        delay(4000);
+        imu.magcalMPU9250(magBias, magScale);
+        printf("Mag Calibration done!");
+        printf("AK8963 mag biases (mG)");
+        printf(magBias[0]);
+        printf(magBias[1]);
+        printf(magBias[2]); 
+        printf("AK8963 mag scale (mG)");
+        printf(magScale[0]);
+        printf(magScale[1]);
+        printf(magScale[2]); 
+        delay(2000); // add delay to see results before serial spew of data
+
+        printf("Calibration values: ");
+        printf("X-Axis sensitivity adjustment value ");
+        printf(magCalibration[0], 2);
+        printf("Y-Axis sensitivity adjustment value ");
+        printf(magCalibration[1], 2);
+        printf("Z-Axis sensitivity adjustment value ");
+        printf(magCalibration[2], 2);
+
+        attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
+        */
+
+    }
+    else
+    {
+        printf("Could not connect to MPU9250: 0x%02x\n", c);
+        exit(1);
+    }
+
+
     return 0;
 }
 
