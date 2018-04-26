@@ -40,6 +40,7 @@
   sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
   sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
 */
+
 static const uint8_t Gscale     = GFS_250DPS;
 static const uint8_t Ascale     = AFS_2G;
 static const uint8_t Mscale     = MFS_16BITS;
@@ -54,13 +55,16 @@ static const float GyroMeasError = M_PI * (40.0f / 180.0f); // gyroscope measure
 static const float GyroMeasDrift = M_PI * (0.0f  / 180.0f); // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
 static const float beta = sqrtf(3.0f / 4.0f) * GyroMeasError;   // compute beta
 
-
 // SPI settings
 static const uint8_t SPI_BUS = 1;
 static const uint32_t SPI_SPEED = 400000;
 
 int main(int argc, char ** argv)
 {
+    // Bias corrections for gyro and accelerometer. These can be measured once and
+    // entered here or can be calculated each time the device is powered on.
+    float gyroBias[3], accelBias[3], magBias[3], magScale[3];      
+
     // Set up SPI transfer object
     WiringPiSPI bt = WiringPiSPI(SPI_BUS, SPI_SPEED);
 
@@ -104,31 +108,27 @@ int main(int argc, char ** argv)
         gRes = imu.getGres(Gscale);
         mRes = imu.getMres(Mscale);
 
-        /*
         // Comment out if using pre-measured, pre-stored offset biases
         imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
-        printf("accel biases (mg)");
-        printf(1000.*accelBias[0]);
-        printf(1000.*accelBias[1]);
-        printf(1000.*accelBias[2]);
-        printf("gyro biases (dps)");
-        printf(gyroBias[0]);
-        printf(gyroBias[1]);
-        printf(gyroBias[2]);
+        printf("accel biases (mg)\n");
+        printf("%f\n", 1000.*accelBias[0]);
+        printf("%f\n", 1000.*accelBias[1]);
+        printf("%f\n", 1000.*accelBias[2]);
+        printf("gyro biases (dps)\n");
+        printf("%f\n", gyroBias[0]);
+        printf("%f\n", gyroBias[1]);
+        printf("%f\n", gyroBias[2]);
         delay(1000); 
 
         imu.initMPU9250(Ascale, Gscale, sampleRate); 
-        printf("MPU9250 initialized for active data mode...."); 
+        printf("MPU9250 initialized for active data mode....\n"); 
 
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
-        byte d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
-        printf("AK8963 ");
-        printf("I AM ");
-        printf(d, HEX);
-        printf(" I should be ");
-        printf(0x48, HEX);
+        uint8_t d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
+        printf("AK8963 I AM 0x%02x   I should be 0x48\n", d);
         delay(1000); 
 
+        /*
         // Get magnetometer calibration from AK8963 ROM
         imu.initAK8963(Mscale, Mmode, magCalibration);
         printf("AK8963 initialized for active data mode...."); 
