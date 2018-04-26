@@ -11,6 +11,11 @@
 #include <wiringPiI2C.h>
 #include <wiringPiSPI.h>
 
+void WiringPiTransfer::delayMsec(unsigned long msec)
+{
+    delay(msec);
+}
+
 void WiringPiI2C::writeByte(uint8_t address, uint8_t subAddress, uint8_t data) 
 {
     //wiringPiI2CWriteReg8(_i2c_fd, subAddress, data);

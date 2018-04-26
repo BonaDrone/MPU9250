@@ -12,7 +12,6 @@ class ArduinoTransfer : public ByteTransfer {
     public:
 
         void delayMsec(unsigned long  msec) override;
-
 };
 
 class ArduinoWire : public ArduinoTransfer {

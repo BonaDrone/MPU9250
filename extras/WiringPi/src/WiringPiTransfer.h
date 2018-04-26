@@ -1,4 +1,4 @@
-/*  Header for WiringPi implmentations of ByteTransfer class
+/*  Header for WiringPi implmentations of WiringPiTransfer class
  *
  *  Copyright 2018 Simon D. Levy
  *  
@@ -7,7 +7,15 @@
 
 #include "ByteTransfer.h"
 
-class WiringPiI2C : public ByteTransfer {
+class WiringPiTransfer : public ByteTransfer {
+
+    public:
+
+        void delayMsec(unsigned long  msec) override;
+};
+
+
+class WiringPiI2C : public WiringPiTransfer {
 
 	public:
 
