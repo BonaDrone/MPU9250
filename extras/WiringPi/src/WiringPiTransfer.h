@@ -1,4 +1,4 @@
-/*  Header for Arduino implmentations of ByteTransfer class
+/*  Header for WiringPi implmentations of ByteTransfer class
  *
  *  Copyright 2018 Simon D. Levy
  *  
@@ -7,7 +7,7 @@
 
 #include "ByteTransfer.h"
 
-class ArduinoWire : public ByteTransfer {
+class WiringPiI2C : public ByteTransfer {
 
 	public:
 
@@ -19,9 +19,16 @@ class ArduinoWire : public ByteTransfer {
 };
 
 
-class ArduinoSPI : public ByteTransfer {
+class WiringPiSPI : public ByteTransfer {
+
+    private:
+
+        uint8_t _bus;
+        uint32_t _speed;
 
 	public:
+
+                WiringPiSPI(uint8_t bus);
 
 		void    writeByte(uint8_t address, uint8_t subAddress, uint8_t data) override;
 

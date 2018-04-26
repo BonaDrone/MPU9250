@@ -11,8 +11,9 @@
 
 #include "MPU9250.h"
 
-#include <Wire.h>
-#include <Arduino.h>
+#include <math.h>
+
+extern void delay(unsigned long msec);
 
 // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in 
 // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
@@ -497,10 +498,6 @@ void MPU9250::magcalMPU9250(float * dest1, float * dest2)
   int32_t mag_bias[3] = {0, 0, 0}, mag_scale[3] = {0, 0, 0};
   int16_t mag_max[3] = {-32767, -32767, -32767}, mag_min[3] = {32767, 32767, 32767}, mag_temp[3] = {0, 0, 0};
 
-  Serial.println("Mag Calibration: Wave device in a figure eight until done!");
-  delay(4000);
-  
-// shoot for ~fifteen seconds of mag data
     if(_Mmode == 0x02) sample_count = 128;  // at 8 Hz ODR, new mag data is available every 125 ms
     if(_Mmode == 0x06) sample_count = 1500;  // at 100 Hz ODR, new mag data is available every 10 ms
     for(ii = 0; ii < sample_count; ii++) {
@@ -512,10 +509,6 @@ void MPU9250::magcalMPU9250(float * dest1, float * dest2)
     if(_Mmode == 0x02) delay(135);  // at 8 Hz ODR, new mag data is available every 125 ms
     if(_Mmode == 0x06) delay(12);  // at 100 Hz ODR, new mag data is available every 10 ms
     }
-
-//    Serial.println("mag x min/max:"); Serial.println(mag_max[0]); Serial.println(mag_min[0]);
-//    Serial.println("mag y min/max:"); Serial.println(mag_max[1]); Serial.println(mag_min[1]);
-//    Serial.println("mag z min/max:"); Serial.println(mag_max[2]); Serial.println(mag_min[2]);
 
     // Get hard iron correction
     mag_bias[0]  = (mag_max[0] + mag_min[0])/2;  // get average x mag bias in counts
@@ -537,8 +530,6 @@ void MPU9250::magcalMPU9250(float * dest1, float * dest2)
     dest2[0] = avg_rad/((float)mag_scale[0]);
     dest2[1] = avg_rad/((float)mag_scale[1]);
     dest2[2] = avg_rad/((float)mag_scale[2]);
-  
-   Serial.println("Mag Calibration done!");
 }
 
 // Function which accumulates gyro and accelerometer data after device initialization. It calculates the average

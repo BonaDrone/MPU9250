@@ -170,7 +170,10 @@ void setup()
         Serial.println("AK8963 initialized for active data mode...."); 
 
         // Comment out if using pre-measured, pre-stored offset biases
+        Serial.println("Mag Calibration: Wave device in a figure eight until done!");
+        delay(4000);
         imu.magcalMPU9250(magBias, magScale);
+        Serial.println("Mag Calibration done!");
         Serial.println("AK8963 mag biases (mG)");
         Serial.println(magBias[0]);
         Serial.println(magBias[1]);
