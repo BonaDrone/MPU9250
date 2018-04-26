@@ -38,7 +38,7 @@ simple: simpletest
 	./simpletest
 
 simpletest: simpletest.o 
-	g++ -std=c++11 -o simpletest simpletest.o -lwiringPi -lmpu9250 
+	g++ -std=c++11 -o simpletest simpletest.o -lwiringPi ../../src/libmpu9250.so
 
 simpletest.o: simpletest.cpp $(SRC1)/WiringPiTransfer.h $(SRC2)/ByteTransfer.h 
 	g++ -std=c++11 -Wall -I$(SRC1) -I$(SRC2) -c simpletest.cpp
