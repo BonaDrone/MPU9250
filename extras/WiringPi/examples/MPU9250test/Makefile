@@ -18,7 +18,7 @@
 # DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-ALL = MPU9250test
+ALL = MPU9250test simpletest
 
 SRC1 = ../../src
 SRC2 = ../../../../src
@@ -33,6 +33,15 @@ MPU9250test.o: MPU9250test.cpp $(SRC1)/WiringPiTransfer.h $(SRC2)/ByteTransfer.h
 
 run: MPU9250test
 	./MPU9250test
+
+simple: simpletest
+	./simpletest
+
+simpletest: simpletest.o 
+	g++ -std=c++11 -o simpletest simpletest.o -lwiringPi -lmpu9250 
+
+simpletest.o: simpletest.cpp $(SRC1)/WiringPiTransfer.h $(SRC2)/ByteTransfer.h 
+	g++ -std=c++11 -Wall -I$(SRC1) -I$(SRC2) -c simpletest.cpp
 
 clean:
 	rm -f $(ALL) *.o *~
