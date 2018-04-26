@@ -432,7 +432,8 @@ void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
 void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate)
 {  
  // wake up device
-  _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors 
+  //_bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors 
+  _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x80); // Clear sleep mode bit (6), enable all sensors 
   _bt->delayMsec(100); // Wait for all registers to reset 
 
  // get stable time source
