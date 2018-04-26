@@ -7,7 +7,13 @@
 
 #include "ArduinoTransfer.h"
 
+#include <Arduino.h>
 #include <Wire.h>
+
+void ArduinoTransfer::delayMsec(unsigned long msec)
+{
+    delay(msec);
+}
 
 void ArduinoWire::writeByte(uint8_t address, uint8_t subAddress, uint8_t data)
 {

@@ -13,8 +13,6 @@
 
 #include <math.h>
 
-extern void delay(unsigned long msec);
-
 // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in 
 // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
 //
@@ -300,10 +298,9 @@ void MPU9250::accelWakeOnMotion()
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, c | 0x20);     // Write bit 5 to enable accel cycling
 
   gyromagSleep();
-  delay(100); // Wait for all registers to reset 
+  _bt->delayMsec(100); // Wait for all registers to reset 
 
 }
-
 
 void MPU9250::gyromagSleep()
 {
@@ -312,7 +309,7 @@ void MPU9250::gyromagSleep()
   _bt->writeByte(AK8963_ADDRESS, AK8963_CNTL, temp & ~(0x0F) ); // Clear bits 0 - 3 to power down magnetometer  
   temp = _bt->readByte(MPU9250_ADDRESS, PWR_MGMT_1);
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, temp | 0x10);     // Write bit 4 to enable gyro standby
-  delay(10); // Wait for all registers to reset 
+  _bt->delayMsec(10); // Wait for all registers to reset 
 }
 
 void MPU9250::gyromagWake(uint8_t Mmode)
@@ -322,7 +319,7 @@ void MPU9250::gyromagWake(uint8_t Mmode)
   _bt->writeByte(AK8963_ADDRESS, AK8963_CNTL, temp | Mmode ); // Reset normal mode for  magnetometer  
   temp = _bt->readByte(MPU9250_ADDRESS, PWR_MGMT_1);
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);   // return gyro and accel normal mode
-  delay(10); // Wait for all registers to reset 
+  _bt->delayMsec(10); // Wait for all registers to reset 
 }
 
 
@@ -330,7 +327,7 @@ void MPU9250::resetMPU9250()
 {
   // reset device
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x80); // Set bit 7 to reset MPU9250
-  delay(100); // Wait for all registers to reset 
+  _bt->delayMsec(100); // Wait for all registers to reset 
 }
 
 void MPU9250::readMPU9250Data(int16_t * destination)
@@ -411,9 +408,9 @@ void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
   // First extract the factory calibration for each magnetometer axis
   uint8_t rawData[3];  // x/y/z gyro calibration data stored here
   _bt->writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
-  delay(10);
+  _bt->delayMsec(10);
   _bt->writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x0F); // Enter Fuse ROM access mode
-  delay(10);
+  _bt->delayMsec(10);
   _bt->readBytes(AK8963_ADDRESS, AK8963_ASAX, 3, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
   magCalibration[0] =  (float)(rawData[0] - 128)/256.0f + 1.0f;   // Return x-axis sensitivity adjustment values, etc.
   magCalibration[1] =  (float)(rawData[1] - 128)/256.0f + 1.0f;  
@@ -423,12 +420,12 @@ void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
   _magCalibration[2] = magCalibration[2];
   _Mmode = Mmode;
   _bt->writeByte(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
-  delay(10);
+  _bt->delayMsec(10);
   // Configure the magnetometer for continuous read and highest resolution
   // set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
   // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
   _bt->writeByte(AK8963_ADDRESS, AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
-  delay(10);
+  _bt->delayMsec(10);
 }
 
 
@@ -436,11 +433,11 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate)
 {  
  // wake up device
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors 
-  delay(100); // Wait for all registers to reset 
+  _bt->delayMsec(100); // Wait for all registers to reset 
 
  // get stable time source
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);  // Auto select clock source to be PLL gyroscope reference if ready else
-  delay(200); 
+  _bt->delayMsec(200); 
   
  // Configure Gyro and Thermometer
  // Disable FSYNC and set thermometer and gyro bandwidth to 41 and 42 Hz, respectively; 
@@ -489,7 +486,7 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate)
 //   _bt->writeByte(MPU9250_ADDRESS, INT_PIN_CFG, 0x22);    
    _bt->writeByte(MPU9250_ADDRESS, INT_PIN_CFG, 0x12);  // INT is 50 microsecond pulse and any read to clear  
    _bt->writeByte(MPU9250_ADDRESS, INT_ENABLE, 0x01);  // Enable data ready (bit 0) interrupt
-   delay(100);
+   _bt->delayMsec(100);
 }
 
 void MPU9250::magcalMPU9250(float * dest1, float * dest2) 
@@ -506,8 +503,8 @@ void MPU9250::magcalMPU9250(float * dest1, float * dest2)
       if(mag_temp[jj] > mag_max[jj]) mag_max[jj] = mag_temp[jj];
       if(mag_temp[jj] < mag_min[jj]) mag_min[jj] = mag_temp[jj];
     }
-    if(_Mmode == 0x02) delay(135);  // at 8 Hz ODR, new mag data is available every 125 ms
-    if(_Mmode == 0x06) delay(12);  // at 100 Hz ODR, new mag data is available every 10 ms
+    if(_Mmode == 0x02) _bt->delayMsec(135);  // at 8 Hz ODR, new mag data is available every 125 ms
+    if(_Mmode == 0x06) _bt->delayMsec(12);  // at 100 Hz ODR, new mag data is available every 10 ms
     }
 
     // Get hard iron correction
@@ -542,13 +539,13 @@ void MPU9250::calibrateMPU9250(float * dest1, float * dest2)
   
  // reset device
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x80); // Write a one to bit 7 reset bit; toggle reset device
-  delay(100);
+  _bt->delayMsec(100);
    
  // get stable time source; Auto select clock source to be PLL gyroscope reference if ready 
  // else use the internal oscillator, bits 2:0 = 001
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);  
   _bt->writeByte(MPU9250_ADDRESS, PWR_MGMT_2, 0x00);
-  delay(200);                                    
+  _bt->delayMsec(200);                                    
 
 // Configure device for bias calculation
   _bt->writeByte(MPU9250_ADDRESS, INT_ENABLE, 0x00);   // Disable all interrupts
@@ -557,7 +554,7 @@ void MPU9250::calibrateMPU9250(float * dest1, float * dest2)
   _bt->writeByte(MPU9250_ADDRESS, I2C_MST_CTRL, 0x00); // Disable I2C master
   _bt->writeByte(MPU9250_ADDRESS, USER_CTRL, 0x00);    // Disable FIFO and I2C master modes
   _bt->writeByte(MPU9250_ADDRESS, USER_CTRL, 0x0C);    // Reset FIFO and DMP
-  delay(15);
+  _bt->delayMsec(15);
   
 // Configure MPU6050 gyro and accelerometer for bias calculation
   _bt->writeByte(MPU9250_ADDRESS, CONFIG, 0x01);      // Set low-pass filter to 188 Hz
@@ -571,7 +568,7 @@ void MPU9250::calibrateMPU9250(float * dest1, float * dest2)
     // Configure FIFO to capture accelerometer and gyro data for bias calculation
   _bt->writeByte(MPU9250_ADDRESS, USER_CTRL, 0x40);   // Enable FIFO  
   _bt->writeByte(MPU9250_ADDRESS, FIFO_EN, 0x78);     // Enable gyro and accelerometer sensors for FIFO  (max size 512 bytes in MPU-9150)
-  delay(40); // accumulate 40 samples in 40 milliseconds = 480 bytes
+  _bt->delayMsec(40); // accumulate 40 samples in 40 milliseconds = 480 bytes
 
 // At end of sample accumulation, turn off FIFO sensor read
   _bt->writeByte(MPU9250_ADDRESS, FIFO_EN, 0x00);        // Disable gyro and accelerometer sensors for FIFO
@@ -716,7 +713,7 @@ void MPU9250::SelfTest(float * destination) // Should return percent deviation f
 // Configure the accelerometer for self-test
    _bt->writeByte(MPU9250_ADDRESS, ACCEL_CONFIG, 0xE0); // Enable self test on all three axes and set accelerometer range to +/- 2 g
    _bt->writeByte(MPU9250_ADDRESS, GYRO_CONFIG,  0xE0); // Enable self test on all three axes and set gyro range to +/- 250 degrees/s
-   delay(25);  // Delay a while to let the device stabilize
+   _bt->delayMsec(25);  // Delay a while to let the device stabilize
 
   for( int ii = 0; ii < 200; ii++) {  // get average self-test values of gyro and acclerometer
   
@@ -739,7 +736,7 @@ void MPU9250::SelfTest(float * destination) // Should return percent deviation f
  // Configure the gyro and accelerometer for normal operation
    _bt->writeByte(MPU9250_ADDRESS, ACCEL_CONFIG, 0x00);  
    _bt->writeByte(MPU9250_ADDRESS, GYRO_CONFIG,  0x00);  
-   delay(25);  // Delay a while to let the device stabilize
+   _bt->delayMsec(25);  // Delay a while to let the device stabilize
    
    // Retrieve accelerometer and gyro factory Self-Test Code from USR_Reg
    selfTest[0] = _bt->readByte(MPU9250_ADDRESS, SELF_TEST_X_ACCEL); // X-axis accel self-test results

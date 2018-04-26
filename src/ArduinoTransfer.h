@@ -7,7 +7,15 @@
 
 #include "ByteTransfer.h"
 
-class ArduinoWire : public ByteTransfer {
+class ArduinoTransfer : public ByteTransfer {
+
+    public:
+
+        void delayMsec(unsigned long  msec) override;
+
+};
+
+class ArduinoWire : public ArduinoTransfer {
 
 	public:
 
@@ -19,7 +27,7 @@ class ArduinoWire : public ByteTransfer {
 };
 
 
-class ArduinoSPI : public ByteTransfer {
+class ArduinoSPI : public ArduinoTransfer {
 
 	public:
 
