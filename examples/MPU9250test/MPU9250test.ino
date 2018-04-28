@@ -6,7 +6,6 @@
  *  
  * Demonstrate basic MPU-9250 functionality including parameterizing the register addresses, initializing the sensor, 
  * getting properly scaled accelerometer, gyroscope, and magnetometer data out. 
- * Computes quaternion and roll/pitch/yaw using Madgwick's algorithm.
  *
  * SDA and SCL have 4K7 pull-up resistors (to 3.3V).
  *
@@ -18,26 +17,25 @@
 
 #include "KrisWinerMPU9250.h"
 #include "ArduinoTransfer.h"
-#include "QuaternionFilters.h"
 
 /*
- MPU9250 Configuration
+   MPU9250 Configuration
 
- Specify sensor full scale
+   Specify sensor full scale
 
- Choices are:
+   Choices are:
 
-  Gscale:   GFS_250 = 250 dps, GFS_500 = 500 dps, GFS_1000 = 1000 dps, GFS_2000DPS = 2000 degrees per second gyro full scale
+Gscale:   GFS_250 = 250 dps, GFS_500 = 500 dps, GFS_1000 = 1000 dps, GFS_2000DPS = 2000 degrees per second gyro full scale
 
-  Ascale: AFS_2G = 2 g, AFS_4G = 4 g, AFS_8G = 8 g, and AFS_16G = 16 g accelerometer full scale
+Ascale: AFS_2G = 2 g, AFS_4G = 4 g, AFS_8G = 8 g, and AFS_16G = 16 g accelerometer full scale
 
-  Mscale: MFS_14BITS = 0.6 mG per LSB and MFS_16BITS = 0.15 mG per LSB
+Mscale: MFS_14BITS = 0.6 mG per LSB and MFS_16BITS = 0.15 mG per LSB
 
-  Mmode: Mmode = M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
+Mmode: Mmode = M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
 
-  sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
-  sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
-*/
+sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
+sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
+ */
 static const uint8_t Gscale     = GFS_250DPS;
 static const uint8_t Ascale     = AFS_2G;
 static const uint8_t Mscale     = MFS_16BITS;
@@ -55,9 +53,6 @@ static const float beta = sqrtf(3.0f / 4.0f) * GyroMeasError;   // compute beta
 // Pin definitions
 static const uint8_t intPin = 8;   //  MPU9250 interrupt
 static const uint8_t ledPin = 13; // red led
-
-// Quaternion support
-static MadgwickQuaternion quat(beta);
 
 // Interrupt support 
 static bool gotNewData = false;
@@ -171,20 +166,20 @@ void setup()
 
         // Comment out if using pre-measured, pre-stored offset biases
         /*
-        Serial.println("Mag Calibration: Wave device in a figure eight until done!");
-        delay(4000);
-        imu.magcalMPU9250(magBias, magScale);
-        Serial.println("Mag Calibration done!");
-        Serial.println("AK8963 mag biases (mG)");
-        Serial.println(magBias[0]);
-        Serial.println(magBias[1]);
-        Serial.println(magBias[2]); 
-        Serial.println("AK8963 mag scale (mG)");
-        Serial.println(magScale[0]);
-        Serial.println(magScale[1]);
-        Serial.println(magScale[2]); 
-        delay(2000); // add delay to see results before serial spew of data
-        */
+           Serial.println("Mag Calibration: Wave device in a figure eight until done!");
+           delay(4000);
+           imu.magcalMPU9250(magBias, magScale);
+           Serial.println("Mag Calibration done!");
+           Serial.println("AK8963 mag biases (mG)");
+           Serial.println(magBias[0]);
+           Serial.println(magBias[1]);
+           Serial.println(magBias[2]); 
+           Serial.println("AK8963 mag scale (mG)");
+           Serial.println(magScale[0]);
+           Serial.println(magScale[1]);
+           Serial.println(magScale[2]); 
+           delay(2000); // add delay to see results before serial spew of data
+         */
         Serial.println("Calibration values: ");
         Serial.print("X-Axis sensitivity adjustment value ");
         Serial.println(magCalibration[0], 2);
@@ -254,24 +249,6 @@ void loop()
             }
         }
 
-        for(uint8_t i = 0; i < 5; i++) { // iterate a fixed number of times per data read cycle
-
-            uint32_t timeCurr = micros();
-
-            // set integration time by time elapsed since last filter update
-            float deltat = ((timeCurr - timePrev)/1000000.0f); 
-            timePrev = timeCurr;
-
-            sum += deltat; // sum for averaging filter update rate
-            sumCount++;
-
-            quat.update(-ax, ay, az, gx*M_PI/180.0f, -gy*M_PI/180.0f, -gz*M_PI/180.0f, my, -mx, mz, deltat, q);
-        }
-
-    } // if (gotNewData)
-
-    // Serial print and/or display at 0.5 s rate independent of data rates
-    if(sumCount > 500) {
 
         Serial.print("ax = ");
         Serial.print((int)1000*ax);  
@@ -295,15 +272,6 @@ void loop()
         Serial.print( (int)mz );
         Serial.println(" mG");
 
-        Serial.print("q0 = ");
-        Serial.print(q[0]);
-        Serial.print(" qx = ");
-        Serial.print(q[1]); 
-        Serial.print(" qy = ");
-        Serial.print(q[2]); 
-        Serial.print(" qz = ");
-        Serial.println(q[3]); 
-
         float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
 
         // Print temperature in degrees Centigrade      
@@ -311,48 +279,5 @@ void loop()
         Serial.print(temperature, 1);  
         Serial.println(" degrees C"); 
 
-        float a12 =   2.0f * (q[1] * q[2] + q[0] * q[3]);
-        float a22 =   q[0] * q[0] + q[1] * q[1] - q[2] * q[2] - q[3] * q[3];
-        float a31 =   2.0f * (q[0] * q[1] + q[2] * q[3]);
-        float a32 =   2.0f * (q[1] * q[3] - q[0] * q[2]);
-        float a33 =   q[0] * q[0] - q[1] * q[1] - q[2] * q[2] + q[3] * q[3];
-        float pitch = -asinf(a32);
-        float roll  = atan2f(a31, a33);
-        float yaw   = atan2f(a12, a22);
-        pitch *= 180.0f / M_PI;
-        yaw   *= 180.0f / M_PI; 
-        yaw   += 13.8f; // Declination at Danville, California is 13 degrees 48 minutes and 47 seconds on 2014-04-04
-        if(yaw < 0) yaw   += 360.0f; // Ensure yaw stays between 0 and 360
-        roll  *= 180.0f / M_PI;
-        float lin_ax = ax + a31;
-        float lin_ay = ay + a32;
-        float lin_az = az - a33;
-
-        Serial.print("Yaw, Pitch, Roll: ");
-        Serial.print(yaw, 2);
-        Serial.print(", ");
-        Serial.print(pitch, 2);
-        Serial.print(", ");
-        Serial.println(roll, 2);
-
-        Serial.print("Grav_x, Grav_y, Grav_z: ");
-        Serial.print(-a31*1000.0f, 2);
-        Serial.print(", ");
-        Serial.print(-a32*1000.0f, 2);
-        Serial.print(", ");
-        Serial.print(a33*1000.0f, 2);  Serial.println(" mg");
-        Serial.print("Lin_ax, Lin_ay, Lin_az: ");
-        Serial.print(lin_ax*1000.0f, 2);
-        Serial.print(", ");
-        Serial.print(lin_ay*1000.0f, 2);
-        Serial.print(", ");
-        Serial.print(lin_az*1000.0f, 2);  Serial.println(" mg");
-
-        Serial.print("rate = ");
-        Serial.print((float)sumCount/sum, 2);
-        Serial.println(" Hz\n");
-
-        sumCount = 0;
-        sum = 0;    
-    }
+    } // if got new data
 }
