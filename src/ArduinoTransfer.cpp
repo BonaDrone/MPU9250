@@ -42,7 +42,8 @@ void ArduinoWire::readBytes(uint8_t address, uint8_t subAddress, uint8_t count, 
   uint8_t i = 0;
   Wire.requestFrom(address, count);  // Read bytes from slave register address 
   while (Wire.available()) {
-        dest[i++] = Wire.read(); }         // Put read results in the Rx buffer
+        dest[i++] = Wire.read();          // Put read results in the Rx buffer
+  }
 }
 
           
