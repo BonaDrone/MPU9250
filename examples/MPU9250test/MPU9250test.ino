@@ -16,7 +16,7 @@
 #include <Wire.h>   
 #include <math.h>
 
-#include "MPU9250.h"
+#include "KrisWinerMPU9250.h"
 #include "ArduinoTransfer.h"
 #include "QuaternionFilters.h"
 
@@ -71,7 +71,7 @@ static float   magCalibration[3];
 
 // Bias corrections for gyro and accelerometer. These can be measured once and
 // entered here or can be calculated each time the device is powered on.
-static float gyroBias[3], accelBias[3], magBias[3], magScale[3];      
+static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
 // Create a byte-transfer object for Arduino I^2C
 ArduinoWire bt;
@@ -170,6 +170,7 @@ void setup()
         Serial.println("AK8963 initialized for active data mode...."); 
 
         // Comment out if using pre-measured, pre-stored offset biases
+        /*
         Serial.println("Mag Calibration: Wave device in a figure eight until done!");
         delay(4000);
         imu.magcalMPU9250(magBias, magScale);
@@ -183,7 +184,7 @@ void setup()
         Serial.println(magScale[1]);
         Serial.println(magScale[2]); 
         delay(2000); // add delay to see results before serial spew of data
-
+        */
         Serial.println("Calibration values: ");
         Serial.print("X-Axis sensitivity adjustment value ");
         Serial.println(magCalibration[0], 2);
