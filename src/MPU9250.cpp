@@ -32,11 +32,6 @@ uint8_t MPU9250::getMPU9250ID()
   return c;
 }
 
-uint8_t MPU9250::getAK8963CID()
-{
-    return _bt->readRegister(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for MPU-9250
-}
-
 float MPU9250::getMres(uint8_t Mscale) {
     switch (Mscale)
     {
@@ -150,26 +145,6 @@ void MPU9250::accelWakeOnMotion()
 
 }
 
-void MPU9250::gyromagSleep()
-{
-  uint8_t temp = 0;
-  temp = _bt->readRegister(AK8963_ADDRESS, AK8963_CNTL);
-  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, temp & ~(0x0F) ); // Clear bits 0 - 3 to power down magnetometer  
-  temp = _bt->readRegister(MPU9250_ADDRESS, PWR_MGMT_1);
-  _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, temp | 0x10);     // Write bit 4 to enable gyro standby
-  _bt->delayMsec(10); // Wait for all registers to reset 
-}
-
-void MPU9250::gyromagWake(uint8_t Mmode)
-{
-  uint8_t temp = 0;
-  temp = _bt->readRegister(AK8963_ADDRESS, AK8963_CNTL);
-  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, temp | Mmode ); // Reset normal mode for  magnetometer  
-  temp = _bt->readRegister(MPU9250_ADDRESS, PWR_MGMT_1);
-  _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);   // return gyro and accel normal mode
-  _bt->delayMsec(10); // Wait for all registers to reset 
-}
-
 void MPU9250::resetMPU9250()
 {
   // reset device
@@ -224,18 +199,6 @@ bool MPU9250::checkWakeOnMotion()
 }
 
 
-void MPU9250::readMagData(int16_t * destination)
-{
-  uint8_t rawData[7];  // x/y/z gyro register data, ST2 register stored here, must read ST2 at end of data acquisition
-  _bt->readRegisters(AK8963_ADDRESS, AK8963_XOUT_L, 7, &rawData[0]);  // Read the six raw data and ST2 registers sequentially into data array
-  uint8_t c = rawData[6]; // End data read by reading ST2 register
-    if(!(c & 0x08)) { // Check if magnetic sensor overflow set, if not then report data
-    destination[0] = ((int16_t)rawData[1] << 8) | rawData[0] ;  // Turn the MSB and LSB into a signed 16-bit value
-    destination[1] = ((int16_t)rawData[3] << 8) | rawData[2] ;  // Data stored as little Endian
-    destination[2] = ((int16_t)rawData[5] << 8) | rawData[4] ; 
-   }
-}
-
 int16_t MPU9250::readGyroTempData()
 {
   uint8_t rawData[2];  // x/y/z gyro register data stored here
@@ -243,31 +206,6 @@ int16_t MPU9250::readGyroTempData()
   return ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a 16-bit value
 }
        
-void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
-{
-  // First extract the factory calibration for each magnetometer axis
-  uint8_t rawData[3];  // x/y/z gyro calibration data stored here
-  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
-  _bt->delayMsec(10);
-  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x0F); // Enter Fuse ROM access mode
-  _bt->delayMsec(10);
-  _bt->readRegisters(AK8963_ADDRESS, AK8963_ASAX, 3, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
-  magCalibration[0] =  (float)(rawData[0] - 128)/256.0f + 1.0f;   // Return x-axis sensitivity adjustment values, etc.
-  magCalibration[1] =  (float)(rawData[1] - 128)/256.0f + 1.0f;  
-  magCalibration[2] =  (float)(rawData[2] - 128)/256.0f + 1.0f; 
-  _magCalibration[0] = magCalibration[0];
-  _magCalibration[1] = magCalibration[1];
-  _magCalibration[2] = magCalibration[2];
-  _Mmode = Mmode;
-  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
-  _bt->delayMsec(10);
-  // Configure the magnetometer for continuous read and highest resolution
-  // set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
-  // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
-  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
-  _bt->delayMsec(10);
-}
-
 
 void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate)
 {  
@@ -631,9 +569,72 @@ void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* de
 	_bt->readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); // read the bytes off the MPU9250 EXT_SENS_DATA registers
 }
 
+
+// Master mode ==================================================================================
+
 bool MPU9250Master::checkNewMagData()
 {
   return (_bt->readRegister(AK8963_ADDRESS, AK8963_ST1) & 0x01);
 }
 
+uint8_t MPU9250::getAK8963CID()
+{
+    return _bt->readRegister(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for MPU-9250
+}
 
+void MPU9250::gyromagSleep()
+{
+  uint8_t temp = 0;
+  temp = _bt->readRegister(AK8963_ADDRESS, AK8963_CNTL);
+  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, temp & ~(0x0F) ); // Clear bits 0 - 3 to power down magnetometer  
+  temp = _bt->readRegister(MPU9250_ADDRESS, PWR_MGMT_1);
+  _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, temp | 0x10);     // Write bit 4 to enable gyro standby
+  _bt->delayMsec(10); // Wait for all registers to reset 
+}
+
+void MPU9250::gyromagWake(uint8_t Mmode)
+{
+  uint8_t temp = 0;
+  temp = _bt->readRegister(AK8963_ADDRESS, AK8963_CNTL);
+  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, temp | Mmode ); // Reset normal mode for  magnetometer  
+  temp = _bt->readRegister(MPU9250_ADDRESS, PWR_MGMT_1);
+  _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);   // return gyro and accel normal mode
+  _bt->delayMsec(10); // Wait for all registers to reset 
+}
+
+void MPU9250::readMagData(int16_t * destination)
+{
+  uint8_t rawData[7];  // x/y/z gyro register data, ST2 register stored here, must read ST2 at end of data acquisition
+  _bt->readRegisters(AK8963_ADDRESS, AK8963_XOUT_L, 7, &rawData[0]);  // Read the six raw data and ST2 registers sequentially into data array
+  uint8_t c = rawData[6]; // End data read by reading ST2 register
+    if(!(c & 0x08)) { // Check if magnetic sensor overflow set, if not then report data
+    destination[0] = ((int16_t)rawData[1] << 8) | rawData[0] ;  // Turn the MSB and LSB into a signed 16-bit value
+    destination[1] = ((int16_t)rawData[3] << 8) | rawData[2] ;  // Data stored as little Endian
+    destination[2] = ((int16_t)rawData[5] << 8) | rawData[4] ; 
+   }
+}
+
+void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
+{
+  // First extract the factory calibration for each magnetometer axis
+  uint8_t rawData[3];  // x/y/z gyro calibration data stored here
+  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
+  _bt->delayMsec(10);
+  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x0F); // Enter Fuse ROM access mode
+  _bt->delayMsec(10);
+  _bt->readRegisters(AK8963_ADDRESS, AK8963_ASAX, 3, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
+  magCalibration[0] =  (float)(rawData[0] - 128)/256.0f + 1.0f;   // Return x-axis sensitivity adjustment values, etc.
+  magCalibration[1] =  (float)(rawData[1] - 128)/256.0f + 1.0f;  
+  magCalibration[2] =  (float)(rawData[2] - 128)/256.0f + 1.0f; 
+  _magCalibration[0] = magCalibration[0];
+  _magCalibration[1] = magCalibration[1];
+  _magCalibration[2] = magCalibration[2];
+  _Mmode = Mmode;
+  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
+  _bt->delayMsec(10);
+  // Configure the magnetometer for continuous read and highest resolution
+  // set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
+  // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
+  _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
+  _bt->delayMsec(10);
+}
