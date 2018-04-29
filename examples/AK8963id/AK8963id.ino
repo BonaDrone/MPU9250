@@ -73,31 +73,22 @@ static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest
 }
 
 /* writes a register to the AK8963 given a register address and data */
-static int writeAK8963Register(uint8_t subAddress, uint8_t data)
+static void writeAK8963Register(uint8_t subAddress, uint8_t data)
 {
     // set slave 0 to the AK8963 and set for write
     writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR);
 
-
     // set the register to the desired AK8963 sub address 
     writeRegister(I2C_SLV0_REG,subAddress);
-
 
     // store the data for write
     writeRegister(I2C_SLV0_DO,data);
 
-
     // enable I2C and send 1 byte
     writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | (uint8_t)1);
 
-    // read the register and confirm
+    // read the register back
     readAK8963Registers(subAddress,1,_buffer);
-
-    if(_buffer[0] == data) {
-        return 1;
-    } else{
-        return -6;
-    }
 }
 
 static int whoAmIAK8963()
