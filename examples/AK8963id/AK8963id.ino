@@ -84,9 +84,9 @@ static uint8_t _buffer[21];
 
 uint8_t addr = 0x00;
 
-static void readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest)
+static void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t* dest)
 {
-    Wire.beginTransmission(0x68); // open the device
+    Wire.beginTransmission(address); // open the device
     Wire.write(subAddress); // specify the starting register address
     Wire.endTransmission(false);
     Wire.requestFrom(0x68, count); // specify the number of bytes to receive
@@ -95,9 +95,9 @@ static void readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest)
     }
 }
 
-static void writeRegister(uint8_t subAddress, uint8_t data)
+static void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data)
 {
-    Wire.beginTransmission(0x68); // open the device
+    Wire.beginTransmission(address); // open the device
     Wire.write(subAddress); // write the register address
     Wire.write(data); // write the data
     Wire.endTransmission();
@@ -107,18 +107,18 @@ static void writeRegister(uint8_t subAddress, uint8_t data)
 static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
 {
     // set slave 0 to the AK8963 and set for read
-    writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR | I2C_READ_FLAG);
+    writeRegister(0x68, I2C_SLV0_ADDR,AK8963_I2C_ADDR | I2C_READ_FLAG);
 
     // set the register to the desired AK8963 sub address
-    writeRegister(I2C_SLV0_REG,subAddress);
+    writeRegister(0x68, I2C_SLV0_REG,subAddress);
 
     // enable I2C and request the bytes
-    writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | count);
+    writeRegister(0x68, I2C_SLV0_CTRL,I2C_SLV0_EN | count);
 
     delay(1); // takes some time for these registers to fill
 
     // read the bytes off the MPU9250 EXT_SENS_DATA registers
-    readRegisters(EXT_SENS_DATA_00,count,dest); 
+    readRegisters(0x68, EXT_SENS_DATA_00, count,dest); 
 }
 
 static uint8_t whoAmIAK8963()
