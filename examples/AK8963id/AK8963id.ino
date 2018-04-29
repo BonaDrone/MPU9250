@@ -30,7 +30,7 @@ const uint8_t I2C_READ_FLAG = 0x80;
 const uint8_t AK8963_I2C_ADDR = 0x0C;
 const uint8_t AK8963_WHO_AM_I = 0x00;
 
-ArduinoWire bt;
+ArduinoI2C bt;
 
 // reads registers from the AK8963  in master mode
 static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)

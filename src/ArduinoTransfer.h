@@ -14,7 +14,7 @@ class ArduinoTransfer : public ByteTransfer {
         void delayMsec(unsigned long  msec) override;
 };
 
-class ArduinoWire : public ArduinoTransfer {
+class ArduinoI2C : public ArduinoTransfer, I2CTransfer {
 
 	public:
 
@@ -24,20 +24,3 @@ class ArduinoWire : public ArduinoTransfer {
 
 		void    readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 };
-
-
-class ArduinoSPI : public ArduinoTransfer {
-
-	public:
-
-		void    writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) override;
-
-		uint8_t readRegister(uint8_t address, uint8_t subAddress) override;
-
-		void    readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
-};
-
-
-
-
-
