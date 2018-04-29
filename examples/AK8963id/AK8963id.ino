@@ -52,11 +52,6 @@ static void writeRegister(uint8_t subAddress, uint8_t data)
     Wire.write(subAddress); // write the register address
     Wire.write(data); // write the data
     Wire.endTransmission();
-
-    delay(10);
-
-    // read back the register 
-    readRegisters(subAddress,1,_buffer);
 }
 
 /* reads registers from the AK8963 */
