@@ -217,6 +217,7 @@ class MPU9250
         const uint8_t ZA_OFFSET_H       = 0x7D;
         const uint8_t ZA_OFFSET_L       = 0x7E;
         const uint8_t I2C_SLV0_EN       = 0x80;
+
         const uint8_t I2C_READ_FLAG = 0x80;
 
         ByteTransfer * _bt;
