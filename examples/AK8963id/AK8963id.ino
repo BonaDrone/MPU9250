@@ -4,7 +4,6 @@
 
 ArduinoWire bt;
 
-
 // MPU9250 registers
 const uint8_t EXT_SENS_DATA_00 = 0x49;
 const uint8_t I2C_SLV0_ADDR = 0x25;
@@ -37,7 +36,7 @@ static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest
 
 static uint8_t whoAmIAK8963()
 {
-    static uint8_t _buffer[21];
+    uint8_t _buffer[1];
 
     // read the WHO AM I register
     readAK8963Registers(AK8963_WHO_AM_I,1,_buffer);
