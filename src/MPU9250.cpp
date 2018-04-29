@@ -9,7 +9,7 @@
  *  Library may be used freely and without limit with attribution.
  */
 
-#include "KrisWinerMPU9250.h"
+#include "MPU9250.h"
 
 #include <math.h>
 

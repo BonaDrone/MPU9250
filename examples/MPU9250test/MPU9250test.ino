@@ -15,7 +15,7 @@
 #include <Wire.h>   
 #include <math.h>
 
-#include "KrisWinerMPU9250.h"
+#include "MPU9250.h"
 #include "ArduinoTransfer.h"
 
 /*
@@ -204,11 +204,7 @@ void setup()
 void loop()
 {  
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
-    static float sum;
-    static uint32_t sumCount;         // used to control display output rate
-    static uint32_t timePrev;                 // used to calculate integration interval
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
-    static float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};    // vector to hold quaternion
 
 
     // If intPin goes high, either all data registers have new data
