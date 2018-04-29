@@ -32,99 +32,107 @@ uint8_t MPU9250::getMPU9250ID()
   return c;
 }
 
-  uint8_t MPU9250::getAK8963CID()
+uint8_t MPU9250::getAK8963CID()
 {
-  uint8_t c = _bt->readRegister(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for MPU-9250
-  return c;
+    uint8_t buff[1];
+
+    // read the WHO AM I register
+    readAK8963Registers(WHO_AM_I_AK8963, sizeof(buff), &buff[0]);
+
+    // return the register value
+    return buff[0];
+
+    //uint8_t c = _bt->readRegister(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for MPU-9250
+    //return c;
 }
 
 float MPU9250::getMres(uint8_t Mscale) {
-  switch (Mscale)
-  {
-   // Possible magnetometer scales (and their register bit settings) are:
-  // 14 bit resolution (0) and 16 bit resolution (1)
-    case MFS_14BITS:
-          _mRes = 10.*4912./8190.; // Proper scale to return milliGauss
-          return _mRes;
-          break;
-    case MFS_16BITS:
-          _mRes = 10.*4912./32760.0; // Proper scale to return milliGauss
-          return _mRes;
-          break;
-  }
+    switch (Mscale)
+    {
+        // Possible magnetometer scales (and their register bit settings) are:
+        // 14 bit resolution (0) and 16 bit resolution (1)
+        case MFS_14BITS:
+            _mRes = 10.*4912./8190.; // Proper scale to return milliGauss
+            return _mRes;
+            break;
+        case MFS_16BITS:
+            _mRes = 10.*4912./32760.0; // Proper scale to return milliGauss
+            return _mRes;
+            break;
+    }
 
-  // For type safety
-  return 0.f;
+    // For type safety
+    return 0.f;
 }
 
 float MPU9250::getGres(uint8_t Gscale) {
-  switch (Gscale)
-  {
-  // Possible gyro scales (and their register bit settings) are:
-  // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11). 
-    case GFS_250DPS:
-          _gRes = 250.0/32768.0;
-          return _gRes;
-          break;
-    case GFS_500DPS:
-          _gRes = 500.0/32768.0;
-          return _gRes;
-          break;
-    case GFS_1000DPS:
-         _gRes = 1000.0/32768.0;
-         return _gRes;
-         break;
-    case GFS_2000DPS:
-          _gRes = 2000.0/32768.0;
-         return _gRes;
-         break;
-  }
+    switch (Gscale)
+    {
+        // Possible gyro scales (and their register bit settings) are:
+        // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11). 
+        case GFS_250DPS:
+            _gRes = 250.0/32768.0;
+            return _gRes;
+            break;
+        case GFS_500DPS:
+            _gRes = 500.0/32768.0;
+            return _gRes;
+            break;
+        case GFS_1000DPS:
+            _gRes = 1000.0/32768.0;
+            return _gRes;
+            break;
+        case GFS_2000DPS:
+            _gRes = 2000.0/32768.0;
+            return _gRes;
+            break;
+    }
 
-  // For type safety
-  return 0.f;
+    // For type safety
+    return 0.f;
 }
 
 float MPU9250::getAres(uint8_t Ascale) {
-  switch (Ascale)
-  {
-  // Possible accelerometer scales (and their register bit settings) are:
-  // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11). 
+    switch (Ascale)
+    {
+        // Possible accelerometer scales (and their register bit settings) are:
+        // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11). 
         // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
-    case AFS_2G:
-         _aRes = 2.0f/32768.0f;
-         return _aRes;
-         break;
-    case AFS_4G:
-         _aRes = 4.0f/32768.0f;
-         return _aRes;
-         break;
-    case AFS_8G:
-         _aRes = 8.0f/32768.0f;
-         return _aRes;
-         break;
-    case AFS_16G:
-         _aRes = 16.0f/32768.0f;
-         return _aRes;
-         break;
-  }
+        case AFS_2G:
+            _aRes = 2.0f/32768.0f;
+            return _aRes;
+            break;
+        case AFS_4G:
+            _aRes = 4.0f/32768.0f;
+            return _aRes;
+            break;
+        case AFS_8G:
+            _aRes = 8.0f/32768.0f;
+            return _aRes;
+            break;
+        case AFS_16G:
+            _aRes = 16.0f/32768.0f;
+            return _aRes;
+            break;
+    }
 
-  // For type safety
-  return 0.f;
+    // For type safety
+    return 0.f;
 }
 
 
 
 void MPU9250::accelWakeOnMotion()
 {
-  // Set accelerometer sample rate configuration
-  // It is possible to get a 4 kHz sample rate from the accelerometer by choosing 1 for
-  // accel_fchoice_b bit [3]; in this case the bandwidth is 1.13 kHz
-  uint8_t c = _bt->readRegister(MPU9250_ADDRESS, ACCEL_CONFIG2); // get current ACCEL_CONFIG2 register value
-  c = c & ~0x0F; // Clear accel_fchoice_b (bit 3) and A_DLPFG (bits [2:0])  
-  c = c | 0x01;  // Set accelerometer rate to 1 kHz and bandwidth to 184 Hz
-  _bt->writeRegister(MPU9250_ADDRESS, ACCEL_CONFIG2, c); // Write new ACCEL_CONFIG2 register value
+    // Set accelerometer sample rate configuration
+    // It is possible to get a 4 kHz sample rate from the accelerometer by choosing 1 for
+    // accel_fchoice_b bit [3]; in this case the bandwidth is 1.13 kHz
+    uint8_t c = _bt->readRegister(MPU9250_ADDRESS, ACCEL_CONFIG2); // get current ACCEL_CONFIG2 register value
+    c = c & ~0x0F; // Clear accel_fchoice_b (bit 3) and A_DLPFG (bits [2:0])  
+    c = c | 0x01;  // Set accelerometer rate to 1 kHz and bandwidth to 184 Hz
+    _bt->writeRegister(MPU9250_ADDRESS, ACCEL_CONFIG2, c); // Write new ACCEL_CONFIG2 register value
 
-  // Configure Interrupts and Bypass Enable
+    // Configure Interrupts and Bypass Enable
   // Set interrupt pin active high, push-pull, hold interrupt pin level HIGH until interrupt cleared,
   // clear on read of INT_STATUS, and enable I2C_BYPASS_EN so additional chips 
   // can join the I2C bus and all can be controlled by the Arduino as master 
@@ -612,3 +620,32 @@ void MPU9250::SelfTest(float * destination) // Should return percent deviation f
    }
    
 }
+
+// writes a register to the AK8963 given a register address and data 
+bool MPU9250::writeAK8963Register(uint8_t subAddress, uint8_t data)
+{
+	uint8_t count = 1;
+	uint8_t buff[1];
+
+	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_ADDRESS); // set slave 0 to the AK8963 and set for write
+	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
+	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_DO, data); // store the data for write
+	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and send 1 byte
+
+	// read the register and confirm
+	readAK8963Registers(subAddress, sizeof(buff), &buff[0]);
+
+    return buff[0] == data;
+}
+
+/* reads registers from the AK8963 */
+void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
+{
+	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_ADDRESS | I2C_READ_FLAG); // set slave 0 to the AK8963 and set for read
+	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
+	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and request the bytes
+	_bt->delayUsec(100); // takes some time for these registers to fill
+	_bt->readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); // read the bytes off the MPU9250 EXT_SENS_DATA registers
+}
+
+

@@ -203,6 +203,8 @@ void setup()
 
 void loop()
 {  
+    return;
+
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
 

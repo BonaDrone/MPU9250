@@ -14,22 +14,22 @@
 #include "ByteTransfer.h"
 
 enum {
-  AFS_2G,
-  AFS_4G,  
-  AFS_8G,  
-  AFS_16G 
+    AFS_2G,
+    AFS_4G,  
+    AFS_8G,  
+    AFS_16G 
 };
 
 enum {
-  GFS_250DPS,
-  GFS_500DPS,
-  GFS_1000DPS,
-  GFS_2000DPS
+    GFS_250DPS,
+    GFS_500DPS,
+    GFS_1000DPS,
+    GFS_2000DPS
 };
 
 enum {
-  MFS_14BITS, // 0.6 mG per LSB
-  MFS_16BITS  // 0.15 mG per LSB
+    MFS_14BITS, // 0.6 mG per LSB
+    MFS_16BITS  // 0.15 mG per LSB
 };
 
 const uint8_t M_8Hz   = 0x02;
@@ -39,7 +39,8 @@ class MPU9250
 {
     public: 
 
-                MPU9250(ByteTransfer * bt);
+        MPU9250(ByteTransfer * bt);
+
         uint8_t getMPU9250ID(void);
         uint8_t getAK8963CID(void);
         void    resetMPU9250(void);
@@ -215,8 +216,13 @@ class MPU9250
         const uint8_t YA_OFFSET_L       = 0x7B;
         const uint8_t ZA_OFFSET_H       = 0x7D;
         const uint8_t ZA_OFFSET_L       = 0x7E;
+        const uint8_t I2C_SLV0_EN       = 0x80;
+        const uint8_t I2C_READ_FLAG = 0x80;
 
         ByteTransfer * _bt;
+
+        bool writeAK8963Register(uint8_t subAddress, uint8_t data);
+        void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest);
 
         float   _aRes;
         float   _gRes;
