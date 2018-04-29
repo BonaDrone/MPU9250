@@ -209,13 +209,6 @@ void MPU9250::readGyroData(int16_t * destination)
   destination[2] = ((int16_t)rawData[4] << 8) | rawData[5] ; 
 }
 
-bool MPU9250::checkNewMagData()
-{
-  bool test;
-  test = (_bt->readRegister(AK8963_ADDRESS, AK8963_ST1) & 0x01);
-  return test;
-}
-
 bool MPU9250::checkNewAccelGyroData()
 {
   bool test;
@@ -637,3 +630,10 @@ void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* de
 
 	_bt->readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); // read the bytes off the MPU9250 EXT_SENS_DATA registers
 }
+
+bool MPU9250Master::checkNewMagData()
+{
+  return (_bt->readRegister(AK8963_ADDRESS, AK8963_ST1) & 0x01);
+}
+
+

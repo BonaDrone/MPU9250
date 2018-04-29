@@ -14,13 +14,11 @@ class ArduinoTransfer : public ByteTransfer {
         void delayMsec(unsigned long  msec) override;
 };
 
-class ArduinoI2C : public ArduinoTransfer, I2CTransfer {
+class ArduinoI2C : public ArduinoTransfer, public I2CTransfer {
 
 	public:
 
 		void    writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) override;
-
 		uint8_t readRegister(uint8_t address, uint8_t subAddress) override;
-
 		void    readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 };

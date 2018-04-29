@@ -35,11 +35,9 @@ enum {
 const uint8_t M_8Hz   = 0x02;
 const uint8_t M_100Hz = 0x06;
 
-class MPU9250
-{
-    public: 
+class MPU9250 {
 
-        MPU9250(ByteTransfer * bt);
+    public: 
 
         uint8_t getMPU9250ID(void);
         uint8_t getAK8963CID(void);
@@ -55,7 +53,6 @@ class MPU9250
         void    readAccelData(int16_t * destination);
         void    readGyroData(int16_t * destination);
         bool    checkNewAccelGyroData(void);
-        bool    checkNewMagData(void);
         void    readMagData(int16_t * destination);
         int16_t readGyroTempData(void);
         void    gyromagSleep(void);
@@ -64,7 +61,9 @@ class MPU9250
         bool    checkWakeOnMotion(void);
         void    SelfTest(float * destination);
 
-    private:
+    protected:
+
+        MPU9250(ByteTransfer * bt);
 
         // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in 
         // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
@@ -234,4 +233,13 @@ class MPU9250
         float   _fuseROMy;
         float   _fuseROMz;
         float   _magCalibration[3];
+};
+
+class MPU9250Master : public MPU9250 {
+
+    public:
+
+        MPU9250Master(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
+
+        bool    checkNewMagData(void);
 };
