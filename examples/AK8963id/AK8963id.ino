@@ -87,8 +87,8 @@ static void writeAK8963Register(uint8_t subAddress, uint8_t data)
     // enable I2C and send 1 byte
     writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | (uint8_t)1);
 
-    // read the register back
-    readAK8963Registers(subAddress,1,_buffer);
+    // pause briefly to complete writing
+    delay(1);
 }
 
 static int whoAmIAK8963()
