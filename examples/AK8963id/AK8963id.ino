@@ -31,8 +31,6 @@ const uint8_t AK8963_WHO_AM_I = 0x00;
 
 static uint8_t _buffer[21];
 
-uint8_t addr = 0x00;
-
 static void error(int8_t e)
 {
     while (true) {
@@ -188,11 +186,14 @@ void setup(void)
     }
 
     // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
-    addr = whoAmIAK8963();
+    uint8_t addr = whoAmIAK8963();
+
+    while (true) {
+        Serial.print("0x");
+        Serial.println(addr, HEX);
+    }
 }
 
 void loop(void)
 {
-    Serial.print("0x");
-    Serial.println(addr, HEX);
 }
