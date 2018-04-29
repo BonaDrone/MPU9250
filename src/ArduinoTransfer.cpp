@@ -15,11 +15,6 @@ void ArduinoTransfer::delayMsec(unsigned long msec)
     delay(msec);
 }
 
-void ArduinoTransfer::delayUsec(unsigned long usec)
-{
-    delayMicroseconds(usec);
-}
-
 void ArduinoWire::writeRegister(uint8_t address, uint8_t subAddress, uint8_t data)
 {
   Wire.beginTransmission(address);  // Initialize the Tx buffer

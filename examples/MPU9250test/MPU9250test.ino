@@ -107,14 +107,6 @@ void setup()
 
         imu.resetMPU9250(); // start by resetting MPU9250
 
-        byte d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
-        Serial.print("AK8963 ");
-        Serial.print("I AM ");
-        Serial.print(d, HEX);
-        Serial.print(" I should be ");
-        Serial.println(0x48, HEX);
-        delay(1000); 
-
         float SelfTest[6];    // holds results of gyro and accelerometer self test
 
         imu.SelfTest(SelfTest); // Start by performing self test and reporting values
@@ -160,7 +152,6 @@ void setup()
         Serial.println("MPU9250 initialized for active data mode...."); 
 
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
-        /*
         byte d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
         Serial.print("AK8963 ");
         Serial.print("I AM ");
@@ -168,7 +159,7 @@ void setup()
         Serial.print(" I should be ");
         Serial.println(0x48, HEX);
         delay(1000); 
-        */
+
         // Get magnetometer calibration from AK8963 ROM
         imu.initAK8963(Mscale, Mmode, magCalibration);
         Serial.println("AK8963 initialized for active data mode...."); 
@@ -208,12 +199,12 @@ void setup()
     }
 
     digitalWrite(ledPin, LOW); // turn off led when using flash memory
+
+    delay(3000);                // wait a bit before looping
 }
 
 void loop()
 {  
-    return;
-
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
 

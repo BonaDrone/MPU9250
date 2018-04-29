@@ -1,3 +1,13 @@
+/* 
+ *  
+ * Copyright Simon D. Levy 2018
+ *  
+ * Demonstrate MPU9250 in master mode, by displaying AK8963 id
+ *
+ * Library may be used freely and without limit with attribution.
+ */
+
+
 #include <Wire.h>
 
 #include "ArduinoTransfer.h"
@@ -28,7 +38,7 @@ const uint8_t AK8963_WHO_AM_I = 0x00;
 
 ArduinoWire bt;
 
-/* reads registers from the AK8963 */
+// reads registers from the AK8963  in master mode
 static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
 {
     // set slave 0 to the AK8963 and set for read
@@ -66,7 +76,7 @@ void setup(void)
     Wire.setClock(400000);
 
     // enable I2C master mode
-    bt.writeRegister(MPU9250_ADDRESS, USER_CTRL,I2C_MST_EN);
+    bt.writeRegister(MPU9250_ADDRESS, USER_CTRL, I2C_MST_EN);
 
     // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
     uint8_t addr = whoAmIAK8963();

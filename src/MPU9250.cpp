@@ -34,16 +34,7 @@ uint8_t MPU9250::getMPU9250ID()
 
 uint8_t MPU9250::getAK8963CID()
 {
-    uint8_t buff[1];
-
-    // read the WHO AM I register
-    readAK8963Registers(WHO_AM_I_AK8963, sizeof(buff), &buff[0]);
-
-    // return the register value
-    return buff[0];
-
-    //uint8_t c = _bt->readRegister(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for MPU-9250
-    //return c;
+    return _bt->readRegister(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for MPU-9250
 }
 
 float MPU9250::getMres(uint8_t Mscale) {
@@ -178,7 +169,6 @@ void MPU9250::gyromagWake(uint8_t Mmode)
   _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);   // return gyro and accel normal mode
   _bt->delayMsec(10); // Wait for all registers to reset 
 }
-
 
 void MPU9250::resetMPU9250()
 {
@@ -644,5 +634,6 @@ void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* de
 	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
 	_bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and request the bytes
 	_bt->delayMsec(1); // takes some time for these registers to fill
+
 	_bt->readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); // read the bytes off the MPU9250 EXT_SENS_DATA registers
 }
