@@ -84,30 +84,23 @@ static uint8_t _buffer[21];
 
 uint8_t addr = 0x00;
 
-static int readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest)
+static void readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest)
 {
     Wire.beginTransmission(0x68); // open the device
     Wire.write(subAddress); // specify the starting register address
     Wire.endTransmission(false);
-    int _numBytes = Wire.requestFrom(0x68, count); // specify the number of bytes to receive
-    if (_numBytes == count) {
-        for(uint8_t i = 0; i < count; i++){ 
-            dest[i] = Wire.read();
-        }
-        return 1;
-    } else {
-        return -1;
+    Wire.requestFrom(0x68, count); // specify the number of bytes to receive
+    for(uint8_t i = 0; i < count; i++){ 
+        dest[i] = Wire.read();
     }
 }
 
-static int writeRegister(uint8_t subAddress, uint8_t data)
+static void writeRegister(uint8_t subAddress, uint8_t data)
 {
     Wire.beginTransmission(0x68); // open the device
     Wire.write(subAddress); // write the register address
     Wire.write(data); // write the data
     Wire.endTransmission();
-
-    return 1;
 }
 
 /* reads registers from the AK8963 */
@@ -128,7 +121,7 @@ static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest
     readRegisters(EXT_SENS_DATA_00,count,dest); 
 }
 
-static int whoAmIAK8963()
+static uint8_t whoAmIAK8963()
 {
     // read the WHO AM I register
     readAK8963Registers(AK8963_WHO_AM_I,1,_buffer);
