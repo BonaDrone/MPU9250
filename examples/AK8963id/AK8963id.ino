@@ -29,8 +29,6 @@ const uint8_t AK8963_RESET = 0x01;
 
 const uint8_t AK8963_WHO_AM_I = 0x00;
 
-static uint8_t _buffer[21];
-
 static void readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest){
     Wire.beginTransmission(0x68); // open the device
     Wire.write(subAddress); // specify the starting register address
@@ -88,11 +86,13 @@ static void writeAK8963Register(uint8_t subAddress, uint8_t data)
 
 static int whoAmIAK8963()
 {
+    uint8_t buffer = 0;
+
     // read the WHO AM I register
-    readAK8963Registers(AK8963_WHO_AM_I,1,_buffer);
+    readAK8963Registers(AK8963_WHO_AM_I,1, &buffer);
 
     // return the register value
-    return _buffer[0];
+    return buffer;
 }
 
 void setup(void)
