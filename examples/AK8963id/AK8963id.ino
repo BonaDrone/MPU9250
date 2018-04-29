@@ -5,16 +5,16 @@
 ArduinoWire bt;
 
 // MPU9250 registers
-const uint8_t EXT_SENS_DATA_00 = 0x49;
-const uint8_t I2C_SLV0_ADDR = 0x25;
-const uint8_t I2C_SLV0_REG = 0x26;
-const uint8_t I2C_SLV0_CTRL = 0x27;
-const uint8_t I2C_SLV0_EN = 0x80;
-const uint8_t I2C_READ_FLAG = 0x80;
+const uint8_t EXT_SENS_DATA_00  = 0x49;
+const uint8_t I2C_SLV0_ADDR     = 0x25;
+const uint8_t I2C_SLV0_REG      = 0x26;
+const uint8_t I2C_SLV0_CTRL     = 0x27;
+const uint8_t I2C_SLV0_EN       = 0x80;
+const uint8_t I2C_READ_FLAG     = 0x80;
 
 // AK8963 registers
-const uint8_t AK8963_I2C_ADDR = 0x0C;
-const uint8_t AK8963_WHO_AM_I = 0x00;
+const uint8_t AK8963_I2C_ADDR   = 0x0C;
+const uint8_t AK8963_WHO_AM_I   = 0x00;
 
 /* reads registers from the AK8963 */
 static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
@@ -50,8 +50,6 @@ void setup(void)
     Serial.begin(115200);
 
     Wire.begin();
-
-    Wire.setClock(400000);
 
     uint8_t addr = whoAmIAK8963();
 
