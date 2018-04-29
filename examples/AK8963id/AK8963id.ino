@@ -111,28 +111,21 @@ static int writeRegister(uint8_t subAddress, uint8_t data)
 }
 
 /* reads registers from the AK8963 */
-static int readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
+static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
 {
     // set slave 0 to the AK8963 and set for read
-    if (writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR | I2C_READ_FLAG) < 0) {
-        return -1;
-    }
+    writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR | I2C_READ_FLAG);
 
     // set the register to the desired AK8963 sub address
-    if (writeRegister(I2C_SLV0_REG,subAddress) < 0) {
-        return -2;
-    }
+    writeRegister(I2C_SLV0_REG,subAddress);
 
     // enable I2C and request the bytes
-    if (writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | count) < 0) {
-        return -3;
-    }
+    writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | count);
 
     delay(1); // takes some time for these registers to fill
 
     // read the bytes off the MPU9250 EXT_SENS_DATA registers
-    int _status = readRegisters(EXT_SENS_DATA_00,count,dest); 
-    return _status;
+    readRegisters(EXT_SENS_DATA_00,count,dest); 
 }
 
 static int whoAmIAK8963()
