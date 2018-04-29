@@ -12,13 +12,8 @@
 
 #include "ArduinoTransfer.h"
 
-// Define I2C addresses of MPU9250
-#define ADO 0
-#if ADO
-static const uint8_t MPU9250_ADDRESS  = 0x69;   // Device address when ADO = 1
-#else
-static const uint8_t MPU9250_ADDRESS  = 0x68;  // Device address when ADO = 0
-#endif  
+// Device address when ADO = 0
+static const uint8_t MPU9250_ADDRESS  = 0x68;  
 
 // MPU9250 registers
 const uint8_t EXT_SENS_DATA_00 = 0x49;
@@ -33,7 +28,6 @@ const uint8_t I2C_READ_FLAG = 0x80;
 
 // AK8963 registers
 const uint8_t AK8963_I2C_ADDR = 0x0C;
-
 const uint8_t AK8963_WHO_AM_I = 0x00;
 
 ArduinoWire bt;
@@ -42,18 +36,18 @@ ArduinoWire bt;
 static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
 {
     // set slave 0 to the AK8963 and set for read
-    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR,AK8963_I2C_ADDR | I2C_READ_FLAG);
+    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_I2C_ADDR|I2C_READ_FLAG);
 
     // set the register to the desired AK8963 sub address
-    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG,subAddress);
+    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress);
 
     // enable I2C and request the bytes
-    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL,I2C_SLV0_EN | count);
+    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN|count);
 
     delay(1); // takes some time for these registers to fill
 
     // read the bytes off the MPU9250 EXT_SENS_DATA registers
-    bt.readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00,count,dest); 
+    bt.readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); 
 }
 
 static int whoAmIAK8963()
@@ -61,7 +55,7 @@ static int whoAmIAK8963()
     uint8_t buffer = 0;
 
     // read the WHO AM I register
-    readAK8963Registers(AK8963_WHO_AM_I,1, &buffer);
+    readAK8963Registers(AK8963_WHO_AM_I, 1, &buffer);
 
     // return the register value
     return buffer;
