@@ -31,14 +31,6 @@ const uint8_t AK8963_WHO_AM_I = 0x00;
 
 static uint8_t _buffer[21];
 
-static void error(int8_t e)
-{
-    while (true) {
-        Serial.print("Error: ");
-        Serial.println(e);
-    }
-}
-
 static int readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest){
     Wire.beginTransmission(0x68); // open the device
     Wire.write(subAddress); // specify the starting register address
@@ -54,7 +46,7 @@ static int readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest){
     }
 }
 
-static int writeRegister(uint8_t subAddress, uint8_t data)
+static void writeRegister(uint8_t subAddress, uint8_t data)
 {
     Wire.beginTransmission(0x68); // open the device
     Wire.write(subAddress); // write the register address
@@ -63,60 +55,49 @@ static int writeRegister(uint8_t subAddress, uint8_t data)
 
     delay(10);
 
-    /* read back the register */
+    // read back the register 
     readRegisters(subAddress,1,_buffer);
-    /* check the read back register against the written register */
-    if(_buffer[0] == data) {
-        return 1;
-    }
-    else{
-        return -1;
-    }
 }
 
 /* reads registers from the AK8963 */
-static int readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest){
+static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
+{
     // set slave 0 to the AK8963 and set for read
-    if (writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR | I2C_READ_FLAG) < 0) {
-        return -1;
-    }
+    writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR | I2C_READ_FLAG);
+
     // set the register to the desired AK8963 sub address
-    if (writeRegister(I2C_SLV0_REG,subAddress) < 0) {
-        return -2;
-    }
+    writeRegister(I2C_SLV0_REG,subAddress);
+
     // enable I2C and request the bytes
-    if (writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | count) < 0) {
-        return -3;
-    }
+    writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | count);
+
     delay(1); // takes some time for these registers to fill
+
     // read the bytes off the MPU9250 EXT_SENS_DATA registers
-    int _status = readRegisters(EXT_SENS_DATA_00,count,dest); 
-    return _status;
+    readRegisters(EXT_SENS_DATA_00,count,dest); 
 }
 
 /* writes a register to the AK8963 given a register address and data */
 static int writeAK8963Register(uint8_t subAddress, uint8_t data)
 {
     // set slave 0 to the AK8963 and set for write
-    if (writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR) < 0) {
-        return -1;
-    }
+    writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR);
+
+
     // set the register to the desired AK8963 sub address 
-    if (writeRegister(I2C_SLV0_REG,subAddress) < 0) {
-        return -2;
-    }
+    writeRegister(I2C_SLV0_REG,subAddress);
+
+
     // store the data for write
-    if (writeRegister(I2C_SLV0_DO,data) < 0) {
-        return -3;
-    }
+    writeRegister(I2C_SLV0_DO,data);
+
+
     // enable I2C and send 1 byte
-    if (writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | (uint8_t)1) < 0) {
-        return -4;
-    }
+    writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | (uint8_t)1);
+
     // read the register and confirm
-    if (readAK8963Registers(subAddress,1,_buffer) < 0) {
-        return -5;
-    }
+    readAK8963Registers(subAddress,1,_buffer);
+
     if(_buffer[0] == data) {
         return 1;
     } else{
@@ -127,9 +108,7 @@ static int writeAK8963Register(uint8_t subAddress, uint8_t data)
 static int whoAmIAK8963()
 {
     // read the WHO AM I register
-    if (readAK8963Registers(AK8963_WHO_AM_I,1,_buffer) < 0) {
-        return -1;
-    }
+    readAK8963Registers(AK8963_WHO_AM_I,1,_buffer);
 
     // return the register value
     return _buffer[0];
@@ -144,19 +123,13 @@ void setup(void)
     Wire.setClock(400000);
 
     // select clock source to gyro
-    if(writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) < 0){
-        error(1);
-    }
+    writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL);
 
     // enable I2C master mode
-    if(writeRegister(USER_CTRL,I2C_MST_EN) < 0){
-        error(2);
-    }
+    writeRegister(USER_CTRL,I2C_MST_EN);
 
     // set the I2C bus speed to 400 kHz
-    if(writeRegister(I2C_MST_CTRL,I2C_MST_CLK) < 0){
-        error(3);
-    }
+    writeRegister(I2C_MST_CTRL,I2C_MST_CLK);
 
     // set AK8963 to Power Down
     writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN);
@@ -171,19 +144,13 @@ void setup(void)
     writeAK8963Register(AK8963_CNTL2,AK8963_RESET);
 
     // select clock source to gyro
-    if(writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) < 0){
-        error(4);
-    }
+    writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL);
 
     // enable I2C master mode
-    if(writeRegister(USER_CTRL,I2C_MST_EN) < 0){
-        error(12);
-    }
+    writeRegister(USER_CTRL,I2C_MST_EN);
 
     // set the I2C bus speed to 400 kHz
-    if( writeRegister(I2C_MST_CTRL,I2C_MST_CLK) < 0){
-        error(13);
-    }
+    writeRegister(I2C_MST_CTRL,I2C_MST_CLK);
 
     // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
     uint8_t addr = whoAmIAK8963();
