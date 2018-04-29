@@ -1,4 +1,6 @@
 #include <Wire.h>
+
+
 // MPU9250 registers
 const uint8_t ACCEL_OUT = 0x3B;
 const uint8_t GYRO_OUT = 0x43;
@@ -82,14 +84,6 @@ static uint8_t _buffer[21];
 
 uint8_t addr = 0x00;
 
-static void error(int8_t e)
-{
-    while (true) {
-        Serial.print("Error: ");
-        Serial.println(e);
-    }
-}
-
 static int readRegisters(uint8_t subAddress, uint8_t count, uint8_t* dest){
     Wire.beginTransmission(0x68); // open the device
     Wire.write(subAddress); // specify the starting register address
@@ -145,36 +139,6 @@ static int readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
     return _status;
 }
 
-/* writes a register to the AK8963 given a register address and data */
-static int writeAK8963Register(uint8_t subAddress, uint8_t data)
-{
-    // set slave 0 to the AK8963 and set for write
-    if (writeRegister(I2C_SLV0_ADDR,AK8963_I2C_ADDR) < 0) {
-        return -1;
-    }
-    // set the register to the desired AK8963 sub address 
-    if (writeRegister(I2C_SLV0_REG,subAddress) < 0) {
-        return -2;
-    }
-    // store the data for write
-    if (writeRegister(I2C_SLV0_DO,data) < 0) {
-        return -3;
-    }
-    // enable I2C and send 1 byte
-    if (writeRegister(I2C_SLV0_CTRL,I2C_SLV0_EN | (uint8_t)1) < 0) {
-        return -4;
-    }
-    // read the register and confirm
-    if (readAK8963Registers(subAddress,1,_buffer) < 0) {
-        return -5;
-    }
-    if(_buffer[0] == data) {
-        return 1;
-    } else{
-        return -6;
-    }
-}
-
 static int whoAmIAK8963()
 {
     // read the WHO AM I register
@@ -194,49 +158,6 @@ void setup(void)
 
     Wire.setClock(400000);
 
-    // select clock source to gyro
-    if(writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) < 0){
-        error(1);
-    }
-
-    // enable I2C master mode
-    if(writeRegister(USER_CTRL,I2C_MST_EN) < 0){
-        error(2);
-    }
-
-    // set the I2C bus speed to 400 kHz
-    if(writeRegister(I2C_MST_CTRL,I2C_MST_CLK) < 0){
-        error(3);
-    }
-
-    // set AK8963 to Power Down
-    writeAK8963Register(AK8963_CNTL1,AK8963_PWR_DOWN);
-
-    // reset the MPU9250
-    writeRegister(PWR_MGMNT_1,PWR_RESET);
-
-    // wait for MPU-9250 to come back up
-    delay(1);
-
-    // reset the AK8963
-    writeAK8963Register(AK8963_CNTL2,AK8963_RESET);
-
-    // select clock source to gyro
-    if(writeRegister(PWR_MGMNT_1,CLOCK_SEL_PLL) < 0){
-        error(4);
-    }
-
-    // enable I2C master mode
-    if(writeRegister(USER_CTRL,I2C_MST_EN) < 0){
-        error(12);
-    }
-
-    // set the I2C bus speed to 400 kHz
-    if( writeRegister(I2C_MST_CTRL,I2C_MST_CLK) < 0){
-        error(13);
-    }
-
-    // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
     addr = whoAmIAK8963();
 }
 
