@@ -40,10 +40,8 @@ class MPU9250 {
     public: 
 
         uint8_t getMPU9250ID(void);
-        uint8_t getAK8963CID(void);
         void    resetMPU9250(void);
         void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate);
-        void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * destination);
         float   getAres(uint8_t Ascale);
         float   getGres(uint8_t Gscale);
         float   getMres(uint8_t Mscale);
@@ -53,13 +51,17 @@ class MPU9250 {
         void    readAccelData(int16_t * destination);
         void    readGyroData(int16_t * destination);
         bool    checkNewAccelGyroData(void);
-        void    readMagData(int16_t * destination);
         int16_t readGyroTempData(void);
-        void    gyromagSleep(void);
-        void    gyromagWake(uint8_t Mmode);
         void    accelWakeOnMotion(void);
         bool    checkWakeOnMotion(void);
         void    SelfTest(float * destination);
+
+        // Support master or pass-through for AK8963C
+        virtual uint8_t getAK8963CID() = 0;
+        virtual void    gyromagSleep() = 0;
+        virtual void    gyromagWake(uint8_t Mmode) = 0;
+        virtual void    readMagData(int16_t * destination) = 0;
+        virtual void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration) = 0;
 
     protected:
 
@@ -241,5 +243,21 @@ class MPU9250Master : public MPU9250 {
 
         MPU9250Master(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
 
-        bool    checkNewMagData(void);
+        bool checkNewMagData(void);
+
+        virtual uint8_t getAK8963CID() override;
+        virtual void    gyromagSleep() override;
+        virtual void    gyromagWake(uint8_t Mmode) override;
+        virtual void    readMagData(int16_t * destination) override;
+        virtual void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration) override;
 };
+
+/*
+class MPU9250Passthru : public MPU9250 {
+
+    public:
+
+        MPU9250Passthru(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
+};*/
+
+
