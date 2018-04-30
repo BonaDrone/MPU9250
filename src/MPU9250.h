@@ -39,9 +39,11 @@ class MPU9250 {
 
     public: 
 
+        MPU9250(ByteTransfer * bt, bool passthru);
+
         uint8_t getMPU9250ID(void);
         void    resetMPU9250(void);
-        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bool passthru);
+        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate);
         float   getAres(uint8_t Ascale);
         float   getGres(uint8_t Gscale);
         float   getMres(uint8_t Mscale);
@@ -57,15 +59,16 @@ class MPU9250 {
         void    SelfTest(float * destination);
 
         // Support master or pass-through for AK8963C
-        virtual uint8_t getAK8963CID() = 0;
-        virtual void    gyromagSleep() = 0;
-        virtual void    gyromagWake(uint8_t Mmode) = 0;
-        virtual void    readMagData(int16_t * destination) = 0;
-        virtual void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration) = 0;
+        uint8_t getAK8963CID();
+        void    gyromagSleep();
+        void    gyromagWake(uint8_t Mmode);
+        void    readMagData(int16_t * destination);
+        void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration);
+
+        // Pass-thru only
+        bool    checkNewMagData(void);
 
     protected:
-
-        MPU9250(ByteTransfer * bt);
 
         // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in 
         // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
@@ -222,6 +225,8 @@ class MPU9250 {
         const uint8_t I2C_READ_FLAG     = 0x80;
         const uint8_t I2C_MST_EN        = 0x20;
 
+        bool _passthru;
+
         ByteTransfer * _bt;
 
         bool writeAK8963Register(uint8_t subAddress, uint8_t data);
@@ -236,28 +241,3 @@ class MPU9250 {
         float   _fuseROMz;
         float   _magCalibration[3];
 };
-
-class MPU9250Passthru : public MPU9250 {
-
-    public:
-
-        MPU9250Passthru(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
-
-        bool checkNewMagData(void);
-
-        virtual uint8_t getAK8963CID() override;
-        virtual void    gyromagSleep() override;
-        virtual void    gyromagWake(uint8_t Mmode) override;
-        virtual void    readMagData(int16_t * destination) override;
-        virtual void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration) override;
-};
-
-/*
-class MPU9250Master : public MPU9250 {
-
-    public:
-
-        MPU9250Master(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
-};*/
-
-

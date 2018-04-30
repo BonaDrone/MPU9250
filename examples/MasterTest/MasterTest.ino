@@ -64,8 +64,8 @@ static float gyroBias[3], accelBias[3];
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
 
-// Instantiate MPU9250 class in pass-thru mode XXX should be master
-static MPU9250Passthru imu = MPU9250Passthru(&bt); 
+// Instantiate MPU9250 class in master mode
+static MPU9250 imu = MPU9250(&bt, false); 
 
 // Device address when ADO = 0
 static const uint8_t MPU9250_ADDRESS  = 0x68;  
@@ -188,7 +188,7 @@ void setup(void)
         Serial.println(gyroBias[2]);
         delay(1000); 
 
-        imu.initMPU9250(Ascale, Gscale, sampleRate, false); 
+        imu.initMPU9250(Ascale, Gscale, sampleRate); 
         Serial.println("MPU9250 initialized for active data mode...."); 
 
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication

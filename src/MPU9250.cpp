@@ -21,9 +21,10 @@ static const uint8_t MPU9250_ADDRESS  = 0x69;   // Device address when ADO = 1
 static const uint8_t MPU9250_ADDRESS  = 0x68;  // Device address when ADO = 0
 #endif  
 
-MPU9250::MPU9250(ByteTransfer * bt)
+MPU9250::MPU9250(ByteTransfer * bt, bool passthru)
 {
     _bt = bt;
+    _passthru = passthru;
 }
 
 uint8_t MPU9250::getMPU9250ID()
@@ -207,7 +208,7 @@ int16_t MPU9250::readGyroTempData()
 }
 
 
-void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bool passthru)
+void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate)
 {  
     // wake up device
     _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors 
@@ -261,7 +262,7 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bo
     // Enable data ready (bit 0) interrupt
     _bt->writeRegister(MPU9250_ADDRESS, INT_ENABLE, 0x01);  
 
-    if (passthru) {
+    if (_passthru) {
         // Configure Interrupts and passthru Enable
         // Set interrupt pin active high, push-pull, hold interrupt pin level HIGH until interrupt cleared,
         // clear on read of INT_STATUS, and enable I2C_BYPASS_EN so additional chips 
@@ -580,19 +581,19 @@ void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* de
 }
 
 
-// Passthru mode ==================================================================================
+//  mode ==================================================================================
 
-bool MPU9250Passthru::checkNewMagData()
+bool MPU9250::checkNewMagData()
 {
     return (_bt->readRegister(AK8963_ADDRESS, AK8963_ST1) & 0x01);
 }
 
-uint8_t MPU9250Passthru::getAK8963CID()
+uint8_t MPU9250::getAK8963CID()
 {
     return _bt->readRegister(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for MPU-9250
 }
 
-void MPU9250Passthru::gyromagSleep()
+void MPU9250::gyromagSleep()
 {
     uint8_t temp = 0;
     temp = _bt->readRegister(AK8963_ADDRESS, AK8963_CNTL);
@@ -602,7 +603,7 @@ void MPU9250Passthru::gyromagSleep()
     _bt->delayMsec(10); // Wait for all registers to reset 
 }
 
-void MPU9250Passthru::gyromagWake(uint8_t Mmode)
+void MPU9250::gyromagWake(uint8_t Mmode)
 {
     uint8_t temp = 0;
     temp = _bt->readRegister(AK8963_ADDRESS, AK8963_CNTL);
@@ -612,7 +613,7 @@ void MPU9250Passthru::gyromagWake(uint8_t Mmode)
     _bt->delayMsec(10); // Wait for all registers to reset 
 }
 
-void MPU9250Passthru::readMagData(int16_t * destination)
+void MPU9250::readMagData(int16_t * destination)
 {
     uint8_t rawData[7];  // x/y/z gyro register data, ST2 register stored here, must read ST2 at end of data acquisition
     _bt->readRegisters(AK8963_ADDRESS, AK8963_XOUT_L, 7, &rawData[0]);  // Read the six raw data and ST2 registers sequentially into data array
@@ -624,7 +625,7 @@ void MPU9250Passthru::readMagData(int16_t * destination)
     }
 }
 
-void MPU9250Passthru::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
+void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
 {
     // First extract the factory calibration for each magnetometer axis
     uint8_t rawData[3];  // x/y/z gyro calibration data stored here
