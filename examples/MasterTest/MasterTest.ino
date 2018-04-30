@@ -58,7 +58,8 @@ static void myinthandler()
 
 // Bias corrections for gyro and accelerometer. These can be measured once and
 // entered here or can be calculated each time the device is powered on.
-static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
+static float gyroBias[3], accelBias[3];
+//static float magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
@@ -187,11 +188,8 @@ void setup(void)
         Serial.println(gyroBias[2]);
         delay(1000); 
 
-        //imu.initMPU9250(Ascale, Gscale, sampleRate);  // XXX this messes up master-mode
+        imu.initMPU9250(Ascale, Gscale, sampleRate, false); 
         Serial.println("MPU9250 initialized for active data mode...."); 
-
-        // enable I2C master mode
-        bt.writeRegister(MPU9250_ADDRESS, USER_CTRL, I2C_MST_EN);
 
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
         byte d = getAK8963CID();  // Read WHO_AM_I register for AK8963
