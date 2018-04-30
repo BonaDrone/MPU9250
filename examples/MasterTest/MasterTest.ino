@@ -1,8 +1,14 @@
-/* 
+/* 07/6/2017 Copyright Tlera Corporation
  *  
- * Copyright Simon D. Levy 2018
+ * Created by Kris Winer
+ *
+ * Adapted by Simon D. Levy April 2018
  *  
- * Demonstrate MPU9250 in master mode
+ * Demonstrate basic MPU-9250 functionality in master mode including
+ * parameterizing the register addresses, initializing the sensor, getting
+ * properly scaled accelerometer, gyroscope, and magnetometer data out. 
+ *
+ * SDA and SCL have 4K7 pull-up resistors (to 3.3V).
  *
  * Library may be used freely and without limit with attribution.
  */
@@ -13,10 +19,51 @@
 #include "MPU9250.h"
 #include "ArduinoTransfer.h"
 
+/*
+   MPU9250 Configuration
+
+   Specify sensor full scale
+
+   Choices are:
+
+Gscale: GFS_250 = 250 dps, GFS_500 = 500 dps, GFS_1000 = 1000 dps, GFS_2000DPS = 2000 degrees per second gyro full scale
+Ascale: AFS_2G = 2 g, AFS_4G = 4 g, AFS_8G = 8 g, and AFS_16G = 16 g accelerometer full scale
+Mscale: MFS_14BITS = 0.6 mG per LSB and MFS_16BITS = 0.15 mG per LSB
+Mmode:  Mmode = M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
+sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
+sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
+ */
+static const uint8_t Gscale     = GFS_250DPS;
+static const uint8_t Ascale     = AFS_2G;
+static const uint8_t Mscale     = MFS_16BITS;
+static const uint8_t Mmode      = M_100Hz;
+static const uint8_t sampleRate = 0x04;         
+
+// scale resolutions per LSB for the sensors
+static float aRes, gRes, mRes;
+
+// Pin definitions
+static const uint8_t intPin = 8;   //  MPU9250 interrupt
+static const uint8_t ledPin = 13; // red led
+
+// Interrupt support 
+static bool gotNewData = false;
+static void myinthandler()
+{
+    gotNewData = true;
+}
+
+// Factory mag calibration and mag bias
+static float   magCalibration[3]; 
+
+// Bias corrections for gyro and accelerometer. These can be measured once and
+// entered here or can be calculated each time the device is powered on.
+static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
+
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
 
-// Instantiate MPU9250 class in pass-thru mode
+// Instantiate MPU9250 class in pass-thru mode XXX should be master
 static MPU9250Passthru imu = MPU9250Passthru(&bt); 
 
 // Device address when ADO = 0
@@ -69,9 +116,28 @@ static int whoAmIAK8963()
 void setup(void)
 {
     Serial.begin(115200);
+    delay(1000);
 
     Wire.begin();
     Wire.setClock(400000);
+    delay(1000);
+    
+    // Set up the interrupt pin, it's set as active high, push-pull
+    pinMode(intPin, INPUT);
+
+    // Start with orange led on (active HIGH)
+    pinMode(ledPin, OUTPUT);
+    digitalWrite(ledPin, HIGH); 
+
+    // Configure the MPU9250 
+    // Read the WHO_AM_I register, this is a good test of communication
+    Serial.println("MPU9250 9-axis motion sensor...");
+    uint8_t c = imu.getMPU9250ID();
+    Serial.print("MPU9250 ");
+    Serial.print("I AM ");
+    Serial.print(c, HEX);
+    Serial.print(" I should be ");
+    Serial.println(0x71, HEX);
     delay(1000);
 
     // enable I2C master mode
@@ -79,10 +145,10 @@ void setup(void)
 
     // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
     uint8_t addr = whoAmIAK8963();
+    Serial.print("0x");
+    Serial.println(addr, HEX);
 
     while (true) {
-        Serial.print("0x");
-        Serial.println(addr, HEX);
     }
 }
 

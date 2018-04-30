@@ -14,7 +14,6 @@
  */
 
 #include <Wire.h>   
-#include <math.h>
 
 #include "MPU9250.h"
 #include "ArduinoTransfer.h"
@@ -26,14 +25,10 @@
 
    Choices are:
 
-Gscale:   GFS_250 = 250 dps, GFS_500 = 500 dps, GFS_1000 = 1000 dps, GFS_2000DPS = 2000 degrees per second gyro full scale
-
+Gscale: GFS_250 = 250 dps, GFS_500 = 500 dps, GFS_1000 = 1000 dps, GFS_2000DPS = 2000 degrees per second gyro full scale
 Ascale: AFS_2G = 2 g, AFS_4G = 4 g, AFS_8G = 8 g, and AFS_16G = 16 g accelerometer full scale
-
 Mscale: MFS_14BITS = 0.6 mG per LSB and MFS_16BITS = 0.15 mG per LSB
-
-Mmode: Mmode = M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
-
+Mmode:  Mmode = M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
 sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
 sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
  */
