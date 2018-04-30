@@ -237,11 +237,11 @@ class MPU9250 {
         float   _magCalibration[3];
 };
 
-class MPU9250Master : public MPU9250 {
+class MPU9250Passthru : public MPU9250 {
 
     public:
 
-        MPU9250Master(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
+        MPU9250Passthru(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
 
         bool checkNewMagData(void);
 
@@ -253,11 +253,11 @@ class MPU9250Master : public MPU9250 {
 };
 
 /*
-class MPU9250Passthru : public MPU9250 {
+class MPU9250Master : public MPU9250 {
 
     public:
 
-        MPU9250Passthru(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
+        MPU9250Master(I2CTransfer * bt) : MPU9250((ByteTransfer *)bt) { }
 };*/
 
 
