@@ -46,11 +46,6 @@ static const uint8_t sampleRate = 0x04;
 // scale resolutions per LSB for the sensors
 static float aRes, gRes, mRes;
 
-// global constants for 9 DoF fusion and AHRS (Attitude and Heading Reference System)
-static const float GyroMeasError = M_PI * (40.0f / 180.0f); // gyroscope measurement error in rads/s (start at 40 deg/s)
-static const float GyroMeasDrift = M_PI * (0.0f  / 180.0f); // gyroscope measurement drift in rad/s/s (start at 0.0 deg/s/s)
-static const float beta = sqrtf(3.0f / 4.0f) * GyroMeasError;   // compute beta
-
 // Pin definitions
 static const uint8_t intPin = 8;   //  MPU9250 interrupt
 static const uint8_t ledPin = 13; // red led
@@ -80,8 +75,8 @@ void setup()
     Serial.begin(115200);
     delay(1000);
 
-    Wire.begin(); // set master mode, default on SDA/SCL
-    Wire.setClock(400000); // I2C frequency at 400 kHz
+    Wire.begin(); 
+    Wire.setClock(400000); 
     delay(1000);
 
     // Set up the interrupt pin, it's set as active high, push-pull

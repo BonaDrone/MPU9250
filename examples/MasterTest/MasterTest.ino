@@ -10,7 +10,14 @@
 
 #include <Wire.h>
 
+#include "MPU9250.h"
 #include "ArduinoTransfer.h"
+
+// Create a byte-transfer object for Arduino I^2C
+ArduinoI2C bt;
+
+// Instantiate MPU9250 class in pass-thru mode
+static MPU9250Passthru imu = MPU9250Passthru(&bt); 
 
 // Device address when ADO = 0
 static const uint8_t MPU9250_ADDRESS  = 0x68;  
@@ -29,8 +36,6 @@ const uint8_t I2C_READ_FLAG = 0x80;
 // AK8963 registers
 const uint8_t AK8963_I2C_ADDR = 0x0C;
 const uint8_t AK8963_WHO_AM_I = 0x00;
-
-ArduinoI2C bt;
 
 // reads registers from the AK8963  in master mode
 static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
@@ -66,8 +71,8 @@ void setup(void)
     Serial.begin(115200);
 
     Wire.begin();
-
     Wire.setClock(400000);
+    delay(1000);
 
     // enable I2C master mode
     bt.writeRegister(MPU9250_ADDRESS, USER_CTRL, I2C_MST_EN);
