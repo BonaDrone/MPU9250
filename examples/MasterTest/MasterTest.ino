@@ -2,7 +2,7 @@
  *  
  * Copyright Simon D. Levy 2018
  *  
- * Demonstrate MPU9250 in master mode, by displaying AK8963 id
+ * Demonstrate MPU9250 in master mode
  *
  * Library may be used freely and without limit with attribution.
  */

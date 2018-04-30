@@ -4,8 +4,9 @@
  *
  * Adapted by Simon D. Levy April 2018
  *  
- * Demonstrate basic MPU-9250 functionality including parameterizing the register addresses, initializing the sensor, 
- * getting properly scaled accelerometer, gyroscope, and magnetometer data out. 
+ * Demonstrate basic MPU-9250 functionality in pass-through mode including
+ * parameterizing the register addresses, initializing the sensor, getting
+ * properly scaled accelerometer, gyroscope, and magnetometer data out. 
  *
  * SDA and SCL have 4K7 pull-up resistors (to 3.3V).
  *
