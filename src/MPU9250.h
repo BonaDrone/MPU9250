@@ -39,9 +39,11 @@ class MPU9250 {
 
     public: 
 
+        MPU9250(ByteTransfer * bt, bool passthru);
+
         uint8_t getMPU9250ID(void);
         void    resetMPU9250(void);
-        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bool passthru);
+        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate);
         float   getAres(uint8_t Ascale);
         float   getGres(uint8_t Gscale);
         float   getMres(uint8_t Mscale);
@@ -62,8 +64,6 @@ class MPU9250 {
         void    gyromagWake(uint8_t Mmode);
         void    readMagData(int16_t * destination);
         void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration);
-
-        MPU9250(ByteTransfer * bt);
 
         bool checkNewMagData(void);
 
@@ -227,6 +227,7 @@ class MPU9250 {
         bool writeAK8963Register(uint8_t subAddress, uint8_t data);
         void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest);
 
+        bool    _passthru;
         float   _aRes;
         float   _gRes;
         float   _mRes;

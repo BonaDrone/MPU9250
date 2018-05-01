@@ -49,8 +49,8 @@ static const uint8_t ledPin = 13; // red led
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
 
-// Instantiate MPU9250 class 
-static MPU9250 imu = MPU9250(&bt); 
+// Instantiate MPU9250 class in master mode
+static MPU9250 imu = MPU9250(&bt, false); 
 
 // Device address when ADO = 0
 static const uint8_t MPU9250_ADDRESS  = 0x68;  
@@ -164,7 +164,7 @@ void setup(void)
         // XXX should be able to call imu.calibrateMPU9250() here, but it will break master mode
 
 
-        imu.initMPU9250(Ascale, Gscale, sampleRate, false); 
+        imu.initMPU9250(Ascale, Gscale, sampleRate); 
         Serial.println("MPU9250 initialized for active data mode...."); 
 
         // enable I2C master mode
