@@ -573,12 +573,16 @@ bool MPU9250::writeAK8963Register(uint8_t subAddress, uint8_t data)
 /* reads registers from the AK8963 */
 void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
 {
-
-    _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_ADDRESS | I2C_READ_FLAG); // set slave 0 to the AK8963 and set for read
-    _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
-    _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and request the bytes
-    _bt->delayMsec(1); // takes some time for these registers to fill
-    _bt->readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); // read the bytes off the MPU9250 EXT_SENS_DATA registers
+    if (_passthru) {
+        _bt->readRegisters(AK8963_ADDRESS, WHO_AM_I_AK8963, count, dest);
+    }
+    else {
+        _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_ADDRESS | I2C_READ_FLAG); // set slave 0 to the AK8963 and set for read
+        _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
+        _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and request the bytes
+        _bt->delayMsec(1); // takes some time for these registers to fill
+        _bt->readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); // read the bytes off the MPU9250 EXT_SENS_DATA registers
+    }
 }
 
 
@@ -591,10 +595,6 @@ bool MPU9250::checkNewMagData()
 
 uint8_t MPU9250::getAK8963CID()
 {
-    if (_passthru) {
-        return _bt->readRegister(AK8963_ADDRESS, WHO_AM_I_AK8963);  // Read WHO_AM_I register for MPU-9250
-    }
-
     uint8_t buffer = 0;
     readAK8963Registers(WHO_AM_I_AK8963, 1, &buffer);
     return buffer;
