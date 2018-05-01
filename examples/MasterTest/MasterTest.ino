@@ -189,9 +189,16 @@ void loop(void)
     // or the accel wake on motion threshold has been crossed
     if(gotNewData) {   // On interrupt, read data
 
-        Serial.println(millis());
-
         gotNewData = false;     // reset gotNewData flag
 
+        if (imu.checkNewAccelGyroData())  { // data ready interrupt is detected
+
+            Serial.println("ag");
+
+            if(imu.checkNewMagData()) { // wait for magnetometer data ready bit to be set
+
+                Serial.println("m");
+            }
+        }
     }
  }

@@ -206,8 +206,8 @@ void loop()
 
         gotNewData = false;     // reset gotNewData flag
 
-        if (imu.checkNewAccelGyroData())  // data ready interrupt is detected
-        {
+        if (imu.checkNewAccelGyroData())  { // data ready interrupt is detected
+
             imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
 
             // Convert the accleration value into g's
@@ -237,7 +237,6 @@ void loop()
                 mz *= magScale[2]; 
             }
         }
-
 
         Serial.print("ax = ");
         Serial.print((int)1000*ax);  
