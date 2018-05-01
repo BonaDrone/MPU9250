@@ -52,53 +52,6 @@ ArduinoI2C bt;
 // Instantiate MPU9250 class in master mode
 static MPU9250 imu = MPU9250(&bt, false); 
 
-// Device address when ADO = 0
-static const uint8_t MPU9250_ADDRESS  = 0x68;  
-
-// MPU9250 registers
-const uint8_t EXT_SENS_DATA_00 = 0x49;
-
-const uint8_t USER_CTRL = 0x6A;
-const uint8_t I2C_MST_EN = 0x20;
-const uint8_t I2C_SLV0_ADDR = 0x25;
-const uint8_t I2C_SLV0_REG = 0x26;
-const uint8_t I2C_SLV0_CTRL = 0x27;
-const uint8_t I2C_SLV0_EN = 0x80;
-const uint8_t I2C_READ_FLAG = 0x80;
-
-// AK8963 registers
-const uint8_t AK8963_I2C_ADDR = 0x0C;
-const uint8_t AK8963_WHO_AM_I = 0x00;
-
-// reads registers from the AK8963  in master mode
-static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
-{
-    // set slave 0 to the AK8963 and set for read
-    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_I2C_ADDR|I2C_READ_FLAG);
-
-    // set the register to the desired AK8963 sub address
-    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress);
-
-    // enable I2C and request the bytes
-    bt.writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN|count);
-
-    delay(1); // takes some time for these registers to fill
-
-    // read the bytes off the MPU9250 EXT_SENS_DATA registers
-    bt.readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); 
-}
-
-static int whoAmIAK8963()
-{
-    uint8_t buffer = 0;
-
-    // read the WHO AM I register
-    readAK8963Registers(AK8963_WHO_AM_I, 1, &buffer);
-
-    // return the register value
-    return buffer;
-}
-
 void setup(void)
 {
     Serial.begin(115200);
@@ -167,11 +120,8 @@ void setup(void)
         imu.initMPU9250(Ascale, Gscale, sampleRate); 
         Serial.println("MPU9250 initialized for active data mode...."); 
 
-        // enable I2C master mode
-        bt.writeRegister(MPU9250_ADDRESS, USER_CTRL, I2C_MST_EN);
-
         // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
-        uint8_t d = whoAmIAK8963();
+        uint8_t d = imu.getAK8963CID();//whoAmIAK8963();
 
         Serial.print("AK8963 ");
         Serial.print("I AM ");
