@@ -62,8 +62,8 @@ static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
 
-// Instantiate MPU9250 class in pass-thru mode
-static MPU9250Passthru imu = MPU9250Passthru(&bt); 
+// Instantiate MPU9250 class 
+static MPU9250 imu = MPU9250(&bt); 
 
 void setup()
 {
