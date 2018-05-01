@@ -121,7 +121,7 @@ void setup(void)
     Wire.begin();
     Wire.setClock(400000);
     delay(1000);
-    
+
     // Set up the interrupt pin, it's set as active high, push-pull
     pinMode(intPin, INPUT);
 
@@ -140,15 +140,59 @@ void setup(void)
     Serial.println(0x71, HEX);
     delay(1000);
 
-    // enable I2C master mode
-    bt.writeRegister(MPU9250_ADDRESS, USER_CTRL, I2C_MST_EN);
+    if (c == 0x71 ) // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
+    {  
+        Serial.println("MPU9250 is online...");
 
-    // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
-    uint8_t addr = whoAmIAK8963();
-    Serial.print("0x");
-    Serial.println(addr, HEX);
+        imu.resetMPU9250(); // start by resetting MPU9250
 
-    while (true) {
+        float SelfTest[6];    // holds results of gyro and accelerometer self test
+
+        imu.SelfTest(SelfTest); // Start by performing self test and reporting values
+
+        Serial.print("x-axis self test: acceleration trim within : "); 
+        Serial.print(SelfTest[0],1); 
+        Serial.println("% of factory value");
+        Serial.print("y-axis self test: acceleration trim within : "); 
+        Serial.print(SelfTest[1],1); 
+        Serial.println("% of factory value");
+        Serial.print("z-axis self test: acceleration trim within : "); 
+        Serial.print(SelfTest[2],1); 
+        Serial.println("% of factory value");
+        Serial.print("x-axis self test: gyration trim within : "); 
+        Serial.print(SelfTest[3],1); 
+        Serial.println("% of factory value");
+        Serial.print("y-axis self test: gyration trim within : "); 
+        Serial.print(SelfTest[4],1); 
+        Serial.println("% of factory value");
+        Serial.print("z-axis self test: gyration trim within : "); 
+        Serial.print(SelfTest[5],1); 
+        Serial.println("% of factory value");
+        delay(1000);
+
+        // get sensor resolutions, only need to do this once
+        aRes = imu.getAres(Ascale);
+        gRes = imu.getGres(Gscale);
+        mRes = imu.getMres(Mscale);
+
+        // XXX should be able to call imu.calibrateMPU9250() here, but it will break master mode
+
+
+        //imu.initMPU9250(Ascale, Gscale, sampleRate); 
+        //Serial.println("MPU9250 initialized for active data mode...."); 
+
+        // enable I2C master mode
+        bt.writeRegister(MPU9250_ADDRESS, USER_CTRL, I2C_MST_EN);
+
+        // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
+        uint8_t d = whoAmIAK8963();
+
+        Serial.print("AK8963 ");
+        Serial.print("I AM ");
+        Serial.print(d, HEX);
+        Serial.print(" I should be ");
+        Serial.println(0x48, HEX);
+        delay(1000); 
     }
 }
 
