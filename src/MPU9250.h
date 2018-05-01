@@ -58,7 +58,6 @@ class MPU9250 {
         bool    checkWakeOnMotion(void);
         void    SelfTest(float * destination);
 
-        // Support master or pass-through for AK8963C
         uint8_t getAK8963CID();
         void    gyromagSleep();
         void    gyromagWake(uint8_t Mmode);
@@ -224,8 +223,9 @@ class MPU9250 {
 
         ByteTransfer * _bt;
 
-        bool writeAK8963Register(uint8_t subAddress, uint8_t data);
-        void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest);
+        bool    writeAK8963Register(uint8_t subAddress, uint8_t data);
+        uint8_t readAK8963Register(uint8_t subAddress);
+        void    readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest);
 
         bool    _passthru;
         float   _aRes;

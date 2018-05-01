@@ -585,8 +585,12 @@ void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* de
     }
 }
 
-
-//  mode ==================================================================================
+uint8_t MPU9250::readAK8963Register(uint8_t subAddress)
+{
+    uint8_t buffer = 0;
+    readAK8963Registers(subAddress, 1, &buffer);
+    return buffer;
+}
 
 bool MPU9250::checkNewMagData()
 {
@@ -595,9 +599,7 @@ bool MPU9250::checkNewMagData()
 
 uint8_t MPU9250::getAK8963CID()
 {
-    uint8_t buffer = 0;
-    readAK8963Registers(WHO_AM_I_AK8963, 1, &buffer);
-    return buffer;
+    return readAK8963Register(WHO_AM_I_AK8963);
 }
 
 void MPU9250::gyromagSleep()
