@@ -46,20 +46,6 @@ static float aRes, gRes, mRes;
 static const uint8_t intPin = 8;   //  MPU9250 interrupt
 static const uint8_t ledPin = 13; // red led
 
-// Interrupt support 
-static bool gotNewData = false;
-static void myinthandler()
-{
-    gotNewData = true;
-}
-
-// Factory mag calibration and mag bias
-static float   magCalibration[3]; 
-
-// Bias corrections for gyro and accelerometer. These can be measured once and
-// entered here or can be calculated each time the device is powered on.
-static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
-
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
 
@@ -178,8 +164,8 @@ void setup(void)
         // XXX should be able to call imu.calibrateMPU9250() here, but it will break master mode
 
 
-        //imu.initMPU9250(Ascale, Gscale, sampleRate); 
-        //Serial.println("MPU9250 initialized for active data mode...."); 
+        imu.initMPU9250(Ascale, Gscale, sampleRate, false); 
+        Serial.println("MPU9250 initialized for active data mode...."); 
 
         // enable I2C master mode
         bt.writeRegister(MPU9250_ADDRESS, USER_CTRL, I2C_MST_EN);

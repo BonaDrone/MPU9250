@@ -139,7 +139,7 @@ void setup()
         Serial.println(gyroBias[2]);
         delay(1000); 
 
-        imu.initMPU9250(Ascale, Gscale, sampleRate); 
+        imu.initMPU9250(Ascale, Gscale, sampleRate, true); 
         Serial.println("MPU9250 initialized for active data mode...."); 
 
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication

@@ -41,7 +41,7 @@ class MPU9250 {
 
         uint8_t getMPU9250ID(void);
         void    resetMPU9250(void);
-        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate);
+        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bool passthru);
         float   getAres(uint8_t Ascale);
         float   getGres(uint8_t Gscale);
         float   getMres(uint8_t Mscale);

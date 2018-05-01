@@ -207,7 +207,7 @@ int16_t MPU9250::readGyroTempData()
 }
 
 
-void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate)
+void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bool passthru)
 {  
     // wake up device
     //_bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors 
@@ -218,13 +218,15 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate)
     _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);  // Auto select clock source to be PLL gyroscope reference if ready else
     _bt->delayMsec(200); 
 
+    // ----------------------------------
+
     // Configure Gyro and Thermometer
     // Disable FSYNC and set thermometer and gyro bandwidth to 41 and 42 Hz, respectively; 
     // minimum delay time for this setting is 5.9 ms, which means sensor fusion update rates cannot
     // be higher than 1 / 0.0059 = 170 Hz
     // DLPF_CFG = bits 2:0 = 011; this limits the sample rate to 1000 Hz for both
     // With the MPU9250, it is possible to get gyro sample rates of 32 kHz (!), 8 kHz, or 1 kHz
-    _bt->writeRegister(MPU9250_ADDRESS, CONFIG, 0x03);  
+    if (passthru) _bt->writeRegister(MPU9250_ADDRESS, CONFIG, 0x03);  
 
     // Set sample rate = gyroscope output rate/(1 + SMPLRT_DIV)
     _bt->writeRegister(MPU9250_ADDRESS, SMPLRT_DIV, sampleRate);  // Use a 200 Hz rate; a rate consistent with the filter update rate 
@@ -262,8 +264,8 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate)
     // Set interrupt pin active high, push-pull, hold interrupt pin level HIGH until interrupt cleared,
     // clear on read of INT_STATUS, and enable I2C_BYPASS_EN so additional chips 
     // can join the I2C bus and all can be controlled by the Arduino as master
-    //   _bt->writeRegister(MPU9250_ADDRESS, INT_PIN_CFG, 0x22);    
-    _bt->writeRegister(MPU9250_ADDRESS, INT_PIN_CFG, 0x12);  // INT is 50 microsecond pulse and any read to clear  
+    //  if(passthru) _bt->writeRegister(MPU9250_ADDRESS, INT_PIN_CFG, 0x22);    
+    if (passthru) _bt->writeRegister(MPU9250_ADDRESS, INT_PIN_CFG, 0x12);  // INT is 50 microsecond pulse and any read to clear  
     _bt->writeRegister(MPU9250_ADDRESS, INT_ENABLE, 0x01);  // Enable data ready (bit 0) interrupt
     _bt->delayMsec(100);
 }
