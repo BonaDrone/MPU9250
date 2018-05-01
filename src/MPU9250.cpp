@@ -594,7 +594,7 @@ uint8_t MPU9250::readAK8963Register(uint8_t subAddress)
 
 bool MPU9250::checkNewMagData()
 {
-    return (_bt->readRegister(AK8963_ADDRESS, AK8963_ST1) & 0x01);
+    return readAK8963Register(AK8963_ST1) & 0x01;
 }
 
 uint8_t MPU9250::getAK8963CID()
