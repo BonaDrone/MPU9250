@@ -54,18 +54,17 @@ static void myinthandler()
 }
 
 // Factory mag calibration and mag bias
-//static float   magCalibration[3]; 
+static float   magCalibration[3]; 
 
 // Bias corrections for gyro and accelerometer. These can be measured once and
 // entered here or can be calculated each time the device is powered on.
-static float gyroBias[3], accelBias[3];
-//static float magBias[3]={0,0,0}, magScale[3]={1,1,1};      
+static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
 
-// Instantiate MPU9250 class in master mode
-static MPU9250 imu = MPU9250(&bt, false); 
+// Instantiate MPU9250 class in pass-thru mode XXX should be master
+static MPU9250Passthru imu = MPU9250Passthru(&bt); 
 
 // Device address when ADO = 0
 static const uint8_t MPU9250_ADDRESS  = 0x68;  
@@ -103,7 +102,7 @@ static void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest
     bt.readRegisters(MPU9250_ADDRESS, EXT_SENS_DATA_00, count, dest); 
 }
 
-static uint8_t getAK8963CID()
+static int whoAmIAK8963()
 {
     uint8_t buffer = 0;
 
@@ -141,91 +140,16 @@ void setup(void)
     Serial.println(0x71, HEX);
     delay(1000);
 
-    if (c == 0x71 ) // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
-    {  
-        Serial.println("MPU9250 is online...");
+    // enable I2C master mode
+    bt.writeRegister(MPU9250_ADDRESS, USER_CTRL, I2C_MST_EN);
 
-        imu.resetMPU9250(); // start by resetting MPU9250
+    // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
+    uint8_t addr = whoAmIAK8963();
+    Serial.print("0x");
+    Serial.println(addr, HEX);
 
-        float SelfTest[6];    // holds results of gyro and accelerometer self test
-
-        imu.SelfTest(SelfTest); // Start by performing self test and reporting values
-
-        Serial.print("x-axis self test: acceleration trim within : "); 
-        Serial.print(SelfTest[0],1); 
-        Serial.println("% of factory value");
-        Serial.print("y-axis self test: acceleration trim within : "); 
-        Serial.print(SelfTest[1],1); 
-        Serial.println("% of factory value");
-        Serial.print("z-axis self test: acceleration trim within : "); 
-        Serial.print(SelfTest[2],1); 
-        Serial.println("% of factory value");
-        Serial.print("x-axis self test: gyration trim within : "); 
-        Serial.print(SelfTest[3],1); 
-        Serial.println("% of factory value");
-        Serial.print("y-axis self test: gyration trim within : "); 
-        Serial.print(SelfTest[4],1); 
-        Serial.println("% of factory value");
-        Serial.print("z-axis self test: gyration trim within : "); 
-        Serial.print(SelfTest[5],1); 
-        Serial.println("% of factory value");
-        delay(1000);
-
-        // get sensor resolutions, only need to do this once
-        aRes = imu.getAres(Ascale);
-        gRes = imu.getGres(Gscale);
-        mRes = imu.getMres(Mscale);
-
-        // Comment out if using pre-measured, pre-stored offset biases
-        imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
-        Serial.println("accel biases (mg)");
-        Serial.println(1000.*accelBias[0]);
-        Serial.println(1000.*accelBias[1]);
-        Serial.println(1000.*accelBias[2]);
-        Serial.println("gyro biases (dps)");
-        Serial.println(gyroBias[0]);
-        Serial.println(gyroBias[1]);
-        Serial.println(gyroBias[2]);
-        delay(1000); 
-
-        imu.initMPU9250(Ascale, Gscale, sampleRate); 
-        Serial.println("MPU9250 initialized for active data mode...."); 
-
-        // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
-        byte d = getAK8963CID();  // Read WHO_AM_I register for AK8963
-        Serial.print("AK8963 ");
-        Serial.print("I AM ");
-        Serial.print(d, HEX);
-        Serial.print(" I should be ");
-        Serial.println(0x48, HEX);
-        delay(1000); 
-
-        /*
-        // Get magnetometer calibration from AK8963 ROM
-        imu.initAK8963(Mscale, Mmode, magCalibration);
-        Serial.println("AK8963 initialized for active data mode...."); 
-
-        Serial.println("Calibration values: ");
-        Serial.print("X-Axis sensitivity adjustment value ");
-        Serial.println(magCalibration[0], 2);
-        Serial.print("Y-Axis sensitivity adjustment value ");
-        Serial.println(magCalibration[1], 2);
-        Serial.print("Z-Axis sensitivity adjustment value ");
-        Serial.println(magCalibration[2], 2);
-        */
-        attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
-
+    while (true) {
     }
-    else
-    {
-        Serial.print("Could not connect to MPU9250: 0x");
-        Serial.println(c, HEX);
-        while(1) ; // Loop forever if communication doesn't happen
-    }
-
-    digitalWrite(ledPin, LOW); // turn off led when using flash memory
-
-    delay(3000);                // wait a bit before looping
 }
 
 void loop(void)
