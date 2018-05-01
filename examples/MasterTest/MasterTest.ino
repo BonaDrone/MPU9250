@@ -46,8 +46,18 @@ static float aRes, gRes, mRes;
 static const uint8_t intPin = 8;   //  MPU9250 interrupt
 static const uint8_t ledPin = 13; // red led
 
+// Interrupt support 
+static bool gotNewData = false;
+static void myinthandler()
+{
+    gotNewData = true;
+}
+
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
+
+// Factory mag calibration and mag bias
+static float   magCalibration[3]; 
 
 // Instantiate MPU9250 class in master mode
 static MPU9250 imu = MPU9250(&bt, false); 
@@ -79,8 +89,8 @@ void setup(void)
     Serial.println(0x71, HEX);
     delay(1000);
 
-    if (c == 0x71 ) // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
-    {  
+    if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
+    
         Serial.println("MPU9250 is online...");
 
         imu.resetMPU9250(); // start by resetting MPU9250
@@ -129,9 +139,59 @@ void setup(void)
         Serial.print(" I should be ");
         Serial.println(0x48, HEX);
         delay(1000); 
+
+        // Get magnetometer calibration from AK8963 ROM
+        imu.initAK8963(Mscale, Mmode, magCalibration);
+        Serial.println("AK8963 initialized for active data mode...."); 
+
+        // Comment out if using pre-measured, pre-stored offset biases
+        /*
+           Serial.println("Mag Calibration: Wave device in a figure eight until done!");
+           delay(4000);
+           imu.magcalMPU9250(magBias, magScale);
+           Serial.println("Mag Calibration done!");
+           Serial.println("AK8963 mag biases (mG)");
+           Serial.println(magBias[0]);
+           Serial.println(magBias[1]);
+           Serial.println(magBias[2]); 
+           Serial.println("AK8963 mag scale (mG)");
+           Serial.println(magScale[0]);
+           Serial.println(magScale[1]);
+           Serial.println(magScale[2]); 
+           delay(2000); // add delay to see results before serial spew of data
+         */
+        Serial.println("Calibration values: ");
+        Serial.print("X-Axis sensitivity adjustment value ");
+        Serial.println(magCalibration[0], 2);
+        Serial.print("Y-Axis sensitivity adjustment value ");
+        Serial.println(magCalibration[1], 2);
+        Serial.print("Z-Axis sensitivity adjustment value ");
+        Serial.println(magCalibration[2], 2);
+
+        attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
     }
+
+    else {
+
+        Serial.print("Could not connect to MPU9250: 0x");
+        Serial.println(c, HEX);
+        while(1) ; // Loop forever if communication doesn't happen
+    }
+
+    digitalWrite(ledPin, LOW); // turn off led when using flash memory
+
+    delay(3000);                // wait a bit before looping
 }
 
 void loop(void)
 {
-}
+    // If intPin goes high, either all data registers have new data
+    // or the accel wake on motion threshold has been crossed
+    if(gotNewData) {   // On interrupt, read data
+
+        Serial.println(millis());
+
+        gotNewData = false;     // reset gotNewData flag
+
+    }
+ }

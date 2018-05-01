@@ -187,16 +187,12 @@ void MPU9250::readGyroData(int16_t * destination)
 
 bool MPU9250::checkNewAccelGyroData()
 {
-    bool test;
-    test = (_bt->readRegister(MPU9250_ADDRESS, INT_STATUS) & 0x01);
-    return test;
+    return (_bt->readRegister(MPU9250_ADDRESS, INT_STATUS) & 0x01);
 }
 
 bool MPU9250::checkWakeOnMotion()
 {
-    bool test;
-    test = (_bt->readRegister(MPU9250_ADDRESS, INT_STATUS) & 0x40);
-    return test;
+    return (_bt->readRegister(MPU9250_ADDRESS, INT_STATUS) & 0x40);
 }
 
 
@@ -555,26 +551,29 @@ void MPU9250::SelfTest(float * destination) // Should return percent deviation f
 }
 
 // writes a register to the AK8963 given a register address and data 
-bool MPU9250::writeAK8963Register(uint8_t subAddress, uint8_t data)
+void MPU9250::writeAK8963Register(uint8_t subAddress, uint8_t data)
 {
-    uint8_t count = 1;
-    uint8_t buff[1];
+    if (_passthru) {
 
-    _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_ADDRESS); // set slave 0 to the AK8963 and set for write
-    _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
-    _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_DO, data); // store the data for write
-    _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and send 1 byte
+        _bt->writeRegister(AK8963_ADDRESS, subAddress, data);
+    }
 
-    _bt->delayMsec(1);
+    else {
 
-    return buff[0] == data;
+        uint8_t count = 1;
+
+        _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_ADDRESS); // set slave 0 to the AK8963 and set for write
+        _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
+        _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_DO, data); // store the data for write
+        _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and send 1 byte
+    }
 }
 
 /* reads registers from the AK8963 */
 void MPU9250::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
 {
     if (_passthru) {
-        _bt->readRegisters(AK8963_ADDRESS, WHO_AM_I_AK8963, count, dest);
+        _bt->readRegisters(AK8963_ADDRESS, subAddress, count, dest);
     }
     else {
         _bt->writeRegister(MPU9250_ADDRESS, I2C_SLV0_ADDR, AK8963_ADDRESS | I2C_READ_FLAG); // set slave 0 to the AK8963 and set for read

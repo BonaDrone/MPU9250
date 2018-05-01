@@ -223,7 +223,7 @@ class MPU9250 {
 
         ByteTransfer * _bt;
 
-        bool    writeAK8963Register(uint8_t subAddress, uint8_t data);
+        void    writeAK8963Register(uint8_t subAddress, uint8_t data);
         uint8_t readAK8963Register(uint8_t subAddress);
         void    readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest);
 

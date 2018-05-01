@@ -92,8 +92,8 @@ void setup()
     Serial.println(0x71, HEX);
     delay(1000);
 
-    if (c == 0x71 ) // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
-    {  
+    if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
+    
         Serial.println("MPU9250 is online...");
 
         imu.resetMPU9250(); // start by resetting MPU9250
@@ -182,8 +182,8 @@ void setup()
         attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
 
     }
-    else
-    {
+    else {
+
         Serial.print("Could not connect to MPU9250: 0x");
         Serial.println(c, HEX);
         while(1) ; // Loop forever if communication doesn't happen
@@ -206,7 +206,7 @@ void loop()
 
         gotNewData = false;     // reset gotNewData flag
 
-        if(imu.checkNewAccelGyroData())  // data ready interrupt is detected
+        if (imu.checkNewAccelGyroData())  // data ready interrupt is detected
         {
             imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
 
