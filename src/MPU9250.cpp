@@ -605,8 +605,8 @@ uint8_t MPU9250::getAK8963CID()
 void MPU9250::gyromagSleep()
 {
     uint8_t temp = 0;
-    temp = _bt->readRegister(AK8963_ADDRESS, AK8963_CNTL);
-    _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, temp & ~(0x0F) ); // Clear bits 0 - 3 to power down magnetometer  
+    temp = readAK8963Register(AK8963_CNTL);
+    writeAK8963Register(AK8963_CNTL, temp & ~(0x0F) ); // Clear bits 0 - 3 to power down magnetometer  
     temp = _bt->readRegister(MPU9250_ADDRESS, PWR_MGMT_1);
     _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, temp | 0x10);     // Write bit 4 to enable gyro standby
     _bt->delayMsec(10); // Wait for all registers to reset 
@@ -615,8 +615,8 @@ void MPU9250::gyromagSleep()
 void MPU9250::gyromagWake(uint8_t Mmode)
 {
     uint8_t temp = 0;
-    temp = _bt->readRegister(AK8963_ADDRESS, AK8963_CNTL);
-    _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, temp | Mmode ); // Reset normal mode for  magnetometer  
+    temp = readAK8963Register(AK8963_CNTL);
+    writeAK8963Register(AK8963_CNTL, temp | Mmode ); // Reset normal mode for  magnetometer  
     temp = _bt->readRegister(MPU9250_ADDRESS, PWR_MGMT_1);
     _bt->writeRegister(MPU9250_ADDRESS, PWR_MGMT_1, 0x01);   // return gyro and accel normal mode
     _bt->delayMsec(10); // Wait for all registers to reset 
@@ -638,9 +638,9 @@ void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
 {
     // First extract the factory calibration for each magnetometer axis
     uint8_t rawData[3];  // x/y/z gyro calibration data stored here
-    _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
+    writeAK8963Register(AK8963_CNTL, 0x00); // Power down magnetometer  
     _bt->delayMsec(10);
-    _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x0F); // Enter Fuse ROM access mode
+    writeAK8963Register(AK8963_CNTL, 0x0F); // Enter Fuse ROM access mode
     _bt->delayMsec(10);
     _bt->readRegisters(AK8963_ADDRESS, AK8963_ASAX, 3, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
     magCalibration[0] =  (float)(rawData[0] - 128)/256.0f + 1.0f;   // Return x-axis sensitivity adjustment values, etc.
@@ -650,11 +650,11 @@ void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
     _magCalibration[1] = magCalibration[1];
     _magCalibration[2] = magCalibration[2];
     _Mmode = Mmode;
-    _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, 0x00); // Power down magnetometer  
+    writeAK8963Register(AK8963_CNTL, 0x00); // Power down magnetometer  
     _bt->delayMsec(10);
     // Configure the magnetometer for continuous read and highest resolution
     // set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
     // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
-    _bt->writeRegister(AK8963_ADDRESS, AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
+    writeAK8963Register(AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
     _bt->delayMsec(10);
 }
