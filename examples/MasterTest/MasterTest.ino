@@ -53,6 +53,10 @@ static void myinthandler()
     gotNewData = true;
 }
 
+// Bias corrections for gyro and accelerometer. These can be measured once and
+// entered here or can be calculated each time the device is powered on.
+static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
+
 // Create a byte-transfer object for Arduino I^2C
 ArduinoI2C bt;
 
@@ -90,7 +94,7 @@ void setup(void)
     delay(1000);
 
     if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
-    
+
         Serial.println("MPU9250 is online...");
 
         imu.resetMPU9250(); // start by resetting MPU9250
@@ -185,6 +189,9 @@ void setup(void)
 
 void loop(void)
 {
+    static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
+    static float ax, ay, az, gx, gy, gz, mx, my, mz;
+
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
     if(gotNewData) {   // On interrupt, read data
@@ -193,7 +200,60 @@ void loop(void)
 
         if (imu.checkNewData())  { // data ready interrupt is detected
 
-            Serial.println(millis());
+            imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
+
+            // Convert the accleration value into g's
+            ax = (float)MPU9250Data[0]*aRes - accelBias[0];  
+            ay = (float)MPU9250Data[1]*aRes - accelBias[1];   
+            az = (float)MPU9250Data[2]*aRes - accelBias[2];  
+
+            // Convert the gyro value into degrees per second
+            gx = (float)MPU9250Data[4]*gRes;  
+            gy = (float)MPU9250Data[5]*gRes;  
+            gz = (float)MPU9250Data[6]*gRes; 
+
+            int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
+
+            imu.readMagData(magCount);  // Read the x/y/z adc values
+
+            // Calculate the magnetometer values in milliGauss
+            // Include factory calibration per data sheet and user environmental corrections
+            // Get actual magnetometer value, this depends on scale being set
+            mx = (float)magCount[0]*mRes*magCalibration[0] - magBias[0];  
+            my = (float)magCount[1]*mRes*magCalibration[1] - magBias[1];  
+            mz = (float)magCount[2]*mRes*magCalibration[2] - magBias[2];  
+            mx *= magScale[0];
+            my *= magScale[1];
+            mz *= magScale[2]; 
+
+            Serial.print("ax = ");
+            Serial.print((int)1000*ax);  
+            Serial.print(" ay = ");
+            Serial.print((int)1000*ay); 
+            Serial.print(" az = ");
+            Serial.print((int)1000*az);
+            Serial.println(" mg");
+            Serial.print("gx = ");
+            Serial.print( gx, 2); 
+            Serial.print(" gy = ");
+            Serial.print( gy, 2); 
+            Serial.print(" gz = ");
+            Serial.print( gz, 2);
+            Serial.println(" deg/s");
+            Serial.print("mx = ");
+            Serial.print( (int)mx ); 
+            Serial.print(" my = ");
+            Serial.print( (int)my ); 
+            Serial.print(" mz = ");
+            Serial.print( (int)mz );
+            Serial.println(" mG");
+
+            float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
+
+            // Print temperature in degrees Centigrade      
+            Serial.print("Gyro temperature is ");  
+            Serial.print(temperature, 1);  
+            Serial.println(" degrees C"); 
         }
     }
 }
