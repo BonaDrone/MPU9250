@@ -227,9 +227,6 @@ class MPU9250 {
 
         uint8_t readAK8963Register(uint8_t subAddress);
 
-        void    writeAK8963Register(uint8_t subAddress, uint8_t data);
-        void    readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest);
-
         bool    _passthru;
         float   _aRes;
         float   _gRes;
@@ -239,6 +236,12 @@ class MPU9250 {
         float   _fuseROMy;
         float   _fuseROMz;
         float   _magCalibration[3];
+
+    protected:
+
+        virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
+        virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) = 0;
+
 };
 
 class MPU9250Passthru : public MPU9250 {
@@ -246,6 +249,12 @@ class MPU9250Passthru : public MPU9250 {
     public:
 
         MPU9250Passthru(ByteTransfer * bt) : MPU9250(bt, true) { }
+
+    protected:
+
+        virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
+
+        virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
 };
 
 class MPU9250Master : public MPU9250 {
@@ -253,4 +262,10 @@ class MPU9250Master : public MPU9250 {
     public:
 
         MPU9250Master(ByteTransfer * bt) : MPU9250(bt, false) { }
+
+    protected:
+
+        virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
+
+        virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
 };
