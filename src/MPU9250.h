@@ -37,10 +37,6 @@ const uint8_t M_100Hz = 0x06;
 
 class MPU9250 {
 
-    protected:
-
-        MPU9250(ByteTransfer * bt, bool passthru);
-
     public: 
 
         uint8_t getMPU9250ID(void);
@@ -67,6 +63,14 @@ class MPU9250 {
         void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration);
 
         bool checkNewMagData(void);
+
+    protected:
+
+        ByteTransfer * _bt;
+
+        MPU9250(ByteTransfer * bt, bool passthru);
+        virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
+        virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) = 0;
 
         // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in 
         // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
@@ -223,8 +227,6 @@ class MPU9250 {
         const uint8_t I2C_READ_FLAG     = 0x80;
         const uint8_t I2C_MST_EN        = 0x20;
 
-        ByteTransfer * _bt;
-
         uint8_t readAK8963Register(uint8_t subAddress);
 
         bool    _passthru;
@@ -236,11 +238,6 @@ class MPU9250 {
         float   _fuseROMy;
         float   _fuseROMz;
         float   _magCalibration[3];
-
-    protected:
-
-        virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
-        virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) = 0;
 
 };
 
