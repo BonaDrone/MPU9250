@@ -185,7 +185,7 @@ void MPU9250::readGyroData(int16_t * destination)
     destination[2] = ((int16_t)rawData[4] << 8) | rawData[5] ; 
 }
 
-bool MPU9250::checkNewAccelGyroData()
+bool MPU9250Passthru::checkNewAccelGyroData()
 {
     return (_bt->readRegister(MPU9250_ADDRESS, INT_STATUS) & 0x01);
 }
@@ -586,9 +586,14 @@ uint8_t MPU9250::readAK8963Register(uint8_t subAddress)
     return buffer;
 }
 
-bool MPU9250::checkNewMagData()
+bool MPU9250Passthru::checkNewMagData()
 {
     return readAK8963Register(AK8963_ST1) & 0x01;
+}
+
+bool MPU9250Master::checkNewData(void)
+{
+    return (_bt->readRegister(MPU9250_ADDRESS, INT_STATUS) & 0x01);
 }
 
 uint8_t MPU9250::getAK8963CID()

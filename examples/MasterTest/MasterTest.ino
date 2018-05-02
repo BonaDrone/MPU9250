@@ -191,14 +191,9 @@ void loop(void)
 
         gotNewData = false;     // reset gotNewData flag
 
-        if (imu.checkNewAccelGyroData())  { // data ready interrupt is detected
+        if (imu.checkNewData())  { // data ready interrupt is detected
 
-            Serial.println("ag");
-
-            if(imu.checkNewMagData()) { // wait for magnetometer data ready bit to be set
-
-                Serial.println("m");
-            }
+            Serial.println(millis());
         }
     }
- }
+}
