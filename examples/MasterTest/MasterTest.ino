@@ -225,13 +225,6 @@ void loop(void)
 
             imu.readMagData(magCount);  // Read the x/y/z adc values
 
-            Serial.print(magCount[0]);
-            Serial.print("\t");
-            Serial.print(magCount[1]);
-            Serial.print("\t");
-            Serial.println(magCount[2]);
-            Serial.println("****************************");
-
             // Calculate the magnetometer values in milliGauss
             // Include factory calibration per data sheet and user environmental corrections
             // Get actual magnetometer value, this depends on scale being set
