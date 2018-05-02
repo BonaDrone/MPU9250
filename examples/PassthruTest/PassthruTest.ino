@@ -199,7 +199,6 @@ void loop()
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
 
-
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
     if(gotNewData) {   // On interrupt, read data
@@ -225,6 +224,13 @@ void loop()
                 int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 
                 imu.readMagData(magCount);  // Read the x/y/z adc values
+
+                Serial.print(magCount[0]);
+                Serial.print("\t");
+                Serial.print(magCount[1]);
+                Serial.print("\t");
+                Serial.println(magCount[2]);
+                Serial.println("****************************");
 
                 // Calculate the magnetometer values in milliGauss
                 // Include factory calibration per data sheet and user environmental corrections

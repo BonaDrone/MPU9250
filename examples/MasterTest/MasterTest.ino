@@ -61,7 +61,7 @@ static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};
 ArduinoI2C bt;
 
 // Factory mag calibration and mag bias
-static float   magCalibration[3]; 
+static float magCalibration[3]; 
 
 // Instantiate MPU9250 class in master mode
 static MPU9250Master imu = MPU9250Master(&bt); 
@@ -128,8 +128,17 @@ void setup(void)
         gRes = imu.getGres(Gscale);
         mRes = imu.getMres(Mscale);
 
-        // XXX should be able to call imu.calibrateMPU9250() here, but it will break master mode
-
+        // Comment out if using pre-measured, pre-stored offset biases
+        imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
+        Serial.println("accel biases (mg)");
+        Serial.println(1000.*accelBias[0]);
+        Serial.println(1000.*accelBias[1]);
+        Serial.println(1000.*accelBias[2]);
+        Serial.println("gyro biases (dps)");
+        Serial.println(gyroBias[0]);
+        Serial.println(gyroBias[1]);
+        Serial.println(gyroBias[2]);
+        delay(1000); 
 
         imu.initMPU9250(Ascale, Gscale, sampleRate); 
         Serial.println("MPU9250 initialized for active data mode...."); 
@@ -215,6 +224,13 @@ void loop(void)
             int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 
             imu.readMagData(magCount);  // Read the x/y/z adc values
+
+            Serial.print(magCount[0]);
+            Serial.print("\t");
+            Serial.print(magCount[1]);
+            Serial.print("\t");
+            Serial.println(magCount[2]);
+            Serial.println("****************************");
 
             // Calculate the magnetometer values in milliGauss
             // Include factory calibration per data sheet and user environmental corrections

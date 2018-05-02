@@ -623,7 +623,7 @@ void MPU9250::gyromagWake(uint8_t Mmode)
 void MPU9250::readMagData(int16_t * destination)
 {
     uint8_t rawData[7];  // x/y/z gyro register data, ST2 register stored here, must read ST2 at end of data acquisition
-    _bt->readRegisters(AK8963_ADDRESS, AK8963_XOUT_L, 7, &rawData[0]);  // Read the six raw data and ST2 registers sequentially into data array
+    readAK8963Registers(AK8963_XOUT_L, 7, &rawData[0]);  // Read the six raw data and ST2 registers sequentially into data array
     uint8_t c = rawData[6]; // End data read by reading ST2 register
     if(!(c & 0x08)) { // Check if magnetic sensor overflow set, if not then report data
         destination[0] = ((int16_t)rawData[1] << 8) | rawData[0] ;  // Turn the MSB and LSB into a signed 16-bit value
@@ -640,7 +640,7 @@ void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
     _bt->delayMsec(10);
     writeAK8963Register(AK8963_CNTL, 0x0F); // Enter Fuse ROM access mode
     _bt->delayMsec(10);
-    _bt->readRegisters(AK8963_ADDRESS, AK8963_ASAX, 3, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
+    readAK8963Registers(AK8963_ASAX, 3, &rawData[0]);  // Read the x-, y-, and z-axis calibration values
     magCalibration[0] =  (float)(rawData[0] - 128)/256.0f + 1.0f;   // Return x-axis sensitivity adjustment values, etc.
     magCalibration[1] =  (float)(rawData[1] - 128)/256.0f + 1.0f;  
     magCalibration[2] =  (float)(rawData[2] - 128)/256.0f + 1.0f; 
