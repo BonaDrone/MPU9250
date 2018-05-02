@@ -41,7 +41,6 @@ class MPU9250 {
 
         uint8_t getMPU9250ID(void);
         void    resetMPU9250(void);
-        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate);
         float   getAres(uint8_t Ascale);
         float   getGres(uint8_t Gscale);
         float   getMres(uint8_t Mscale);
@@ -65,7 +64,10 @@ class MPU9250 {
 
         ByteTransfer * _bt;
 
-        MPU9250(ByteTransfer * bt, bool passthru);
+        MPU9250(ByteTransfer * bt);
+
+        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bool passthru);
+
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) = 0;
 
@@ -242,7 +244,9 @@ class MPU9250Passthru : public MPU9250 {
 
     public:
 
-        MPU9250Passthru(ByteTransfer * bt) : MPU9250(bt, true) { }
+        MPU9250Passthru(ByteTransfer * bt) : MPU9250(bt) { }
+
+        void initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate) { MPU9250::initMPU9250(Ascale, Gscale, sampleRate, true);  }
 
         bool checkNewAccelGyroData(void);
 
@@ -259,7 +263,9 @@ class MPU9250Master : public MPU9250 {
 
     public:
 
-        MPU9250Master(ByteTransfer * bt) : MPU9250(bt, false) { }
+        MPU9250Master(ByteTransfer * bt) : MPU9250(bt) { }
+
+        void initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate) { MPU9250::initMPU9250(Ascale, Gscale, sampleRate, false); }
 
         bool checkNewData(void);
 
