@@ -60,7 +60,7 @@ ArduinoI2C bt;
 static float   magCalibration[3]; 
 
 // Instantiate MPU9250 class in master mode
-static MPU9250 imu = MPU9250(&bt, false); 
+static MPU9250Master imu = MPU9250Master(&bt); 
 
 void setup(void)
 {
