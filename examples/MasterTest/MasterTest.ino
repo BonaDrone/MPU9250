@@ -128,7 +128,7 @@ void setup(void)
         gRes = imu.getGres(Gscale);
         mRes = imu.getMres(Mscale);
 
-        // Comment out if using pre-measured, pre-stored offset biases
+        // Comment out if using pre-measured, pre-stored accel/gyro offset biases
         imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
         Serial.println("accel biases (mg)");
         Serial.println(1000.*accelBias[0]);
@@ -157,22 +157,20 @@ void setup(void)
         imu.initAK8963(Mscale, Mmode, magCalibration);
         Serial.println("AK8963 initialized for active data mode...."); 
 
-        // Comment out if using pre-measured, pre-stored offset biases
-        /*
-           Serial.println("Mag Calibration: Wave device in a figure eight until done!");
-           delay(4000);
-           imu.magcalMPU9250(magBias, magScale);
-           Serial.println("Mag Calibration done!");
-           Serial.println("AK8963 mag biases (mG)");
-           Serial.println(magBias[0]);
-           Serial.println(magBias[1]);
-           Serial.println(magBias[2]); 
-           Serial.println("AK8963 mag scale (mG)");
-           Serial.println(magScale[0]);
-           Serial.println(magScale[1]);
-           Serial.println(magScale[2]); 
-           delay(2000); // add delay to see results before serial spew of data
-         */
+        // Comment out if using pre-measured, pre-stored offset magnetometer biases
+        Serial.println("Mag Calibration: Wave device in a figure eight until done!");
+        delay(4000);
+        imu.magcalMPU9250(magBias, magScale);
+        Serial.println("Mag Calibration done!");
+        Serial.println("AK8963 mag biases (mG)");
+        Serial.println(magBias[0]);
+        Serial.println(magBias[1]);
+        Serial.println(magBias[2]); 
+        Serial.println("AK8963 mag scale (mG)");
+        Serial.println(magScale[0]);
+        Serial.println(magScale[1]);
+        Serial.println(magScale[2]); 
+        delay(2000); // add delay to see results before serial spew of data
         Serial.println("Calibration values: ");
         Serial.print("X-Axis sensitivity adjustment value ");
         Serial.println(magCalibration[0], 2);

@@ -283,12 +283,16 @@ void MPU9250::magcalMPU9250(float * dest1, float * dest2)
 
     if(_Mmode == 0x02) sample_count = 128;  // at 8 Hz ODR, new mag data is available every 125 ms
     if(_Mmode == 0x06) sample_count = 1500;  // at 100 Hz ODR, new mag data is available every 10 ms
+
     for(ii = 0; ii < sample_count; ii++) {
+
         readMagData(mag_temp);  // Read the mag data   
+
         for (int jj = 0; jj < 3; jj++) {
             if(mag_temp[jj] > mag_max[jj]) mag_max[jj] = mag_temp[jj];
             if(mag_temp[jj] < mag_min[jj]) mag_min[jj] = mag_temp[jj];
         }
+
         if(_Mmode == 0x02) _bt->delayMsec(135);  // at 8 Hz ODR, new mag data is available every 125 ms
         if(_Mmode == 0x06) _bt->delayMsec(12);  // at 100 Hz ODR, new mag data is available every 10 ms
     }
