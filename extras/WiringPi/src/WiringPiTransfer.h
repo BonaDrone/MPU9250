@@ -1,4 +1,4 @@
-/*  Header for WiringPi implmentations of WiringPiTransfer class
+/*  Header for WiringPi implmentations of ByteTransfer class
  *
  *  Copyright 2018 Simon D. Levy
  *  
@@ -7,45 +7,13 @@
 
 #include "ByteTransfer.h"
 
-class WiringPiTransfer : public ByteTransfer {
+class WiringPiI2C : public I2CTransfer {
 
     public:
 
-        void delayMsec(unsigned long  msec) override;
+        WiringPiI2C(uint8_t address) : I2CTransfer(address) { }
+
+        void    writeRegister(uint8_t subAddress, uint8_t data) override;
+        uint8_t readRegister(uint8_t subAddress) override;
+        void    readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 };
-
-
-class WiringPiI2C : public WiringPiTransfer {
-
-	public:
-
-		void    writeByte(uint8_t address, uint8_t subAddress, uint8_t data) override;
-
-		uint8_t readByte(uint8_t address, uint8_t subAddress) override;
-
-		void    readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
-};
-
-
-class WiringPiSPI : public WiringPiTransfer {
-
-    private:
-
-        uint8_t _bus;
-        uint32_t _speed;
-
-	public:
-
-                WiringPiSPI(uint8_t bus, uint32_t speed);
-
-		void    writeByte(uint8_t address, uint8_t subAddress, uint8_t data) override;
-
-		uint8_t readByte(uint8_t address, uint8_t subAddress) override;
-
-		void    readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
-};
-
-
-
-
-

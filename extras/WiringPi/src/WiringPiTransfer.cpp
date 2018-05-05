@@ -9,66 +9,38 @@
 
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
-#include <wiringPiSPI.h>
 
-void WiringPiTransfer::delayMsec(unsigned long msec)
+void WiringPiI2C::writeRegister(uint8_t subAddress, uint8_t data)
 {
-    delay(msec);
+    Wire.beginTransmission(_address);  // Initialize the Tx buffer
+    Wire.write(subAddress);           // Put slave register address in Tx buffer
+    Wire.write(data);                 // Put data in Tx buffer
+    Wire.endTransmission();           // Send the Tx buffer
 }
 
-void WiringPiI2C::writeByte(uint8_t address, uint8_t subAddress, uint8_t data) 
+uint8_t WiringPiI2C::readRegister(uint8_t subAddress)
 {
-    //wiringPiI2CWriteReg8(_i2c_fd, subAddress, data);
-
-    //delay(10); // need to slow down how fast I write to WiringPiI2C
-    //readRegisters(subAddress,sizeof(buff),&buff[0]);
-    //return buff[0] == data;
+    uint8_t data = 0;                        // `data` will store the register data   
+    Wire.beginTransmission(_address);         // Initialize the Tx buffer
+    Wire.write(subAddress);                  // Put slave register address in Tx buffer
+    Wire.endTransmission(false);             // Send the Tx buffer, but send a restart to keep connection alive
+    Wire.requestFrom(_address, 1);            // Read two bytes from slave register address on WiringPiI2C 
+    data = Wire.read();                      // Fill Rx buffer with result
+    return data;                             // Return data read from slave register
 }
 
-uint8_t WiringPiI2C::readByte(uint8_t address, uint8_t subAddress) 
-{
-    return 0;//wiringPiI2CReadReg8(_i2c_fd, subAddress+i);
-}
-
-void WiringPiI2C::readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest)
-{
-    for (uint8_t i=0; i<count; ++i) {
-        //dest[i] = wiringPiI2CReadReg8(_i2c_fd, subAddress+i);
+void WiringPiI2C::readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest)
+{  
+    Wire.beginTransmission(_address);   // Initialize the Tx buffer
+    Wire.write(subAddress);            // Put slave register address in Tx buffer
+    Wire.endTransmission(false);       // Send the Tx buffer, but send a restart to keep connection alive
+    uint8_t i = 0;
+    Wire.requestFrom(_address, count);  // Read bytes from slave register address 
+    while (Wire.available()) {
+        dest[i++] = Wire.read();          // Put read results in the Rx buffer
     }
-} 
-
-WiringPiSPI::WiringPiSPI(uint8_t bus, uint32_t speed) {
-    _bus = bus;
-    _speed = speed;
 }
 
-void WiringPiSPI::writeByte(uint8_t address, uint8_t subAddress, uint8_t data) 
-{
-    uint8_t buff2[2];
-    buff2[0] = subAddress;
-    buff2[1] = data;
-    wiringPiSPIDataRW(_bus, &buff2[0], 2);
 
-}
 
-uint8_t WiringPiSPI::readByte(uint8_t address, uint8_t subAddress) 
-{
-    uint8_t buff2[2];
 
-    buff2[0] = subAddress | 0x80;
-    buff2[1] = 0;
-    wiringPiSPIDataRW(_bus, &buff2[0], 2);
-    return buff2[1];
-}
-
-void WiringPiSPI::readBytes(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest)
-{
-    uint8_t buff2[2];
-
-    for (uint8_t i=0; i<count; ++i) {
-        buff2[0] = (subAddress+i) | 0x80;
-        buff2[1] = 0;
-        wiringPiSPIDataRW(_bus, &buff2[0], 2);
-        dest[i] = buff2[1];
-    }
-} 

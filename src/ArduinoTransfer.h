@@ -19,5 +19,5 @@ class ArduinoI2C : public I2CTransfer {
 
     private:
 
-        uint8_t address;
+        uint8_t _address;
 };
