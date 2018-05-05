@@ -7,14 +7,7 @@
 
 #include "ByteTransfer.h"
 
-class ArduinoTransfer : public ByteTransfer {
-
-    public:
-
-        void delayMsec(unsigned long  msec) override;
-};
-
-class ArduinoI2C : public ArduinoTransfer, public I2CTransfer {
+class ArduinoI2C : public I2CTransfer {
 
 	public:
 
