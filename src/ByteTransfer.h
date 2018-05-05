@@ -20,4 +20,5 @@ class ByteTransfer
 
 class I2CTransfer : public ByteTransfer
 {
+        virtual void    begin(void) { }
 };
