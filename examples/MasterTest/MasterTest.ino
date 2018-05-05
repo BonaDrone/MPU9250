@@ -58,13 +58,13 @@ static void myinthandler()
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
 // Create a byte-transfer object for Arduino I^2C
-ArduinoI2C bt;
+ArduinoI2C mpu(MPU9250::MPU9250_ADDRESS);
 
 // Factory mag calibration and mag bias
 static float magCalibration[3]; 
 
 // Instantiate MPU9250 class in master mode
-static MPU9250Master imu = MPU9250Master(&bt); 
+static MPU9250Master imu = MPU9250Master(&mpu); 
 
 void setup(void)
 {
@@ -233,34 +233,43 @@ void loop(void)
             my *= magScale[1];
             mz *= magScale[2]; 
 
-            Serial.print("ax = ");
-            Serial.print((int)1000*ax);  
-            Serial.print(" ay = ");
-            Serial.print((int)1000*ay); 
-            Serial.print(" az = ");
-            Serial.print((int)1000*az);
-            Serial.println(" mg");
-            Serial.print("gx = ");
-            Serial.print( gx, 2); 
-            Serial.print(" gy = ");
-            Serial.print( gy, 2); 
-            Serial.print(" gz = ");
-            Serial.print( gz, 2);
-            Serial.println(" deg/s");
-            Serial.print("mx = ");
-            Serial.print( (int)mx ); 
-            Serial.print(" my = ");
-            Serial.print( (int)my ); 
-            Serial.print(" mz = ");
-            Serial.print( (int)mz );
-            Serial.println(" mG");
+            // Report at 1Hz
+            static uint32_t msec_prev;
+            uint32_t msec_curr = millis();
 
-            float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
+            if (msec_curr-msec_prev > 1000) {
 
-            // Print temperature in degrees Centigrade      
-            Serial.print("Gyro temperature is ");  
-            Serial.print(temperature, 1);  
-            Serial.println(" degrees C"); 
+                msec_prev = msec_curr;
+
+                Serial.print("ax = ");
+                Serial.print((int)1000*ax);  
+                Serial.print(" ay = ");
+                Serial.print((int)1000*ay); 
+                Serial.print(" az = ");
+                Serial.print((int)1000*az);
+                Serial.println(" mg");
+                Serial.print("gx = ");
+                Serial.print( gx, 2); 
+                Serial.print(" gy = ");
+                Serial.print( gy, 2); 
+                Serial.print(" gz = ");
+                Serial.print( gz, 2);
+                Serial.println(" deg/s");
+                Serial.print("mx = ");
+                Serial.print( (int)mx ); 
+                Serial.print(" my = ");
+                Serial.print( (int)my ); 
+                Serial.print(" mz = ");
+                Serial.print( (int)mz );
+                Serial.println(" mG");
+
+                float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
+
+                // Print temperature in degrees Centigrade      
+                Serial.print("Gyro temperature is ");  
+                Serial.print(temperature, 1);  
+                Serial.println(" degrees C"); 
+            }
         }
     }
 }
