@@ -17,7 +17,8 @@
 #if defined(ARDUINO)
 #include <Arduino.h>
 #else
-extern void delay(uint32_t msec);
+#include <wiringPi.h>
+//extern void delay(uint32_t msec);
 #endif
 
 MPU9250::MPU9250(ByteTransfer * bt)

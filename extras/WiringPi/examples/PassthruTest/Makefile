@@ -12,11 +12,14 @@ SRC = ../../../../src
 
 all: $(ALL)
 
-PassthruTest: PassthruTest.o
-	g++ -std=c++11 -o PassthruTest PassthruTest.o -lwiringPi
+PassthruTest: PassthruTest.o MPU9250.o
+	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU9250.o -lwiringPi
 
 PassthruTest.o: PassthruTest.cpp 
 	g++ -std=c++11 -Wall -I$(SRC) -c PassthruTest.cpp
+
+MPU9250.o: $(SRC)/MPU9250.cpp 
+	g++ -std=c++11 -Wall -I$(SRC) -c $(SRC)/MPU9250.cpp
 
 clean:
 	rm -f $(ALL) *.o *~
