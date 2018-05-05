@@ -66,7 +66,7 @@ class MPU9250 {
 
     protected:
 
-        ByteTransfer * _bt;
+        ByteTransfer * _mpu;
 
         MPU9250(ByteTransfer * bt);
 

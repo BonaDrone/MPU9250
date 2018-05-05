@@ -13,7 +13,7 @@ class ArduinoI2C : public I2CTransfer {
 
         ArduinoI2C(uint8_t address) : I2CTransfer(address) { }
 
-		void    writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) override;
-		uint8_t readRegister(uint8_t address, uint8_t subAddress) override;
-		void    readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+		void    writeRegister(uint8_t subAddress, uint8_t data) override;
+		uint8_t readRegister(uint8_t subAddress) override;
+		void    readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 };

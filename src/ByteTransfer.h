@@ -13,9 +13,9 @@ class ByteTransfer
 {
     public: 
 
-        virtual void    writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) = 0;
-        virtual uint8_t readRegister(uint8_t address, uint8_t subAddress) = 0;
-        virtual void    readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
+        virtual void    writeRegister(uint8_t subAddress, uint8_t data) = 0;
+        virtual uint8_t readRegister(uint8_t subAddress) = 0;
+        virtual void    readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
 };
 
 class I2CTransfer : public ByteTransfer
@@ -24,7 +24,7 @@ class I2CTransfer : public ByteTransfer
 
         I2CTransfer(uint8_t address) : _address(address) { }
 
-    private:
+    protected:
 
         uint8_t _address;
 };
