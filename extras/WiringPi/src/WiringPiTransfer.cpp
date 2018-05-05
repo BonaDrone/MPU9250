@@ -10,22 +10,17 @@
 #include <wiringPi.h>
 #include <wiringPiI2C.h>
 
+void WiringPiI2C::begin(void)
+{
+    _fd = wiringPiI2CSetup (_i2c_address);
+}
+
 void WiringPiI2C::writeRegister(uint8_t subAddress, uint8_t data)
 {
-    Wire.beginTransmission(_address);  // Initialize the Tx buffer
-    Wire.write(subAddress);           // Put slave register address in Tx buffer
-    Wire.write(data);                 // Put data in Tx buffer
-    Wire.endTransmission();           // Send the Tx buffer
 }
 
 uint8_t WiringPiI2C::readRegister(uint8_t subAddress)
 {
-    uint8_t data = 0;                        // `data` will store the register data   
-    Wire.beginTransmission(_address);         // Initialize the Tx buffer
-    Wire.write(subAddress);                  // Put slave register address in Tx buffer
-    Wire.endTransmission(false);             // Send the Tx buffer, but send a restart to keep connection alive
-    Wire.requestFrom(_address, 1);            // Read two bytes from slave register address on WiringPiI2C 
-    data = Wire.read();                      // Fill Rx buffer with result
     return data;                             // Return data read from slave register
 }
 
