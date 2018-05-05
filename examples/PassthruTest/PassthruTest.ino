@@ -68,9 +68,11 @@ static MPU9250Passthru imu = MPU9250Passthru(&mpu, &mag);
 
 void setup()
 {
+    // Start serial comms
     Serial.begin(115200);
     delay(1000);
 
+    // Start I^2C
     Wire.begin(); 
     Wire.setClock(400000); 
     delay(1000);

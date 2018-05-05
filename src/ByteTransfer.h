@@ -24,7 +24,5 @@ class I2CTransfer : public ByteTransfer
 
         I2CTransfer(uint8_t address) { _address = address;}
 
-        virtual void    begin(void) { }
-
         uint8_t _address;
 };
