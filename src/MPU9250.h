@@ -39,6 +39,10 @@ class MPU9250 {
 
     public: 
 
+        //const uint8_t MPU9250_ADDRESS = 0x69; // When AD0 = 1
+        const uint8_t MPU9250_ADDRESS = 0x68;   // When AD0 = 0
+        const uint8_t AK8963_ADDRESS  = 0x0C;
+
         uint8_t getMPU9250ID(void);
         void    resetMPU9250(void);
         float   getAres(uint8_t Ascale);
@@ -75,7 +79,6 @@ class MPU9250 {
         // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
         //
         //Magnetometer Registers
-        const uint8_t AK8963_ADDRESS    = 0x0C;
         const uint8_t WHO_AM_I_AK8963   = 0x00; // should return  = 0x48
         const uint8_t INFO              = 0x01;
         const uint8_t AK8963_ST1        = 0x02; // data ready status bit 0

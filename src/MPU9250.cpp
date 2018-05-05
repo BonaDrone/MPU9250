@@ -13,14 +13,6 @@
 
 #include <math.h>
 
-// Define I2C addresses of MPU9250
-#define ADO 0
-#if ADO
-static const uint8_t MPU9250_ADDRESS  = 0x69;   // Device address when ADO = 1
-#else
-static const uint8_t MPU9250_ADDRESS  = 0x68;  // Device address when ADO = 0
-#endif  
-
 MPU9250::MPU9250(ByteTransfer * bt)
 {
     _bt = bt;
