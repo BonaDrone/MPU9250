@@ -20,11 +20,4 @@ class ByteTransfer
 
 class I2CTransfer : public ByteTransfer
 {
-    public:
-
-        I2CTransfer(uint8_t address) : _address(address) { }
-
-    protected:
-
-        uint8_t _address;
 };
