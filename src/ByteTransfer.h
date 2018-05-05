@@ -21,4 +21,11 @@ class ByteTransfer
 
 class I2CTransfer
 {
+    public:
+
+        I2CTransfer(uint8_t address) : _address(address) { }
+
+    private:
+
+        uint8_t _address;
 };
