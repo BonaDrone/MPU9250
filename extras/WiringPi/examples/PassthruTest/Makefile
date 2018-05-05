@@ -13,14 +13,17 @@ RPISRC = ../../src
 
 all: $(ALL)
 
-PassthruTest: PassthruTest.o MPU9250.o
-	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU9250.o -lwiringPi
+PassthruTest: PassthruTest.o MPU9250.o WiringPiTransfer.o
+	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU9250.o WiringPiTransfer.o -lwiringPi
 
 PassthruTest.o: PassthruTest.cpp 
 	g++ -std=c++11 -Wall -I$(RPISRC) -I$(MPUSRC) -c PassthruTest.cpp
 
 MPU9250.o: $(MPUSRC)/MPU9250.cpp 
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU9250.cpp
+
+WiringPiTransfer.o: $(RPISRC)/WiringPiTransfer.cpp 
+	g++ -std=c++11 -Wall -I$(RPISRC) -I$(MPUSRC) -c $(RPISRC)/WiringPiTransfer.cpp
 
 clean:
 	rm -f $(ALL) *.o *~

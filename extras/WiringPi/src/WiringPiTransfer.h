@@ -13,7 +13,7 @@ class WiringPiI2C : public I2CTransfer {
 
         WiringPiI2C(uint8_t address) : I2CTransfer(address) { }
 
-        void    begin(void) override;
+        void    begin(void);
 
         void    writeRegister(uint8_t subAddress, uint8_t data) override;
         uint8_t readRegister(uint8_t subAddress) override;

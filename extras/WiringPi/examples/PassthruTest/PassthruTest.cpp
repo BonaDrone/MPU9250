@@ -33,7 +33,6 @@ sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rat
 sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
  */
 
-/*
 static const uint8_t Gscale     = GFS_250DPS;
 static const uint8_t Ascale     = AFS_2G;
 static const uint8_t Mscale     = MFS_16BITS;
@@ -44,15 +43,15 @@ static const uint8_t sampleRate = 0x04;
 static float aRes, gRes, mRes;
 
 // Pin definitions
-static const uint8_t intPin = 8;   //  MPU9250 interrupt
-static const uint8_t ledPin = 13; // red led
+//static const uint8_t intPin = 8;   //  MPU9250 interrupt
+//static const uint8_t ledPin = 13; // red led
 
 // Interrupt support 
-static bool gotNewData = false;
-static void myinthandler()
-{
-    gotNewData = true;
-}
+//static bool gotNewData = false;
+//static void myinthandler()
+//{
+//    gotNewData = true;
+//}
 
 // Factory mag calibration and mag bias
 static float   magCalibration[3]; 
@@ -61,13 +60,12 @@ static float   magCalibration[3];
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
-// Create a byte-transfer object for Arduino I^2C
-ArduinoI2C mpu(MPU9250::MPU9250_ADDRESS);
-ArduinoI2C mag(MPU9250::AK8963_ADDRESS);
+// Create a byte-transfer object for WiringPi I^2C
+WiringPiI2C mpu(MPU9250::MPU9250_ADDRESS);
+WiringPiI2C mag(MPU9250::AK8963_ADDRESS);
 
 // Instantiate MPU9250 class in pass-through mode
-static MPU9250Passthru imu = MPU9250Passthru(&mpu, &mag); 
-*/
+//static MPU9250Passthru imu = MPU9250Passthru(&mpu, &mag); 
 
 static void setup()
 {
