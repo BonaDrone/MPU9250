@@ -39,9 +39,9 @@ class MPU9250 {
 
     public: 
 
-        //const uint8_t MPU9250_ADDRESS = 0x69; // When AD0 = 1
-        const uint8_t MPU9250_ADDRESS = 0x68;   // When AD0 = 0
-        const uint8_t AK8963_ADDRESS  = 0x0C;
+        //static const uint8_t MPU9250_ADDRESS = 0x69; // When AD0 = 1
+        static const uint8_t MPU9250_ADDRESS = 0x68;   // When AD0 = 0
+        static const uint8_t AK8963_ADDRESS  = 0x0C;
 
         uint8_t getMPU9250ID(void);
         void    resetMPU9250(void);
@@ -247,7 +247,7 @@ class MPU9250Passthru : public MPU9250 {
 
     public:
 
-        MPU9250Passthru(ByteTransfer * bt) : MPU9250(bt) { }
+        MPU9250Passthru(I2CTransfer * mpu, I2CTransfer * mag) : MPU9250(mpu) { _mag = mag; }
 
         void initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate) { MPU9250::initMPU9250(Ascale, Gscale, sampleRate, true);  }
 
@@ -260,6 +260,10 @@ class MPU9250Passthru : public MPU9250 {
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
+
+    private:
+
+        I2CTransfer * _mag;
 };
 
 class MPU9250Master : public MPU9250 {
