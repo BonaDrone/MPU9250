@@ -202,7 +202,7 @@ void loop()
 
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
-    if(gotNewData) {   // On interrupt, read data
+    if (gotNewData) {   // On interrupt, read data
 
         gotNewData = false;     // reset gotNewData flag
 

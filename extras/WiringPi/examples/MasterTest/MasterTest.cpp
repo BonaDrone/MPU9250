@@ -132,7 +132,6 @@ static void setup()
         printf("AK8963 initialized for active data mode....\n"); 
 
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
-        /*
         printf("Mag Calibration: Wave device in a figure eight until done!\n");
         delay(4000);
         imu.magcalMPU9250(magBias, magScale);
@@ -150,7 +149,6 @@ static void setup()
         printf("X-Axis sensitivity adjustment value %+2.2f\n", magCalibration[0]);
         printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
         printf("Z-Axis sensitivity adjustment value %+2.2f\n", magCalibration[2]);
-        */
         
         wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250
     }

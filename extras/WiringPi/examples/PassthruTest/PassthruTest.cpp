@@ -137,7 +137,6 @@ static void setup()
         printf("AK8963 initialized for active data mode....\n"); 
 
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
-        /*
         printf("Mag Calibration: Wave device in a figure eight until done!\n");
         delay(4000);
         imu.magcalMPU9250(magBias, magScale);
@@ -155,7 +154,6 @@ static void setup()
         printf("X-Axis sensitivity adjustment value %+2.2f\n", magCalibration[0]);
         printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
         printf("Z-Axis sensitivity adjustment value %+2.2f\n", magCalibration[2]);
-        */
         
         wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250
     }
@@ -168,7 +166,6 @@ static void setup()
     delay(3000);                // wait a bit before looping
 }
 
-/*
 static void loop()
 {  
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
@@ -176,11 +173,11 @@ static void loop()
 
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
-    if(gotNewData) {   // On interrupt, read data
+    if (gotNewData) {   // On interrupt, read data
 
        gotNewData = false;     // reset gotNewData flag
 
-        if (imu.checkNewData())  { // data ready interrupt is detected
+        if (imu.checkNewAccelGyroData())  { // data ready interrupt is detected
 
             imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
 
@@ -194,6 +191,7 @@ static void loop()
             gy = (float)MPU9250Data[5]*gRes;  
             gz = (float)MPU9250Data[6]*gRes; 
 
+            if(imu.checkNewMagData()) { // wait for magnetometer data ready bit to be set
             int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 
             imu.readMagData(magCount);  // Read the x/y/z adc values
@@ -207,6 +205,7 @@ static void loop()
             mx *= magScale[0];
             my *= magScale[1];
             mz *= magScale[2]; 
+            }
         }
 
         // Report at 1Hz
@@ -229,15 +228,15 @@ static void loop()
 
     } // if got new data
 }
-*/
+
 
 int main(int argc, char ** argv)
 {
     setup();
 
-    //while (true) {
-    //    loop();
-    //}
+    while (true) {
+        loop();
+    }
 
     return 0;
 }
