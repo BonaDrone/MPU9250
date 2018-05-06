@@ -1,5 +1,5 @@
 # 
-# Makefile for MPU9250 I2C example
+# Makefile for MPU9250 WiringPi I2C master-mode example
 #
 #
 # Copyright (c) 2018 Simon D. Levy

@@ -1,5 +1,5 @@
 # 
-# Makefile for MPU9250 I2C example
+# Makefile for MPU9250 WiringPi I2C pass-through-mode example
 #
 #
 # Copyright (c) 2018 Simon D. Levy
@@ -24,6 +24,12 @@ MPU9250.o: $(MPUSRC)/MPU9250.cpp
 
 WiringPiTransfer.o: $(RPISRC)/WiringPiTransfer.cpp 
 	g++ -std=c++11 -Wall -I$(RPISRC) -I$(MPUSRC) -c $(RPISRC)/WiringPiTransfer.cpp
+
+run: PassthruTest
+	./PassthruTest
+
+edit:
+	vim PassthruTest.cpp
 
 clean:
 	rm -f $(ALL) *.o *~
