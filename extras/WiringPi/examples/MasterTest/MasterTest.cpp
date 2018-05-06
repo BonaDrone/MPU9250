@@ -4,7 +4,7 @@
  *
  * Adapted for WiringPi by Simon D. Levy April 2018
  *  
- * Demonstrate basic MPU-9250 functionality in pass-through mode including
+ * Demonstrate basic MPU-9250 functionality in master mode including
  * parameterizing the register addresses, initializing the sensor, getting
  * properly scaled accelerometer, gyroscope, and magnetometer data out. 
  *
@@ -62,10 +62,9 @@ static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};
 
 // Create a byte-transfer object for WiringPi I^2C
 WiringPiI2C mpu(MPU9250::MPU9250_ADDRESS);
-WiringPiI2C mag(MPU9250::AK8963_ADDRESS);
 
 // Instantiate MPU9250 class in pass-through mode
-static MPU9250Passthru imu = MPU9250Passthru(&mpu, &mag); 
+static MPU9250Master imu = MPU9250Master(&mpu); 
 
 static void setup()
 {
