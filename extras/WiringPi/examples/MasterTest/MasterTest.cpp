@@ -49,7 +49,7 @@ static float aRes, gRes, mRes;
 //static const uint8_t ledPin = 13; // red led
 
 // Interrupt support 
-//static bool gotNewData = false;
+static bool gotNewData;
 //static void myinthandler()
 //{
 //    gotNewData = true;
@@ -165,17 +165,18 @@ static void setup()
 
 static void loop()
 {  
-    /*
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
+
+    gotNewData = true; // XXX should be set by interrupt service routine
 
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
     if(gotNewData) {   // On interrupt, read data
 
-        gotNewData = false;     // reset gotNewData flag
+        //gotNewData = false;     // reset gotNewData flag
 
-        if (imu.checkNewAccelGyroData())  { // data ready interrupt is detected
+        if (imu.checkNewData())  { // data ready interrupt is detected
 
             imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
 
@@ -189,22 +190,19 @@ static void loop()
             gy = (float)MPU9250Data[5]*gRes;  
             gz = (float)MPU9250Data[6]*gRes; 
 
-            if(imu.checkNewMagData()) { // wait for magnetometer data ready bit to be set
+            int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 
-                int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
+            imu.readMagData(magCount);  // Read the x/y/z adc values
 
-                imu.readMagData(magCount);  // Read the x/y/z adc values
-
-                // Calculate the magnetometer values in milliGauss
-                // Include factory calibration per data sheet and user environmental corrections
-                // Get actual magnetometer value, this depends on scale being set
-                mx = (float)magCount[0]*mRes*magCalibration[0] - magBias[0];  
-                my = (float)magCount[1]*mRes*magCalibration[1] - magBias[1];  
-                mz = (float)magCount[2]*mRes*magCalibration[2] - magBias[2];  
-                mx *= magScale[0];
-                my *= magScale[1];
-                mz *= magScale[2]; 
-            }
+            // Calculate the magnetometer values in milliGauss
+            // Include factory calibration per data sheet and user environmental corrections
+            // Get actual magnetometer value, this depends on scale being set
+            mx = (float)magCount[0]*mRes*magCalibration[0] - magBias[0];  
+            my = (float)magCount[1]*mRes*magCalibration[1] - magBias[1];  
+            mz = (float)magCount[2]*mRes*magCalibration[2] - magBias[2];  
+            mx *= magScale[0];
+            my *= magScale[1];
+            mz *= magScale[2]; 
         }
 
         // Report at 1Hz
@@ -215,50 +213,26 @@ static void loop()
 
             msec_prev = msec_curr;
 
-            printf("ax = ");
-            printf((int)1000*ax);  
-            printf(" ay = ");
-            printf((int)1000*ay); 
-            printf(" az = ");
-            printf((int)1000*az);
-            printf(" mg");
-            printf("gx = ");
-            printf( gx, 2); 
-            printf(" gy = ");
-            printf( gy, 2); 
-            printf(" gz = ");
-            printf( gz, 2);
-            printf(" deg/s");
-            printf("mx = ");
-            printf( (int)mx ); 
-            printf(" my = ");
-            printf( (int)my ); 
-            printf(" mz = ");
-            printf( (int)mz );
-            printf(" mG");
+            printf("ax = %d  ay = %d  az = %d mg\n", (int)(1000*ax), (int)(1000*ay), (int)(1000*az));
+            printf("gx = %+2.2f  gy = %+2.2f  gz = %+2.2f deg/s\n", gx, gy, gz);
+            printf("mx = %d  my = %d  mz = %d mG\n", (int)mx, (int)my, (int)mz);
 
             float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
 
             // Print temperature in degrees Centigrade      
-            printf("Gyro temperature is ");  
-            printf(temperature, 1);  
-            printf(" degrees C"); 
-
+            printf("Gyro temperature is %+1.1f degrees C\n", temperature);  
         }
 
     } // if got new data
-
-    */
 }
 
 int main(int argc, char ** argv)
 {
     setup();
 
-    /*
     while (true) {
         loop();
-    }*/
+    }
 
     return 0;
 }
