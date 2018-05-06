@@ -23,3 +23,22 @@ class WiringPiI2C : public I2CTransfer {
 
         int8_t _fd;
 };
+
+class WiringPiSPI : public SPITransfer {
+
+    public:
+
+        WiringPiSPI(uint8_t bus, uint32_t speed) { _bus = bus; _speed = speed; }
+
+        void    begin(void);
+
+        void    writeRegister(uint8_t subAddress, uint8_t data) override;
+        uint8_t readRegister(uint8_t subAddress) override;
+        void    readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+
+    private:
+
+        uint8_t  _bus;
+        uint32_t _speed;
+
+};

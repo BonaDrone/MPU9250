@@ -1,4 +1,4 @@
-/*  Header file for abstract ByteTransfer class supporting I^2C and SPI
+/*  Abstract ByteTransfer class supporting I^2C and SPI
  *
  *  Copyright 2018 Simon D. Levy
  *  
@@ -25,4 +25,8 @@ class I2CTransfer : public ByteTransfer
         I2CTransfer(uint8_t address) { _address = address;}
 
         uint8_t _address;
+};
+
+class SPITransfer : public ByteTransfer
+{
 };
