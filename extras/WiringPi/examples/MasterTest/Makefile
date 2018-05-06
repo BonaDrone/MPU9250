@@ -25,5 +25,11 @@ MPU9250.o: $(MPUSRC)/MPU9250.cpp
 WiringPiTransfer.o: $(RPISRC)/WiringPiTransfer.cpp 
 	g++ -std=c++11 -Wall -I$(RPISRC) -I$(MPUSRC) -c $(RPISRC)/WiringPiTransfer.cpp
 
+run: MasterTest
+	./MasterTest
+
+edit:
+	vim MasterTest.cpp
+
 clean:
 	rm -f $(ALL) *.o *~
