@@ -23,7 +23,7 @@ I have tested this library on the following hardware:
 * [Butterfly STM32L433](https://www.tindie.com/products/TleraCorp/butterfly-stm32l433-development-board/) 
 development board, I<sup>2</sup>C
 
-* Raspberry Pi 3, I<sup>2</sup>
+* Raspberry Pi 3, I<sup>2</sup>C
 
 * Raspberry Pi Zero with [PXFMini](http://erlerobotics.com/blog/product/pxfmini/) autopilot shield, SPI 
 
