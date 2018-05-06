@@ -84,12 +84,10 @@ static void setup()
     uint8_t c = imu.getMPU9250ID();
     printf("MPU9250  I AM %02X  I should be 0x71\n", c);
     delay(1000);
-    /*
-
 
     if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
     
-        printf("MPU9250 is online...");
+        printf("MPU9250 is online...\n");
 
         imu.resetMPU9250(); // start by resetting MPU9250
 
@@ -97,24 +95,12 @@ static void setup()
 
         imu.SelfTest(SelfTest); // Start by performing self test and reporting values
 
-        printf("x-axis self test: acceleration trim within : "); 
-        printf(SelfTest[0],1); 
-        printf("% of factory value");
-        printf("y-axis self test: acceleration trim within : "); 
-        printf(SelfTest[1],1); 
-        printf("% of factory value");
-        printf("z-axis self test: acceleration trim within : "); 
-        printf(SelfTest[2],1); 
-        printf("% of factory value");
-        printf("x-axis self test: gyration trim within : "); 
-        printf(SelfTest[3],1); 
-        printf("% of factory value");
-        printf("y-axis self test: gyration trim within : "); 
-        printf(SelfTest[4],1); 
-        printf("% of factory value");
-        printf("z-axis self test: gyration trim within : "); 
-        printf(SelfTest[5],1); 
-        printf("% of factory value");
+        printf("x-axis self test: acceleration trim within : %+3.3f%% of factory value\n", SelfTest[0]); 
+        printf("y-axis self test: acceleration trim within : %+3.3f%% of factory value\n", SelfTest[1]); 
+        printf("z-axis self test: acceleration trim within : %+3.3f%% of factory value\n", SelfTest[2]); 
+        printf("x-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[3]); 
+        printf("y-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[4]); 
+        printf("z-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[5]); 
         delay(1000);
 
         // get sensor resolutions, only need to do this once
@@ -122,6 +108,7 @@ static void setup()
         gRes = imu.getGres(Gscale);
         mRes = imu.getMres(Mscale);
 
+        /*
         // Comment out if using pre-measured, pre-stored offset accel/gyro biases
         imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
         printf("accel biases (mg)");
@@ -173,19 +160,16 @@ static void setup()
         printf(magCalibration[2], 2);
 
         attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
+        */
 
     }
     else {
 
-        printf("Could not connect to MPU9250: 0x");
-        printf(c, HEX);
-        while(1) ; // Loop forever if communication doesn't happen
+        printf("Could not connect to MPU9250: 0x%02x", c);
+        while(true) ; // Loop forever if communication doesn't happen
     }
 
-    digitalWrite(ledPin, LOW); // turn off led when using flash memory
-
     delay(3000);                // wait a bit before looping
-    */
 }
 
 static void loop()
