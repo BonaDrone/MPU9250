@@ -61,11 +61,12 @@ static float   magCalibration[3];
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
-// Create a byte-transfer object for WiringPi I^2C
-WiringPiI2C mpu(MPU9250::MPU9250_ADDRESS);
+// Create byte-transfer objects for WiringPi I^2C
+WiringPiI2C mpu(MPU9250::MPU9250_ADDRESS); 
+WiringPiI2C mag(MPU9250::AK8963_ADDRESS); 
 
 // Instantiate MPU9250 class in master mode
-static MPU9250Master imu = MPU9250Master(&mpu); 
+static MPU9250Passthru imu = MPU9250Passthru(&mpu, &mag); 
 
 static void setup()
 {
@@ -122,6 +123,10 @@ static void setup()
         imu.initMPU9250(Ascale, Gscale, sampleRate); 
         printf("MPU9250 initialized for active data mode....\n"); 
 
+        // Now we can start the I^2C connection to the AK8963
+        mag.begin();
+        delay(100);
+
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
         uint8_t d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
         printf("AK8963  I AM 0x%02x  I should be 0x48\n", d);
@@ -163,6 +168,7 @@ static void setup()
     delay(3000);                // wait a bit before looping
 }
 
+/*
 static void loop()
 {  
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
@@ -223,14 +229,15 @@ static void loop()
 
     } // if got new data
 }
+*/
 
 int main(int argc, char ** argv)
 {
     setup();
 
-    while (true) {
-        loop();
-    }
+    //while (true) {
+    //    loop();
+    //}
 
     return 0;
 }
