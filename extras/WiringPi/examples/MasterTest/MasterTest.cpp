@@ -132,29 +132,25 @@ static void setup()
         imu.initAK8963(Mscale, Mmode, magCalibration);
         printf("AK8963 initialized for active data mode....\n"); 
 
-        /*
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
-        printf("Mag Calibration: Wave device in a figure eight until done!");
+        printf("Mag Calibration: Wave device in a figure eight until done!\n");
         delay(4000);
         imu.magcalMPU9250(magBias, magScale);
-        printf("Mag Calibration done!");
-        printf("AK8963 mag biases (mG)");
-        printf(magBias[0]);
-        printf(magBias[1]);
-        printf(magBias[2]); 
-        printf("AK8963 mag scale (mG)");
-        printf(magScale[0]);
-        printf(magScale[1]);
-        printf(magScale[2]); 
+        printf("Mag Calibration done!\n");
+        printf("AK8963 mag biases (mG)\n");
+        printf("%f\n", magBias[0]);
+        printf("%f\n", magBias[1]);
+        printf("%f\n", magBias[2]); 
+        printf("AK8963 mag scale (mG)\n");
+        printf("%f\n", magScale[0]);
+        printf("%f\n", magScale[1]);
+        printf("%f\n", magScale[2]); 
         delay(2000); // add delay to see results before serial spew of data
-        printf("Calibration values: ");
-        printf("X-Axis sensitivity adjustment value ");
-        printf(magCalibration[0], 2);
-        printf("Y-Axis sensitivity adjustment value ");
-        printf(magCalibration[1], 2);
-        printf("Z-Axis sensitivity adjustment value ");
-        printf(magCalibration[2], 2);
-        */
+        printf("Calibration values:\n");
+        printf("X-Axis sensitivity adjustment value %+2.2f\n", magCalibration[0]);
+        printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
+        printf("Z-Axis sensitivity adjustment value %+2.2f\n", magCalibration[2]);
+        
         //attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
 
     }
