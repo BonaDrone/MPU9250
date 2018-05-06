@@ -45,15 +45,14 @@ static const uint8_t sampleRate = 0x04;
 static float aRes, gRes, mRes;
 
 // Pin definitions
-//static const uint8_t intPin = 8;   //  MPU9250 interrupt
-//static const uint8_t ledPin = 13; // red led
+static const uint8_t intPin = 0;   //  MPU9250 interrupt
 
 // Interrupt support 
 static bool gotNewData;
-//static void myinthandler()
-//{
-//    gotNewData = true;
-//}
+static void myinthandler()
+{
+    gotNewData = true;
+}
 
 // Factory mag calibration and mag bias
 static float   magCalibration[3]; 
@@ -70,13 +69,13 @@ static MPU9250Master imu = MPU9250Master(&mpu);
 
 static void setup()
 {
+    // Setup WirinPi
+    wiringPiSetup();
+
     // Start I^2 on the MPU9250 address
     mpu.begin();
 
     delay(100);
-
-    // Set up the interrupt pin, it's set as active high, push-pull
-    //pinMode(intPin, INPUT);
 
     // Configure the MPU9250 
     // Read the WHO_AM_I register, this is a good test of communication
@@ -133,6 +132,7 @@ static void setup()
         printf("AK8963 initialized for active data mode....\n"); 
 
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
+        /*
         printf("Mag Calibration: Wave device in a figure eight until done!\n");
         delay(4000);
         imu.magcalMPU9250(magBias, magScale);
@@ -150,9 +150,9 @@ static void setup()
         printf("X-Axis sensitivity adjustment value %+2.2f\n", magCalibration[0]);
         printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
         printf("Z-Axis sensitivity adjustment value %+2.2f\n", magCalibration[2]);
+        */
         
-        //attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
-
+        wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250
     }
     else {
 
@@ -168,13 +168,11 @@ static void loop()
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
 
-    gotNewData = true; // XXX should be set by interrupt service routine
-
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
     if(gotNewData) {   // On interrupt, read data
 
-        //gotNewData = false;     // reset gotNewData flag
+       gotNewData = false;     // reset gotNewData flag
 
         if (imu.checkNewData())  { // data ready interrupt is detected
 
