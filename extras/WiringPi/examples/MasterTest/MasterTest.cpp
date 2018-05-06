@@ -123,20 +123,16 @@ static void setup()
         imu.initMPU9250(Ascale, Gscale, sampleRate); 
         printf("MPU9250 initialized for active data mode....\n"); 
 
-        /*
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
-        byte d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
-        printf("AK8963 ");
-        printf("I AM ");
-        printf(d, HEX);
-        printf(" I should be ");
-        printf(0x48, HEX);
+        uint8_t d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
+        printf("AK8963  I AM 0x%02x  I should be 0x48\n", d);
         delay(1000); 
 
         // Get magnetometer calibration from AK8963 ROM
         imu.initAK8963(Mscale, Mmode, magCalibration);
-        printf("AK8963 initialized for active data mode...."); 
+        printf("AK8963 initialized for active data mode....\n"); 
 
+        /*
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
         printf("Mag Calibration: Wave device in a figure eight until done!");
         delay(4000);
