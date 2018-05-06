@@ -4,7 +4,7 @@
  *
  * Adapted for WiringPi by Simon D. Levy April 2018
  *  
- * Demonstrate basic MPU-9250 functionality in master mode including
+ * Demonstrate basic MPU-9250 functionality in SPI master mode including
  * parameterizing the register addresses, initializing the sensor, getting
  * properly scaled accelerometer, gyroscope, and magnetometer data out. 
  *
@@ -49,20 +49,22 @@ static const uint8_t intPin = 0;   //  MPU9250 interrupt
 
 // Interrupt support 
 static bool gotNewData;
+/*
 static void myinthandler()
 {
     gotNewData = true;
 }
+*/
 
 // Factory mag calibration and mag bias
-static float   magCalibration[3]; 
+static float magCalibration[3]; 
 
 // Bias corrections for gyro and accelerometer. These can be measured once and
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
-// Create a byte-transfer object for WiringPi I^2C
-WiringPiI2C mpu(MPU9250::MPU9250_ADDRESS);
+// Create a byte-transfer object for WiringPi SPI on bus 1, speed 400 kHz
+WiringPiSPI mpu(1, 400000);
 
 // Instantiate MPU9250 class in master mode
 static MPU9250Master imu = MPU9250Master(&mpu); 
@@ -72,7 +74,7 @@ static void setup()
     // Setup WirinPi
     wiringPiSetup();
 
-    // Start I^2 on the MPU9250 address
+    // Start SPI
     mpu.begin();
 
     delay(100);
@@ -150,7 +152,7 @@ static void setup()
         printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
         printf("Z-Axis sensitivity adjustment value %+2.2f\n", magCalibration[2]);
         
-        wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250
+        //wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250
     }
     else {
 
@@ -166,11 +168,13 @@ static void loop()
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
 
+    gotNewData = true; // XXX avoid interrupts for now
+
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
     if(gotNewData) {   // On interrupt, read data
 
-       gotNewData = false;     // reset gotNewData flag
+       //gotNewData = false;     // reset gotNewData flag
 
         if (imu.checkNewData())  { // data ready interrupt is detected
 

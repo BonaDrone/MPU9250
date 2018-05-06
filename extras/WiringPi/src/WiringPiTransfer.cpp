@@ -52,6 +52,7 @@ void WiringPiSPI::writeRegister(uint8_t subAddress, uint8_t data)
 uint8_t WiringPiSPI::readRegister(uint8_t subAddress)
 {
     uint8_t data = 0;
+    readRegisters(subAddress, 1, &data);
     return data;                             
 }
 
