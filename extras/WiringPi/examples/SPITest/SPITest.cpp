@@ -36,7 +36,7 @@ sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 20
  */
 
 static const uint8_t Gscale     = GFS_250DPS;
-static const uint8_t Ascale     = AFS_2G;
+static const uint8_t Ascale     = AFS_4G;//AFS_2G;
 static const uint8_t Mscale     = MFS_16BITS;
 static const uint8_t Mmode      = M_100Hz;
 static const uint8_t sampleRate = 0x04;         
@@ -45,16 +45,14 @@ static const uint8_t sampleRate = 0x04;
 static float aRes, gRes, mRes;
 
 // Pin definitions
-static const uint8_t intPin = 0;   //  MPU9250 interrupt
+static const uint8_t intPin = 4;   //  MPU9250 interrupt on PXFMini
 
 // Interrupt support 
 static bool gotNewData;
-/*
 static void myinthandler()
 {
     gotNewData = true;
 }
-*/
 
 // Factory mag calibration and mag bias
 static float magCalibration[3]; 
@@ -110,7 +108,7 @@ static void setup()
         mRes = imu.getMres(Mscale);
 
         // Comment out if using pre-measured, pre-stored offset accel/gyro biases
-        imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
+        //imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
         printf("accel biases (mg)\n");
         printf("%f\n", 1000.*accelBias[0]);
         printf("%f\n", 1000.*accelBias[1]);
@@ -120,7 +118,7 @@ static void setup()
         printf("%f\n", gyroBias[1]);
         printf("%f\n", gyroBias[2]);
         delay(1000); 
-
+        
         imu.initMPU9250(Ascale, Gscale, sampleRate); 
         printf("MPU9250 initialized for active data mode....\n"); 
 
@@ -134,6 +132,7 @@ static void setup()
         printf("AK8963 initialized for active data mode....\n"); 
 
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
+        
         printf("Mag Calibration: Wave device in a figure eight until done!\n");
         delay(4000);
         imu.magcalMPU9250(magBias, magScale);
@@ -152,7 +151,7 @@ static void setup()
         printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
         printf("Z-Axis sensitivity adjustment value %+2.2f\n", magCalibration[2]);
         
-        //wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250
+        wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250
     }
     else {
 

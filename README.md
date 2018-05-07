@@ -30,4 +30,4 @@ development board, I<sup>2</sup>C
 Arduino users can just clone this repository into their Arduino libraries folder, the run the examples in the
 usual way (<b>File</b> / <b>Examples</b> / <b>MPU9250</b>).  RaspberryPi users should download and install
 [WiringPi](http://wiringpi.com/), then cd to one of the example folders in 
-<b>MPU9250/extras/WiringPi/examples</b>, and type <b>make run</b>.
+<b>MPU9250/extras/WiringPi/examples</b>, and type <b>sudo make run</b>.
