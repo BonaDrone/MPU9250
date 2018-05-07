@@ -13,7 +13,11 @@
  * Library may be used freely and without limit with attribution.
  */
 
+#if defined(__MK20DX256__)  
+#include <i2c_t3.h>   
+#else
 #include <Wire.h>   
+#endif
 
 #include "MPU9250.h"
 #include "ArduinoTransfer.h"
@@ -72,9 +76,14 @@ void setup()
     Serial.begin(115200);
     delay(1000);
 
-    // Start I^2C
+    // Start I^2C 
+#if defined(__MK20DX256__)  
+    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_16_17, I2C_PULLUP_EXT, I2C_RATE_100); 
+#else
     Wire.begin(); 
     Wire.setClock(400000); 
+#endif
+
     delay(1000);
 
     // Set up the interrupt pin, it's set as active high, push-pull
