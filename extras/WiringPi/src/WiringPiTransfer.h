@@ -16,7 +16,6 @@ class WiringPiI2C : public I2CTransfer {
         void    begin(void);
 
         void    writeRegister(uint8_t subAddress, uint8_t data) override;
-        uint8_t readRegister(uint8_t subAddress) override;
         void    readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 
     private:
@@ -33,7 +32,6 @@ class WiringPiSPI : public SPITransfer {
         void    begin(void);
 
         void    writeRegister(uint8_t subAddress, uint8_t data) override;
-        uint8_t readRegister(uint8_t subAddress) override;
         void    readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 
     private:

@@ -14,7 +14,6 @@ class ByteTransfer
     public: 
 
         virtual void    writeRegister(uint8_t subAddress, uint8_t data) = 0;
-        virtual uint8_t readRegister(uint8_t subAddress) = 0;
         virtual void    readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
 };
 

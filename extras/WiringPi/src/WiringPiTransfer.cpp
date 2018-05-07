@@ -21,13 +21,6 @@ void WiringPiI2C::writeRegister(uint8_t subAddress, uint8_t data)
 	wiringPiI2CWriteReg8(_fd, subAddress, data);
 }
 
-uint8_t WiringPiI2C::readRegister(uint8_t subAddress)
-{
-    uint8_t data = 0;
-    readRegisters(subAddress, 1, &data);
-    return data;                             
-}
-
 void WiringPiI2C::readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest)
 {  
     for (uint8_t i=0; i<count; ++i) {
@@ -47,13 +40,6 @@ void WiringPiSPI::writeRegister(uint8_t subAddress, uint8_t data)
     buff2[0] = subAddress;
     buff2[1] = data;
     wiringPiSPIDataRW(_bus, &buff2[0], 2);
-}
-
-uint8_t WiringPiSPI::readRegister(uint8_t subAddress)
-{
-    uint8_t data = 0;
-    readRegisters(subAddress, 1, &data);
-    return data;                             
 }
 
 void WiringPiSPI::readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest)

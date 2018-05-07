@@ -18,17 +18,6 @@ void ArduinoI2C::writeRegister(uint8_t subAddress, uint8_t data)
   Wire.endTransmission();           // Send the Tx buffer
 }
 
-uint8_t ArduinoI2C::readRegister(uint8_t subAddress)
-{
-  uint8_t data = 0;                        // `data` will store the register data   
-  Wire.beginTransmission(_address);         // Initialize the Tx buffer
-  Wire.write(subAddress);                  // Put slave register address in Tx buffer
-  Wire.endTransmission(false);             // Send the Tx buffer, but send a restart to keep connection alive
-  Wire.requestFrom(_address, 1);            // Read two bytes from slave register address on ArduinoI2C 
-  data = Wire.read();                      // Fill Rx buffer with result
-  return data;                             // Return data read from slave register
-}
-
 void ArduinoI2C::readRegisters(uint8_t subAddress, uint8_t count, uint8_t * dest)
 {  
   Wire.beginTransmission(_address);   // Initialize the Tx buffer

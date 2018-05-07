@@ -229,6 +229,8 @@ class MPU9250 {
         const uint8_t I2C_READ_FLAG     = 0x80;
         const uint8_t I2C_MST_EN        = 0x20;
 
+        uint8_t readMPU9250Register(uint8_t subAddress);
+
         uint8_t readAK8963Register(uint8_t subAddress);
 
         bool    _passthru;

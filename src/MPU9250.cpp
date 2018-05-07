@@ -28,8 +28,7 @@ MPU9250::MPU9250(ByteTransfer * bt)
 
 uint8_t MPU9250::getMPU9250ID()
 {
-    uint8_t c = _mpu->readRegister(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
-    return c;
+    return readMPU9250Register(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
 }
 
 float MPU9250::getMres(uint8_t Mscale) {
@@ -113,7 +112,7 @@ void MPU9250::accelWakeOnMotion()
     // Set accelerometer sample rate configuration
     // It is possible to get a 4 kHz sample rate from the accelerometer by choosing 1 for
     // accel_fchoice_b bit [3]; in this case the bandwidth is 1.13 kHz
-    uint8_t c = _mpu->readRegister(ACCEL_CONFIG2); // get current ACCEL_CONFIG2 register value
+    uint8_t c = readMPU9250Register(ACCEL_CONFIG2); // get current ACCEL_CONFIG2 register value
     c = c & ~0x0F; // Clear accel_fchoice_b (bit 3) and A_DLPFG (bits [2:0])  
     c = c | 0x01;  // Set accelerometer rate to 1 kHz and bandwidth to 184 Hz
     _mpu->writeRegister(ACCEL_CONFIG2, c); // Write new ACCEL_CONFIG2 register value
@@ -137,7 +136,7 @@ void MPU9250::accelWakeOnMotion()
      */
     _mpu->writeRegister(LP_ACCEL_ODR, 0x02);
 
-    c = _mpu->readRegister(PWR_MGMT_1);
+    c = readMPU9250Register(PWR_MGMT_1);
     _mpu->writeRegister(PWR_MGMT_1, c | 0x20);     // Write bit 5 to enable accel cycling
 
     gyromagSleep();
@@ -186,12 +185,12 @@ void MPU9250::readGyroData(int16_t * destination)
 
 bool MPU9250Passthru::checkNewAccelGyroData()
 {
-    return (_mpu->readRegister(INT_STATUS) & 0x01);
+    return (readMPU9250Register(INT_STATUS) & 0x01);
 }
 
 bool MPU9250::checkWakeOnMotion()
 {
-    return (_mpu->readRegister(INT_STATUS) & 0x40);
+    return (readMPU9250Register(INT_STATUS) & 0x40);
 }
 
 
@@ -230,7 +229,7 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bo
 
     // Set gyroscope full scale range
     // Range selects FS_SEL and AFS_SEL are 0 - 3, so 2-bit values are left-shifted into positions 4:3
-    uint8_t c = _mpu->readRegister(GYRO_CONFIG); // get current GYRO_CONFIG register value
+    uint8_t c = readMPU9250Register(GYRO_CONFIG); // get current GYRO_CONFIG register value
     // c = c & ~0xE0; // Clear self-test bits [7:5] 
     c = c & ~0x02; // Clear Fchoice bits [1:0] 
     c = c & ~0x18; // Clear AFS bits [4:3]
@@ -239,7 +238,7 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bo
     _mpu->writeRegister(GYRO_CONFIG, c ); // Write new GYRO_CONFIG value to register
 
     // Set accelerometer full-scale range configuration
-    c = _mpu->readRegister(ACCEL_CONFIG); // get current ACCEL_CONFIG register value
+    c = readMPU9250Register(ACCEL_CONFIG); // get current ACCEL_CONFIG register value
     // c = c & ~0xE0; // Clear self-test bits [7:5] 
     c = c & ~0x18;  // Clear AFS bits [4:3]
     c = c | Ascale << 3; // Set full scale range for the accelerometer 
@@ -248,7 +247,7 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bo
     // Set accelerometer sample rate configuration
     // It is possible to get a 4 kHz sample rate from the accelerometer by choosing 1 for
     // accel_fchoice_b bit [3]; in this case the bandwidth is 1.13 kHz
-    c = _mpu->readRegister(ACCEL_CONFIG2); // get current ACCEL_CONFIG2 register value
+    c = readMPU9250Register(ACCEL_CONFIG2); // get current ACCEL_CONFIG2 register value
     c = c & ~0x0F; // Clear accel_fchoice_b (bit 3) and A_DLPFG (bits [2:0])  
     c = c | 0x03;  // Set accelerometer rate to 1 kHz and bandwidth to 41 Hz
     _mpu->writeRegister(ACCEL_CONFIG2, c); // Write new ACCEL_CONFIG2 register value
@@ -529,12 +528,12 @@ void MPU9250::SelfTest(float * destination) // Should return percent deviation f
     delay(25);  // Delay a while to let the device stabilize
 
     // Retrieve accelerometer and gyro factory Self-Test Code from USR_Reg
-    selfTest[0] = _mpu->readRegister(SELF_TEST_X_ACCEL); // X-axis accel self-test results
-    selfTest[1] = _mpu->readRegister(SELF_TEST_Y_ACCEL); // Y-axis accel self-test results
-    selfTest[2] = _mpu->readRegister(SELF_TEST_Z_ACCEL); // Z-axis accel self-test results
-    selfTest[3] = _mpu->readRegister(SELF_TEST_X_GYRO);  // X-axis gyro self-test results
-    selfTest[4] = _mpu->readRegister(SELF_TEST_Y_GYRO);  // Y-axis gyro self-test results
-    selfTest[5] = _mpu->readRegister(SELF_TEST_Z_GYRO);  // Z-axis gyro self-test results
+    selfTest[0] = readMPU9250Register(SELF_TEST_X_ACCEL); // X-axis accel self-test results
+    selfTest[1] = readMPU9250Register(SELF_TEST_Y_ACCEL); // Y-axis accel self-test results
+    selfTest[2] = readMPU9250Register(SELF_TEST_Z_ACCEL); // Z-axis accel self-test results
+    selfTest[3] = readMPU9250Register(SELF_TEST_X_GYRO);  // X-axis gyro self-test results
+    selfTest[4] = readMPU9250Register(SELF_TEST_Y_GYRO);  // Y-axis gyro self-test results
+    selfTest[5] = readMPU9250Register(SELF_TEST_Z_GYRO);  // Z-axis gyro self-test results
 
     // Retrieve factory self-test value from self-test code reads
     factoryTrim[0] = (float)(2620/1<<FS)*(pow( 1.01 , ((float)selfTest[0] - 1.0) )); // FT[Xa] factory trim calculation
@@ -596,7 +595,7 @@ bool MPU9250Passthru::checkNewMagData()
 
 bool MPU9250Master::checkNewData(void)
 {
-    return (_mpu->readRegister(INT_STATUS) & 0x01);
+    return (readMPU9250Register(INT_STATUS) & 0x01);
 }
 
 uint8_t MPU9250::getAK8963CID()
@@ -609,7 +608,7 @@ void MPU9250::gyromagSleep()
     uint8_t temp = 0;
     temp = readAK8963Register(AK8963_CNTL);
     writeAK8963Register(AK8963_CNTL, temp & ~(0x0F) ); // Clear bits 0 - 3 to power down magnetometer  
-    temp = _mpu->readRegister(PWR_MGMT_1);
+    temp = readMPU9250Register(PWR_MGMT_1);
     _mpu->writeRegister(PWR_MGMT_1, temp | 0x10);     // Write bit 4 to enable gyro standby
     delay(10); // Wait for all registers to reset 
 }
@@ -619,7 +618,7 @@ void MPU9250::gyromagWake(uint8_t Mmode)
     uint8_t temp = 0;
     temp = readAK8963Register(AK8963_CNTL);
     writeAK8963Register(AK8963_CNTL, temp | Mmode ); // Reset normal mode for  magnetometer  
-    temp = _mpu->readRegister(PWR_MGMT_1);
+    temp = readMPU9250Register(PWR_MGMT_1);
     _mpu->writeRegister(PWR_MGMT_1, 0x01);   // return gyro and accel normal mode
     delay(10); // Wait for all registers to reset 
 }
@@ -659,4 +658,11 @@ void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
     // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
     writeAK8963Register(AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
     delay(10);
+}
+
+uint8_t MPU9250::readMPU9250Register(uint8_t subAddress)
+{
+    uint8_t data = 0;
+    _mpu->readRegisters(subAddress, 1, &data);
+    return data;
 }
