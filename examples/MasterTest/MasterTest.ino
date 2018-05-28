@@ -14,7 +14,6 @@
  */
 
 
-#include <i2c_t3.h>
 #if defined(__MK20DX256__)  
 #include <i2c_t3.h>   
 #else
