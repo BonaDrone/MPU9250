@@ -31,8 +31,8 @@ uint8_t MPU9250::getMPU9250ID()
     return readMPU9250Register(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
 }
 
-float MPU9250::getMres(uint8_t Mscale) {
-    switch (Mscale)
+float MPU9250::getMres(Mscale_t mscale) {
+    switch (mscale)
     {
         // Possible magnetometer scales (and their register bit settings) are:
         // 14 bit resolution (0) and 16 bit resolution (1)
@@ -50,8 +50,8 @@ float MPU9250::getMres(uint8_t Mscale) {
     return 0.f;
 }
 
-float MPU9250::getGres(uint8_t Gscale) {
-    switch (Gscale)
+float MPU9250::getGres(Gscale_t gscale) {
+    switch (gscale)
     {
         // Possible gyro scales (and their register bit settings) are:
         // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11). 
@@ -77,8 +77,8 @@ float MPU9250::getGres(uint8_t Gscale) {
     return 0.f;
 }
 
-float MPU9250::getAres(uint8_t Ascale) {
-    switch (Ascale)
+float MPU9250::getAres(Ascale_t ascale) {
+    switch (ascale)
     {
         // Possible accelerometer scales (and their register bit settings) are:
         // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11). 
@@ -202,7 +202,7 @@ int16_t MPU9250::readGyroTempData()
 }
 
 
-void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bool passthru)
+void MPU9250::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate, bool passthru)
 {  
     // wake up device
     //_mpu->writeRegister(PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors 
@@ -233,7 +233,7 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bo
     // c = c & ~0xE0; // Clear self-test bits [7:5] 
     c = c & ~0x02; // Clear Fchoice bits [1:0] 
     c = c & ~0x18; // Clear AFS bits [4:3]
-    c = c | Gscale << 3; // Set full scale range for the gyro
+    c = c | gscale << 3; // Set full scale range for the gyro
     // c =| 0x00; // Set Fchoice for the gyro to 11 by writing its inverse to bits 1:0 of GYRO_CONFIG
     _mpu->writeRegister(GYRO_CONFIG, c ); // Write new GYRO_CONFIG value to register
 
@@ -241,7 +241,7 @@ void MPU9250::initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bo
     c = readMPU9250Register(ACCEL_CONFIG); // get current ACCEL_CONFIG register value
     // c = c & ~0xE0; // Clear self-test bits [7:5] 
     c = c & ~0x18;  // Clear AFS bits [4:3]
-    c = c | Ascale << 3; // Set full scale range for the accelerometer 
+    c = c | ascale << 3; // Set full scale range for the accelerometer 
     _mpu->writeRegister(ACCEL_CONFIG, c); // Write new ACCEL_CONFIG register value
 
     // Set accelerometer sample rate configuration
@@ -613,11 +613,11 @@ void MPU9250::gyromagSleep()
     delay(10); // Wait for all registers to reset 
 }
 
-void MPU9250::gyromagWake(uint8_t Mmode)
+void MPU9250::gyromagWake(Mmode_t mmode)
 {
     uint8_t temp = 0;
     temp = readAK8963Register(AK8963_CNTL);
-    writeAK8963Register(AK8963_CNTL, temp | Mmode ); // Reset normal mode for  magnetometer  
+    writeAK8963Register(AK8963_CNTL, temp | mmode ); // Reset normal mode for  magnetometer  
     temp = readMPU9250Register(PWR_MGMT_1);
     _mpu->writeRegister(PWR_MGMT_1, 0x01);   // return gyro and accel normal mode
     delay(10); // Wait for all registers to reset 
@@ -635,7 +635,7 @@ void MPU9250::readMagData(int16_t * destination)
     }
 }
 
-void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
+void MPU9250::initAK8963(Mscale_t mscale, uint8_t Mmode, float * magCalibration)
 {
     // First extract the factory calibration for each magnetometer axis
     uint8_t rawData[3];  // x/y/z gyro calibration data stored here
@@ -656,7 +656,7 @@ void MPU9250::initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration)
     // Configure the magnetometer for continuous read and highest resolution
     // set Mscale bit 4 to 1 (0) to enable 16 (14) bit resolution in CNTL register,
     // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
-    writeAK8963Register(AK8963_CNTL, Mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
+    writeAK8963Register(AK8963_CNTL, mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
     delay(10);
 }
 

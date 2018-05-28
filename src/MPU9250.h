@@ -13,27 +13,37 @@
 
 #include "ByteTransfer.h"
 
-enum {
+typedef enum {
+
     AFS_2G,
     AFS_4G,  
     AFS_8G,  
     AFS_16G 
-};
 
-enum {
+} Ascale_t;
+
+typedef enum {
+
     GFS_250DPS,
     GFS_500DPS,
     GFS_1000DPS,
     GFS_2000DPS
-};
 
-enum {
+} Gscale_t;
+
+typedef enum {
+
     MFS_14BITS, // 0.6 mG per LSB
     MFS_16BITS  // 0.15 mG per LSB
-};
 
-const uint8_t M_8Hz   = 0x02;
-const uint8_t M_100Hz = 0x06;
+} Mscale_t;
+
+typedef enum {
+
+    M_8Hz   = 0x02,
+    M_100Hz = 0x06
+
+} Mmode_t;
 
 class MPU9250 {
 
@@ -45,9 +55,9 @@ class MPU9250 {
 
         uint8_t getMPU9250ID(void);
         void    resetMPU9250(void);
-        float   getAres(uint8_t Ascale);
-        float   getGres(uint8_t Gscale);
-        float   getMres(uint8_t Mscale);
+        float   getAres(Ascale_t ascale);
+        float   getGres(Gscale_t gscale);
+        float   getMres(Mscale_t mscale);
         void    magcalMPU9250(float * dest1, float * dest2);
         void    calibrateMPU9250(float * dest1, float * dest2);
         void    readMPU9250Data(int16_t * destination);
@@ -60,9 +70,9 @@ class MPU9250 {
 
         uint8_t getAK8963CID();
         void    gyromagSleep();
-        void    gyromagWake(uint8_t Mmode);
+        void    gyromagWake(Mmode_t mmode);
         void    readMagData(int16_t * destination);
-        void    initAK8963(uint8_t Mscale, uint8_t Mmode, float * magCalibration);
+        void    initAK8963(Mscale_t mscale, uint8_t Mmode, float * magCalibration);
 
     protected:
 
@@ -70,7 +80,7 @@ class MPU9250 {
 
         MPU9250(ByteTransfer * bt);
 
-        void    initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate, bool passthru);
+        void    initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate, bool passthru);
 
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) = 0;
@@ -251,7 +261,7 @@ class MPU9250Passthru : public MPU9250 {
 
         MPU9250Passthru(I2CTransfer * mpu, I2CTransfer * mag) : MPU9250(mpu) { _mag = mag; }
 
-        void initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate) { MPU9250::initMPU9250(Ascale, Gscale, sampleRate, true);  }
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate) { MPU9250::initMPU9250(ascale, gscale, sampleRate, true);  }
 
         bool checkNewAccelGyroData(void);
 
@@ -274,7 +284,7 @@ class MPU9250Master : public MPU9250 {
 
         MPU9250Master(ByteTransfer * bt) : MPU9250(bt) { }
 
-        void initMPU9250(uint8_t Ascale, uint8_t Gscale, uint8_t sampleRate) { MPU9250::initMPU9250(Ascale, Gscale, sampleRate, false); }
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate) { MPU9250::initMPU9250(ascale, gscale, sampleRate, false); }
 
         bool checkNewData(void);
 

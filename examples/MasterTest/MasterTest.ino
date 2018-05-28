@@ -37,10 +37,10 @@ Mmode:  Mmode = M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
 sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
 sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
  */
-static const uint8_t Gscale     = GFS_250DPS;
-static const uint8_t Ascale     = AFS_2G;
-static const uint8_t Mscale     = MFS_16BITS;
-static const uint8_t Mmode      = M_100Hz;
+static const Gscale_t GSCALE     = GFS_250DPS;
+static const Ascale_t ASCALE     = AFS_2G;
+static const Mscale_t MSCALE     = MFS_16BITS;
+static const Mmode_t  MMODE      = M_100Hz;
 static const uint8_t sampleRate = 0x04;         
 
 // scale resolutions per LSB for the sensors
@@ -135,9 +135,9 @@ void setup(void)
         delay(1000);
 
         // get sensor resolutions, only need to do this once
-        aRes = imu.getAres(Ascale);
-        gRes = imu.getGres(Gscale);
-        mRes = imu.getMres(Mscale);
+        aRes = imu.getAres(ASCALE);
+        gRes = imu.getGres(GSCALE);
+        mRes = imu.getMres(MSCALE);
 
         // Comment out if using pre-measured, pre-stored accel/gyro offset biases
         imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
@@ -151,7 +151,7 @@ void setup(void)
         Serial.println(gyroBias[2]);
         delay(1000); 
 
-        imu.initMPU9250(Ascale, Gscale, sampleRate); 
+        imu.initMPU9250(ASCALE, GSCALE, sampleRate); 
         Serial.println("MPU9250 initialized for active data mode...."); 
 
         // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
@@ -165,7 +165,7 @@ void setup(void)
         delay(1000); 
 
         // Get magnetometer calibration from AK8963 ROM
-        imu.initAK8963(Mscale, Mmode, magCalibration);
+        imu.initAK8963(MSCALE, MMODE, magCalibration);
         Serial.println("AK8963 initialized for active data mode...."); 
 
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
