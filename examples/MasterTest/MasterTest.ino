@@ -34,14 +34,14 @@ Gscale: GFS_250 = 250 dps, GFS_500 = 500 dps, GFS_1000 = 1000 dps, GFS_2000DPS =
 Ascale: AFS_2G = 2 g, AFS_4G = 4 g, AFS_8G = 8 g, and AFS_16G = 16 g accelerometer full scale
 Mscale: MFS_14BITS = 0.6 mG per LSB and MFS_16BITS = 0.15 mG per LSB
 Mmode:  Mmode = M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
-sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
-sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
+SAMPLE_RATE_DIVISOR: (1 + SAMPLE_RATE_DIVISOR) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
+SAMPLE_RATE_DIVISOR = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
  */
 static const Gscale_t GSCALE     = GFS_250DPS;
 static const Ascale_t ASCALE     = AFS_2G;
 static const Mscale_t MSCALE     = MFS_16BITS;
 static const Mmode_t  MMODE      = M_100Hz;
-static const uint8_t sampleRate = 0x04;         
+static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;         
 
 // scale resolutions per LSB for the sensors
 static float aRes, gRes, mRes;
@@ -151,7 +151,7 @@ void setup(void)
         Serial.println(gyroBias[2]);
         delay(1000); 
 
-        imu.initMPU9250(ASCALE, GSCALE, sampleRate); 
+        imu.initMPU9250(ASCALE, GSCALE, SAMPLE_RATE_DIVISOR); 
         Serial.println("MPU9250 initialized for active data mode...."); 
 
         // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)

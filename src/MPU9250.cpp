@@ -202,7 +202,7 @@ int16_t MPU9250::readGyroTempData()
 }
 
 
-void MPU9250::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate, bool passthru)
+void MPU9250::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru)
 {  
     // wake up device
     //_mpu->writeRegister(PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors 
@@ -224,7 +224,7 @@ void MPU9250::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate, 
     if (passthru) _mpu->writeRegister(CONFIG, 0x03);  
 
     // Set sample rate = gyroscope output rate/(1 + SMPLRT_DIV)
-    _mpu->writeRegister(SMPLRT_DIV, sampleRate);  // Use a 200 Hz rate; a rate consistent with the filter update rate 
+    _mpu->writeRegister(SMPLRT_DIV, sampleRateDivisor);  // Use a 200 Hz rate; a rate consistent with the filter update rate 
     // determined inset in CONFIG above
 
     // Set gyroscope full scale range

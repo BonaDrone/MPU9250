@@ -80,7 +80,7 @@ class MPU9250 {
 
         MPU9250(ByteTransfer * bt);
 
-        void    initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate, bool passthru);
+        void    initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) = 0;
@@ -261,7 +261,7 @@ class MPU9250Passthru : public MPU9250 {
 
         MPU9250Passthru(I2CTransfer * mpu, I2CTransfer * mag) : MPU9250(mpu) { _mag = mag; }
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate) { MPU9250::initMPU9250(ascale, gscale, sampleRate, true);  }
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) { MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true);  }
 
         bool checkNewAccelGyroData(void);
 
@@ -284,7 +284,7 @@ class MPU9250Master : public MPU9250 {
 
         MPU9250Master(ByteTransfer * bt) : MPU9250(bt) { }
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate) { MPU9250::initMPU9250(ascale, gscale, sampleRate, false); }
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) { MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, false); }
 
         bool checkNewData(void);
 
