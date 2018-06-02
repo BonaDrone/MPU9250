@@ -35,11 +35,12 @@ sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rat
 sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
  */
 
-static const uint8_t Gscale     = GFS_250DPS;
-static const uint8_t Ascale     = AFS_2G;
-static const uint8_t Mscale     = MFS_16BITS;
-static const uint8_t Mmode      = M_100Hz;
-static const uint8_t sampleRate = 0x04;         
+static const Gscale_t GSCALE    = GFS_250DPS;
+static const Ascale_t ASCALE    = AFS_2G;
+static const Mscale_t MSCALE    = MFS_16BITS;
+static const Mmode_t  MMODE     = M_100Hz;
+static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;         
+
 
 // scale resolutions per LSB for the sensors
 static float aRes, gRes, mRes;
@@ -104,9 +105,9 @@ static void setup()
         delay(1000);
 
         // get sensor resolutions, only need to do this once
-        aRes = imu.getAres(Ascale);
-        gRes = imu.getGres(Gscale);
-        mRes = imu.getMres(Mscale);
+        aRes = imu.getAres(ASCALE);
+        gRes = imu.getGres(GSCALE);
+        mRes = imu.getMres(MSCALE);
 
         // Comment out if using pre-measured, pre-stored offset accel/gyro biases
         imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
@@ -120,7 +121,7 @@ static void setup()
         printf("%f\n", gyroBias[2]);
         delay(1000); 
 
-        imu.initMPU9250(Ascale, Gscale, sampleRate); 
+        imu.initMPU9250(ASCALE, GSCALE, SAMPLE_RATE_DIVISOR); 
         printf("MPU9250 initialized for active data mode....\n"); 
 
         // Now we can start the I^2C connection to the AK8963
@@ -133,7 +134,7 @@ static void setup()
         delay(1000); 
 
         // Get magnetometer calibration from AK8963 ROM
-        imu.initAK8963(Mscale, Mmode, magCalibration);
+        imu.initAK8963(MSCALE, MMODE, magCalibration);
         printf("AK8963 initialized for active data mode....\n"); 
 
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
