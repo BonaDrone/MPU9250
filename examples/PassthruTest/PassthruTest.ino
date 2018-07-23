@@ -45,7 +45,7 @@ static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;
 static float aRes, gRes, mRes;
 
 // Pin definitions
-static const uint8_t intPin = 8;   //  MPU9250 interrupt
+static const uint8_t INTERRUPT_PIN = 8;   //  MPU9250 interrupt
 static const uint8_t ledPin = 13; // red led
 
 // Interrupt support 
@@ -86,7 +86,7 @@ void setup()
     delay(100);
 
     // Set up the interrupt pin, it's set as active high, push-pull
-    pinMode(intPin, INPUT);
+    pinMode(INTERRUPT_PIN, INPUT);
 
     // Start with orange led on (active HIGH)
     pinMode(ledPin, OUTPUT);
@@ -188,7 +188,7 @@ void setup()
         Serial.print("Z-Axis sensitivity adjustment value ");
         Serial.println(magCalibration[2], 2);
 
-        attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
+        attachInterrupt(INTERRUPT_PIN, myinthandler, RISING);  // define interrupt for INTERRUPT_PIN output of MPU9250
 
     }
     else {
@@ -208,7 +208,7 @@ void loop()
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
 
-    // If intPin goes high, either all data registers have new data
+    // If INTERRUPT_PIN goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
     if (gotNewData) {   // On interrupt, read data
 
