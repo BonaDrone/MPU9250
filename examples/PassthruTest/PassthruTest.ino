@@ -63,7 +63,7 @@ static float   magCalibration[3];
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
 // Instantiate MPU9250 class in pass-through mode
-static MPU9250Passthru imu;
+static MPU9250_Passthru imu;
 
 void setup()
 {

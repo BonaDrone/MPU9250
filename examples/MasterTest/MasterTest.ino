@@ -21,7 +21,6 @@
 #endif
 
 #include "MPU9250.h"
-#include "ArduinoTransfer.h"
 
 /*
    MPU9250 Configuration
@@ -92,6 +91,8 @@ void setup(void)
     // Start with orange led on (active HIGH)
     pinMode(ledPin, OUTPUT);
     digitalWrite(ledPin, HIGH); 
+
+    imu.begin();
 
     // Configure the MPU9250 
     // Read the WHO_AM_I register, this is a good test of communication

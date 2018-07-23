@@ -78,6 +78,8 @@ class MPU9250 {
 
         uint8_t _mpu;
 
+        void begin(void);
+
         void    initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
@@ -264,7 +266,7 @@ class MPU9250 {
 
 }; // class MPU9250
 
-class MPU9250Passthru : public MPU9250 {
+class MPU9250_Passthru : public MPU9250 {
 
     public:
 
@@ -292,11 +294,13 @@ class MPU9250Passthru : public MPU9250 {
 
         uint8_t _mag;
 
-}; // class MPU9250Passthru
+}; // class MPU9250_Passthru
 
-class MPU9250Master : public MPU9250 {
+class MPU9250_Master : public MPU9250 {
 
     public:
+
+        void begin(void);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) { MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, false); }
 
