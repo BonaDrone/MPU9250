@@ -181,6 +181,7 @@ void MPU9250::readGyroData(int16_t * destination)
 void MPU9250Passthru::begin(void)
 {
     _mpu = cpi2c_open(MPU9250_ADDRESS);
+    _mag = cpi2c_open(AK8963_ADDRESS);
 }
 
 bool MPU9250Passthru::checkNewAccelGyroData()
