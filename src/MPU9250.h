@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "ByteTransfer.h"
+#include "CrossPlatformI2C.h"
 
 typedef enum {
 
@@ -76,14 +76,19 @@ class MPU9250 {
 
     protected:
 
-        ByteTransfer * _mpu;
-
-        MPU9250(ByteTransfer * bt);
+        uint8_t _mpu;
 
         void    initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
-        virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) = 0;
+
+        virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
+
+        virtual void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
+
+        virtual uint8_t readRegister(uint8_t address, uint8_t subAddress) = 0;
+
+        virtual void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) = 0;
 
         // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in 
         // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
@@ -239,6 +244,10 @@ class MPU9250 {
         const uint8_t I2C_READ_FLAG     = 0x80;
         const uint8_t I2C_MST_EN        = 0x20;
 
+        void    writeMPU9250Register(uint8_t subAddress, uint8_t data);
+
+        void    readMPU9250Registers(uint8_t subAddress, uint8_t count, uint8_t * data);
+
         uint8_t readMPU9250Register(uint8_t subAddress);
 
         uint8_t readAK8963Register(uint8_t subAddress);
@@ -253,13 +262,13 @@ class MPU9250 {
         float   _fuseROMz;
         float   _magCalibration[3];
 
-};
+}; // class MPU9250
 
 class MPU9250Passthru : public MPU9250 {
 
     public:
 
-        MPU9250Passthru(I2CTransfer * mpu, I2CTransfer * mag) : MPU9250(mpu) { _mag = mag; }
+        void begin(void);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) { MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true);  }
 
@@ -267,22 +276,27 @@ class MPU9250Passthru : public MPU9250 {
 
         bool checkNewMagData(void);
 
-    protected:
+    private:
 
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
 
-    private:
+    protected:
 
-        I2CTransfer * _mag;
-};
+        uint8_t readRegister(uint8_t address, uint8_t subAddress);
+
+        void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * data);
+
+        void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data);
+
+        uint8_t _mag;
+
+}; // class MPU9250Passthru
 
 class MPU9250Master : public MPU9250 {
 
     public:
-
-        MPU9250Master(ByteTransfer * bt) : MPU9250(bt) { }
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) { MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, false); }
 

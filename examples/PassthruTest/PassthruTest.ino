@@ -20,7 +20,6 @@
 #endif
 
 #include "MPU9250.h"
-#include "ArduinoTransfer.h"
 
 /*
    MPU9250 Configuration
@@ -63,12 +62,8 @@ static float   magCalibration[3];
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
-// Create a byte-transfer object for Arduino I^2C
-ArduinoI2C mpu(MPU9250::MPU9250_ADDRESS);
-ArduinoI2C mag(MPU9250::AK8963_ADDRESS);
-
 // Instantiate MPU9250 class in pass-through mode
-static MPU9250Passthru imu = MPU9250Passthru(&mpu, &mag); 
+static MPU9250Passthru imu;
 
 void setup()
 {
@@ -78,13 +73,17 @@ void setup()
 
     // Start I^2C 
 #if defined(__MK20DX256__)  
-    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_16_17, I2C_PULLUP_EXT, I2C_RATE_100); 
+    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_INT, 400000);
 #else
     Wire.begin(); 
     Wire.setClock(400000); 
 #endif
 
-    delay(1000);
+    delay(100);
+
+    imu.begin();
+
+    delay(100);
 
     // Set up the interrupt pin, it's set as active high, push-pull
     pinMode(intPin, INPUT);
