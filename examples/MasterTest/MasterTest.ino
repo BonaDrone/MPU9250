@@ -46,8 +46,8 @@ static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;
 static float aRes, gRes, mRes;
 
 // Pin definitions
-static const uint8_t intPin = 8;   //  MPU9250 interrupt
-static const uint8_t ledPin = 13; // red led
+static const uint8_t INTERRUPT_PIN = 8;   //  MPU9250 interrupt
+static const uint8_t LED_PIN = 13; // red led
 
 // Interrupt support 
 static bool gotNewData = false;
@@ -60,14 +60,11 @@ static void myinthandler()
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
-// Create a byte-transfer object for Arduino I^2C
-ArduinoI2C mpu(MPU9250::MPU9250_ADDRESS);
-
 // Factory mag calibration and mag bias
 static float magCalibration[3]; 
 
 // Instantiate MPU9250 class in master mode
-static MPU9250Master imu = MPU9250Master(&mpu); 
+static MPU9250_Master imu;
 
 void setup(void)
 {
@@ -77,7 +74,7 @@ void setup(void)
 
     // Start I^2C
 #if defined(__MK20DX256__)  
-    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_16_17, I2C_PULLUP_EXT, I2C_RATE_100); 
+    Wire.begin(I2C_MASTER, 0x00, I2C_PINS_18_19, I2C_PULLUP_INT, 400000);
 #else
     Wire.begin(); 
     Wire.setClock(400000); 
@@ -86,12 +83,13 @@ void setup(void)
     delay(1000);
 
     // Set up the interrupt pin, it's set as active high, push-pull
-    pinMode(intPin, INPUT);
+    pinMode(INTERRUPT_PIN, INPUT);
 
     // Start with orange led on (active HIGH)
-    pinMode(ledPin, OUTPUT);
-    digitalWrite(ledPin, HIGH); 
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, HIGH); 
 
+    // Start the MPU9250
     imu.begin();
 
     // Configure the MPU9250 
@@ -103,6 +101,7 @@ void setup(void)
     Serial.print(c, HEX);
     Serial.print(" I should be ");
     Serial.println(0x71, HEX);
+
     delay(1000);
 
     if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
@@ -191,7 +190,7 @@ void setup(void)
         Serial.print("Z-Axis sensitivity adjustment value ");
         Serial.println(magCalibration[2], 2);
 
-        attachInterrupt(intPin, myinthandler, RISING);  // define interrupt for intPin output of MPU9250
+        attachInterrupt(INTERRUPT_PIN, myinthandler, RISING);  // define interrupt for INTERRUPT_PIN output of MPU9250
     }
 
     else {
@@ -201,7 +200,7 @@ void setup(void)
         while(1) ; // Loop forever if communication doesn't happen
     }
 
-    digitalWrite(ledPin, LOW); // turn off led when using flash memory
+    digitalWrite(LED_PIN, LOW); // turn off led when using flash memory
 
     delay(3000);                // wait a bit before looping
 }
@@ -211,7 +210,7 @@ void loop(void)
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
 
-    // If intPin goes high, either all data registers have new data
+    // If INTERRUPT_PIN goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
     if(gotNewData) {   // On interrupt, read data
 

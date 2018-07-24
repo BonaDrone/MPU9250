@@ -46,7 +46,7 @@ static float aRes, gRes, mRes;
 
 // Pin definitions
 static const uint8_t INTERRUPT_PIN = 8;   //  MPU9250 interrupt
-static const uint8_t ledPin = 13; // red led
+static const uint8_t LED_PIN = 13; // red led
 
 // Interrupt support 
 static bool gotNewData = false;
@@ -89,8 +89,8 @@ void setup()
     pinMode(INTERRUPT_PIN, INPUT);
 
     // Start with orange led on (active HIGH)
-    pinMode(ledPin, OUTPUT);
-    digitalWrite(ledPin, HIGH); 
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, HIGH); 
 
     // Configure the MPU9250 
     // Read the WHO_AM_I register, this is a good test of communication
@@ -198,7 +198,7 @@ void setup()
         while(1) ; // Loop forever if communication doesn't happen
     }
 
-    digitalWrite(ledPin, LOW); // turn off led when using flash memory
+    digitalWrite(LED_PIN, LOW); // turn off led when using flash memory
 
     delay(3000);                // wait a bit before looping
 }
