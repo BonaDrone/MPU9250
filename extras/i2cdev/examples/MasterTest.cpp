@@ -15,7 +15,9 @@
 
 #include <MPU9250.h>
 #include <stdio.h>
-#include <unistd.h>
+
+extern void delay(uint32_t msec);
+extern uint32_t micros(void);
 
 /*
    MPU9250 Configuration
@@ -56,14 +58,14 @@ void setup()
     // Open a connection to the MPU9250
     imu.begin();
 
-    usleep(100000);
+    delay(100);
 
     // Configure the MPU9250 
     // Read the WHO_AM_I register, this is a good test of communication
     printf("MPU9250 9-axis motion sensor...\n");
     uint8_t c = imu.getMPU9250ID();
     printf("MPU9250  I AM %02X  I should be 0x71\n", c);
-    usleep(1000000);
+    delay(1000);
 
     if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
     
@@ -81,7 +83,7 @@ void setup()
         printf("x-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[3]); 
         printf("y-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[4]); 
         printf("z-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[5]); 
-        usleep(1000000);
+        delay(1000);
 
         // get sensor resolutions, only need to do this once
         aRes = imu.getAres(ASCALE);
@@ -98,7 +100,7 @@ void setup()
         printf("%f\n", gyroBias[0]);
         printf("%f\n", gyroBias[1]);
         printf("%f\n", gyroBias[2]);
-        usleep(1000000); 
+        delay(1000); 
 
         imu.initMPU9250(ASCALE, GSCALE, SAMPLE_RATE_DIVISOR); 
         printf("MPU9250 initialized for active data mode....\n"); 
@@ -106,7 +108,7 @@ void setup()
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
         uint8_t d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
         printf("AK8963  I AM 0x%02x  I should be 0x48\n", d);
-        usleep(1000000); 
+        delay(1000); 
 
         // Get magnetometer calibration from AK8963 ROM
         imu.initAK8963(MSCALE, MMODE, magCalibration);
@@ -114,7 +116,7 @@ void setup()
 
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
         printf("Mag Calibration: Wave device in a figure eight until done!\n");
-        usleep(4000000);
+        delay(4000);
         imu.magcalMPU9250(magBias, magScale);
         printf("Mag Calibration done!\n");
         printf("AK8963 mag biases (mG)\n");
@@ -125,7 +127,7 @@ void setup()
         printf("%f\n", magScale[0]);
         printf("%f\n", magScale[1]);
         printf("%f\n", magScale[2]); 
-        usleep(2000000); // add delay to see results before serial spew of data
+        delay(2000); // add delay to see results before serial spew of data
         printf("Calibration values:\n");
         printf("X-Axis sensitivity adjustment value %+2.2f\n", magCalibration[0]);
         printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
@@ -137,7 +139,7 @@ void setup()
         while(true) ; // Loop forever if communication doesn't happen
     }
 
-    usleep(3000000);                // wait a bit before looping
+    delay(3000);                // wait a bit before looping
 }
 
 void loop()
@@ -175,12 +177,12 @@ void loop()
     }
 
     // Report at 1Hz
-    //static uint32_t msec_prev;
-    //uint32_t msec_curr = millis();
+    static uint32_t usec_prev;
+    uint32_t usec_curr = micros();
 
-    //if (msec_curr-msec_prev > 1000) {
+    if (usec_curr-usec_prev > 1000000) {
 
-        //msec_prev = msec_curr;
+        usec_prev = usec_curr;
 
         printf("ax = %d  ay = %d  az = %d mg\n", (int)(1000*ax), (int)(1000*ay), (int)(1000*az));
         printf("gx = %+2.2f  gy = %+2.2f  gz = %+2.2f deg/s\n", gx, gy, gz);
@@ -190,8 +192,5 @@ void loop()
 
         // Print temperature in degrees Centigrade      
         printf("Gyro temperature is %+1.1f degrees C\n", temperature);  
-   // }
-
-     usleep(1000000);
-
+    }
 }
