@@ -2,7 +2,7 @@
  *  
  * Created by Kris Winer
  *
- * Adapted for WiringPi by Simon D. Levy April 2018
+ * Adapted for I2CDEV by Simon D. Levy July 2018
  *  
  * Demonstrate basic MPU-9250 functionality in master mode including
  * parameterizing the register addresses, initializing the sensor, getting

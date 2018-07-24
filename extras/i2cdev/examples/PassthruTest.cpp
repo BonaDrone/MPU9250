@@ -2,7 +2,7 @@
  *  
  * Created by Kris Winer
  *
- * Adapted for WiringPi by Simon D. Levy April 2018
+ * Adapted for I2CDev by Simon D. Levy July 2018
  *  
  * Demonstrate basic MPU-9250 functionality in master mode including
  * parameterizing the register addresses, initializing the sensor, getting
@@ -15,6 +15,9 @@
 
 #include <stdio.h>
 #include <MPU9250.h>
+
+extern void delay(uint32_t msec);
+extern uint32_t micros(void);
 
 /*
    MPU9250 Configuration
@@ -41,16 +44,6 @@ static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;
 // scale resolutions per LSB for the sensors
 static float aRes, gRes, mRes;
 
-// Pin definitions
-static const uint8_t intPin = 0;   //  MPU9250 interrupt
-
-// Interrupt support 
-static bool gotNewData;
-static void myinthandler()
-{
-    gotNewData = true;
-}
-
 // Factory mag calibration and mag bias
 static float   magCalibration[3]; 
 
@@ -74,7 +67,7 @@ void setup()
     delay(1000);
 
     if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
-    
+
         printf("MPU9250 is online...\n");
 
         imu.resetMPU9250(); // start by resetting MPU9250
@@ -138,8 +131,6 @@ void setup()
         printf("X-Axis sensitivity adjustment value %+2.2f\n", magCalibration[0]);
         printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
         printf("Z-Axis sensitivity adjustment value %+2.2f\n", magCalibration[2]);
-        
-        wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250
     }
     else {
 
@@ -155,27 +146,21 @@ void loop()
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
 
-    // If intPin goes high, either all data registers have new data
-    // or the accel wake on motion threshold has been crossed
-    if (gotNewData) {   // On interrupt, read data
+    if (imu.checkNewAccelGyroData())  { // data ready interrupt is detected
 
-       gotNewData = false;     // reset gotNewData flag
+        imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
 
-        if (imu.checkNewAccelGyroData())  { // data ready interrupt is detected
+        // Convert the accleration value into g's
+        ax = (float)MPU9250Data[0]*aRes - accelBias[0];  
+        ay = (float)MPU9250Data[1]*aRes - accelBias[1];   
+        az = (float)MPU9250Data[2]*aRes - accelBias[2];  
 
-            imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
+        // Convert the gyro value into degrees per second
+        gx = (float)MPU9250Data[4]*gRes;  
+        gy = (float)MPU9250Data[5]*gRes;  
+        gz = (float)MPU9250Data[6]*gRes; 
 
-            // Convert the accleration value into g's
-            ax = (float)MPU9250Data[0]*aRes - accelBias[0];  
-            ay = (float)MPU9250Data[1]*aRes - accelBias[1];   
-            az = (float)MPU9250Data[2]*aRes - accelBias[2];  
-
-            // Convert the gyro value into degrees per second
-            gx = (float)MPU9250Data[4]*gRes;  
-            gy = (float)MPU9250Data[5]*gRes;  
-            gz = (float)MPU9250Data[6]*gRes; 
-
-            if(imu.checkNewMagData()) { // wait for magnetometer data ready bit to be set
+        if(imu.checkNewMagData()) { // wait for magnetometer data ready bit to be set
             int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
 
             imu.readMagData(magCount);  // Read the x/y/z adc values
@@ -189,26 +174,25 @@ void loop()
             mx *= magScale[0];
             my *= magScale[1];
             mz *= magScale[2]; 
-            }
         }
+    }
 
-        // Report at 1Hz
-        static uint32_t msec_prev;
-        uint32_t msec_curr = millis();
+    // Report at 1Hz
+    static uint32_t msec_prev;
+    uint32_t msec_curr = micros();
 
-        if (msec_curr-msec_prev > 1000) {
+    if (msec_curr-msec_prev > 1000000) {
 
-            msec_prev = msec_curr;
+        msec_prev = msec_curr;
 
-            printf("ax = %d  ay = %d  az = %d mg\n", (int)(1000*ax), (int)(1000*ay), (int)(1000*az));
-            printf("gx = %+2.2f  gy = %+2.2f  gz = %+2.2f deg/s\n", gx, gy, gz);
-            printf("mx = %d  my = %d  mz = %d mG\n", (int)mx, (int)my, (int)mz);
+        printf("ax = %d  ay = %d  az = %d mg\n", (int)(1000*ax), (int)(1000*ay), (int)(1000*az));
+        printf("gx = %+2.2f  gy = %+2.2f  gz = %+2.2f deg/s\n", gx, gy, gz);
+        printf("mx = %d  my = %d  mz = %d mG\n", (int)mx, (int)my, (int)mz);
 
-            float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
+        float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
 
-            // Print temperature in degrees Centigrade      
-            printf("Gyro temperature is %+1.1f degrees C\n", temperature);  
-        }
+        // Print temperature in degrees Centigrade      
+        printf("Gyro temperature is %+1.1f degrees C\n", temperature);  
 
     } // if got new data
 }
