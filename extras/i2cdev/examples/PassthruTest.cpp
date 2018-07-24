@@ -15,7 +15,6 @@
 
 #include <stdio.h>
 #include <MPU9250.h>
-#include <wiringPi.h>
 
 /*
    MPU9250 Configuration
@@ -64,11 +63,6 @@ static MPU9250_Passthru imu;
 
 void setup()
 {
-    // Setup WirinPi
-    wiringPiSetup();
-
-    delay(100);
-
     // Open a connection to the MPU9250
     imu.begin();
 

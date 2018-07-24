@@ -17,8 +17,10 @@
 // One ifdef needed to support delay() cross-platform
 #if defined(ARDUINO)
 #include <Arduino.h>
-#else
+#elif defined(__arm__)
 #include <wiringPi.h>
+#else
+extern void delay(uint32_t msec);
 #endif
 
 uint8_t MPU9250::getMPU9250ID()
