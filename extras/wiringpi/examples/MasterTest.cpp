@@ -14,11 +14,8 @@
  */
 
 #include <stdio.h>
-
 #include <MPU9250.h>
-
 #include <wiringPi.h>
-#include <WiringPiTransfer.h>
 
 /*
    MPU9250 Configuration
@@ -62,19 +59,16 @@ static float   magCalibration[3];
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
-// Create a byte-transfer object for WiringPi I^2C
-WiringPiI2C mpu(MPU9250::MPU9250_ADDRESS);
-
 // Instantiate MPU9250 class in master mode
-static MPU9250Master imu = MPU9250Master(&mpu); 
+static MPU9250_Master imu;
 
-static void setup()
+void setup()
 {
     // Setup WirinPi
     wiringPiSetup();
 
     // Start I^2 on the MPU9250 address
-    mpu.begin();
+    imu.begin();
 
     delay(100);
 
@@ -162,7 +156,7 @@ static void setup()
     delay(3000);                // wait a bit before looping
 }
 
-static void loop()
+void loop()
 {  
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
@@ -221,15 +215,4 @@ static void loop()
         }
 
     } // if got new data
-}
-
-int main(int argc, char ** argv)
-{
-    setup();
-
-    while (true) {
-        loop();
-    }
-
-    return 0;
 }
