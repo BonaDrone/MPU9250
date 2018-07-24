@@ -49,10 +49,6 @@ class MPU9250 {
 
     public: 
 
-        //static const uint8_t MPU9250_ADDRESS = 0x69; // When AD0 = 1
-        static const uint8_t MPU9250_ADDRESS = 0x68;   // When AD0 = 0
-        static const uint8_t AK8963_ADDRESS  = 0x0C;
-
         uint8_t getMPU9250ID(void);
         void    resetMPU9250(void);
         float   getAres(Ascale_t ascale);
@@ -76,6 +72,10 @@ class MPU9250 {
 
     protected:
 
+        //static const uint8_t MPU9250_ADDRESS = 0x69; // When AD0 = 1
+        static const uint8_t MPU9250_ADDRESS = 0x68;   // When AD0 = 0
+        static const uint8_t AK8963_ADDRESS  = 0x0C;
+
         uint8_t _mpu;
 
         void begin(void);
@@ -92,9 +92,10 @@ class MPU9250 {
 
         void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data);
 
-        // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 for registers not listed in 
-        // above document; the MPU9250 and MPU9150 are virtually identical but the latter has a different register map
-        //
+        // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 
+        // for registers not listed in above document; the MPU9250 and MPU9150 are virtually identical but 
+        // the latter has a different register map
+        
         //Magnetometer Registers
         const uint8_t WHO_AM_I_AK8963   = 0x00; // should return  = 0x48
         const uint8_t INFO              = 0x01;
