@@ -188,6 +188,17 @@ void MPU9250_Master::begin(void)
     MPU9250::begin();
 }
 
+void MPU9250_Master::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
+{ 
+    MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, false); 
+}
+
+void MPU9250_Passthru::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
+{ 
+    MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true); 
+}
+
+
 void MPU9250_Passthru::begin(void)
 {
     MPU9250::begin();

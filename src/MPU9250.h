@@ -80,7 +80,7 @@ class MPU9250 {
 
         void begin(void);
 
-        void    initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
 
@@ -272,7 +272,7 @@ class MPU9250_Passthru : public MPU9250 {
 
         void begin(void);
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) { MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true);  }
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
         bool checkNewAccelGyroData(void);
 
@@ -296,7 +296,7 @@ class MPU9250_Master : public MPU9250 {
 
         void begin(void);
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) { MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, false); }
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
         bool checkNewData(void);
 
