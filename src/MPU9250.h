@@ -86,11 +86,11 @@ class MPU9250 {
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
 
-        void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest);
+        virtual void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest);
 
-        uint8_t readRegister(uint8_t address, uint8_t subAddress);
+        virtual uint8_t readRegister(uint8_t address, uint8_t subAddress);
 
-        void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data);
+        virtual void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data);
 
         // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 
         // for registers not listed in above document; the MPU9250 and MPU9150 are virtually identical but 
@@ -295,7 +295,7 @@ class MPU9250_Master : public MPU9250 {
 
     public:
 
-        void begin(void);
+        virtual void begin(void);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
@@ -306,4 +306,18 @@ class MPU9250_Master : public MPU9250 {
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
+};
+
+class MPU9250_SPI : public MPU9250_Master {
+
+    public:
+
+        virtual void begin(void) override;
+
+        virtual void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+
+        virtual uint8_t readRegister(uint8_t address, uint8_t subAddress) override;
+
+        virtual void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) override;
+
 };
