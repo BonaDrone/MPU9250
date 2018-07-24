@@ -67,7 +67,7 @@ void setup()
     // Setup WirinPi
     wiringPiSetup();
 
-    // Start I^2 on the MPU9250 address
+    // Open a connection to the MPU9250
     imu.begin();
 
     delay(100);
