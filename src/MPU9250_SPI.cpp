@@ -9,12 +9,14 @@
  *  Library may be used freely and without limit with attribution.
  */
 
+#if defined(_SPI)
+
 #include "MPU9250.h"
 #include "CrossPlatformSPI.h"
 
 #include <math.h>
 
-// One ifdef needed to support delay() cross-platform
+// Support delay() cross-platform
 #if defined(ARDUINO)
 #include <Arduino.h>
 #elif defined(__arm__)
@@ -48,3 +50,5 @@ void MPU9250::writeRegister(uint8_t address, uint8_t subAddress, uint8_t data)
     (void)address;
     cpspi_writeRegister(subAddress, data);
 }
+
+#endif // defined (_SPI)
