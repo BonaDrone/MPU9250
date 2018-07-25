@@ -11,6 +11,7 @@
 
 #include "MPU9250.h"
 #include "CrossPlatformI2C.h"
+#include "CrossPlatformSPI.h"
 
 #include <math.h>
 
