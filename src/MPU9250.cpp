@@ -10,8 +10,6 @@
  */
 
 #include "MPU9250.h"
-#include "CrossPlatformI2C.h"
-#include "CrossPlatformSPI.h"
 
 #include <math.h>
 
@@ -179,11 +177,6 @@ void MPU9250::readGyroData(int16_t * destination)
     destination[0] = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
     destination[1] = ((int16_t)rawData[2] << 8) | rawData[3] ;  
     destination[2] = ((int16_t)rawData[4] << 8) | rawData[5] ; 
-}
-
-void MPU9250::begin(void)
-{
-    _mpu = cpi2c_open(MPU9250_ADDRESS);
 }
 
 bool MPU9250::checkWakeOnMotion()
@@ -638,36 +631,11 @@ void MPU9250::readMPU9250Registers(uint8_t subAddress, uint8_t count, uint8_t * 
     readRegisters(_mpu, subAddress, count, data);
 }
 
-uint8_t MPU9250::readRegister(uint8_t address, uint8_t subAddress)
-{
-    uint8_t data = 0;
-    cpi2c_readRegisters(address, subAddress, 1, &data);
-    return data;
-}
-
-void MPU9250::readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * data)
-{
-    cpi2c_readRegisters(address, subAddress, count, data);
-}
-
-
-void MPU9250::writeRegister(uint8_t address, uint8_t subAddress, uint8_t data)
-{
-    cpi2c_writeRegister(address, subAddress, data);
-}
-
 // Passthru ===========================================================================================
 
 void MPU9250_Passthru::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
 { 
     MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true); 
-}
-
-
-void MPU9250_Passthru::begin(void)
-{
-    MPU9250::begin();
-    _mag = cpi2c_open(AK8963_ADDRESS);
 }
 
 bool MPU9250_Passthru::checkNewAccelGyroData()
