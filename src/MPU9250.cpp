@@ -654,7 +654,37 @@ void MPU9250::writeRegister(uint8_t address, uint8_t subAddress, uint8_t data)
 {
     cpi2c_writeRegister(address, subAddress, data);
 }
-// Master ============================================================================================
+
+// Passthru ===========================================================================================
+
+void MPU9250_Passthru::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
+{ 
+    MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true); 
+}
+
+
+void MPU9250_Passthru::begin(void)
+{
+    MPU9250::begin();
+    _mag = cpi2c_open(AK8963_ADDRESS);
+}
+
+bool MPU9250_Passthru::checkNewAccelGyroData()
+{
+    return (readMPU9250Register(INT_STATUS) & 0x01);
+}
+
+void MPU9250_Passthru::writeAK8963Register(uint8_t subAddress, uint8_t data)
+{
+    writeRegister(_mag, subAddress, data);
+}
+
+void MPU9250_Passthru::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
+{
+    readRegisters(_mag, subAddress, count, dest);
+}
+
+// Master ===============================================================================================
 
 void MPU9250_Master::begin(void)
 {
@@ -690,33 +720,41 @@ bool MPU9250_Master::checkNewData(void)
     return (readMPU9250Register(INT_STATUS) & 0x01);
 }
 
-// Passthru ===========================================================================================
 
-void MPU9250_Passthru::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
-{ 
-    MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true); 
-}
+// Master ===============================================================================================
 
-
-void MPU9250_Passthru::begin(void)
+void MPU9250_SPI::begin(void)
 {
     MPU9250::begin();
-    _mag = cpi2c_open(AK8963_ADDRESS);
 }
 
-bool MPU9250_Passthru::checkNewAccelGyroData()
+void MPU9250_SPI::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
+{ 
+    MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, false); 
+}
+
+void MPU9250_SPI::writeAK8963Register(uint8_t subAddress, uint8_t data)
+{
+    uint8_t count = 1;
+
+    writeMPU9250Register(I2C_SLV0_ADDR, AK8963_ADDRESS); // set slave 0 to the AK8963 and set for write
+    writeMPU9250Register(I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
+    writeMPU9250Register(I2C_SLV0_DO, data); // store the data for write
+    writeMPU9250Register(I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and send 1 byte
+}
+
+void MPU9250_SPI::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
+{
+    writeMPU9250Register(I2C_SLV0_ADDR, AK8963_ADDRESS | I2C_READ_FLAG); // set slave 0 to the AK8963 and set for read
+    writeMPU9250Register(I2C_SLV0_REG, subAddress); // set the register to the desired AK8963 sub address
+    writeMPU9250Register(I2C_SLV0_CTRL, I2C_SLV0_EN | count); // enable I2C and request the bytes
+    delay(1); // takes some time for these registers to fill
+    readMPU9250Registers(EXT_SENS_DATA_00, count, dest); // read the bytes off the MPU9250 EXT_SENS_DATA registers
+}
+
+bool MPU9250_SPI::checkNewData(void)
 {
     return (readMPU9250Register(INT_STATUS) & 0x01);
-}
-
-void MPU9250_Passthru::writeAK8963Register(uint8_t subAddress, uint8_t data)
-{
-    writeRegister(_mag, subAddress, data);
-}
-
-void MPU9250_Passthru::readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest)
-{
-    readRegisters(_mag, subAddress, count, dest);
 }
 
 

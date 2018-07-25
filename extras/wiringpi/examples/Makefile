@@ -10,7 +10,7 @@
 # Change this to whereever you installed CrossPlatformI2C
 CPI2C = $(HOME)/CrossPlatformI2C/
 
-ALL = MasterTest PassthruTest
+ALL = MasterTest PassthruTest SPITest
 
 MPUSRC = ../../../src
 
@@ -30,6 +30,12 @@ PassthruTest: PassthruTest.o MPU9250.o WiringPiI2C.o main.o
 
 PassthruTest.o: PassthruTest.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c PassthruTest.cpp
+
+SPITest: SPITest.o MPU9250.o WiringPiI2C.o main.o
+	g++ -std=c++11 -o SPITest SPITest.o MPU9250.o WiringPiI2C.o main.o -lwiringPi
+
+SPITest.o: SPITest.cpp 
+	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c SPITest.cpp
 
 MPU9250.o: $(MPUSRC)/MPU9250.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250.cpp

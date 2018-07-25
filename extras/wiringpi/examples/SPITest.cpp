@@ -4,7 +4,7 @@
  *
  * Adapted for WiringPi by Simon D. Levy April 2018
  *  
- * Demonstrate basic MPU-9250 functionality in SPI master mode including
+ * Demonstrate basic MPU-9250 functionality in master mode including
  * parameterizing the register addresses, initializing the sensor, getting
  * properly scaled accelerometer, gyroscope, and magnetometer data out. 
  *
@@ -14,11 +14,9 @@
  */
 
 #include <stdio.h>
-
 #include <MPU9250.h>
-
 #include <wiringPi.h>
-#include <WiringPiTransfer.h>
+#include <wiringPiSPI.h>
 
 /*
    MPU9250 Configuration
@@ -35,17 +33,18 @@ sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rat
 sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
  */
 
-static const uint8_t Gscale     = GFS_250DPS;
-static const uint8_t Ascale     = AFS_4G;//AFS_2G;
-static const uint8_t Mscale     = MFS_16BITS;
-static const uint8_t Mmode      = M_100Hz;
-static const uint8_t sampleRate = 0x04;         
+static const Gscale_t GSCALE    = GFS_250DPS;
+static const Ascale_t ASCALE    = AFS_2G;
+static const Mscale_t MSCALE    = MFS_16BITS;
+static const Mmode_t  MMODE     = M_100Hz;
+static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;         
+
 
 // scale resolutions per LSB for the sensors
 static float aRes, gRes, mRes;
 
 // Pin definitions
-static const uint8_t intPin = 4;   //  MPU9250 interrupt on PXFMini
+static const uint8_t intPin = 0;   //  MPU9250 interrupt
 
 // Interrupt support 
 static bool gotNewData;
@@ -55,25 +54,25 @@ static void myinthandler()
 }
 
 // Factory mag calibration and mag bias
-static float magCalibration[3]; 
+static float   magCalibration[3]; 
 
 // Bias corrections for gyro and accelerometer. These can be measured once and
 // entered here or can be calculated each time the device is powered on.
 static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
 
-// Create a byte-transfer object for WiringPi SPI on bus 1, speed 400 kHz
-WiringPiSPI mpu(1, 400000);
-
 // Instantiate MPU9250 class in master mode
-static MPU9250Master imu = MPU9250Master(&mpu); 
+static MPU9250_SPI imu;
 
-static void setup()
+void setup()
 {
     // Setup WirinPi
     wiringPiSetup();
 
-    // Start SPI
-    mpu.begin();
+    // Set up SPI
+    wiringPiSPISetup(1, 400000);
+
+    // Open a connection to the MPU9250
+    imu.begin();
 
     delay(100);
 
@@ -103,12 +102,12 @@ static void setup()
         delay(1000);
 
         // get sensor resolutions, only need to do this once
-        aRes = imu.getAres(Ascale);
-        gRes = imu.getGres(Gscale);
-        mRes = imu.getMres(Mscale);
+        aRes = imu.getAres(ASCALE);
+        gRes = imu.getGres(GSCALE);
+        mRes = imu.getMres(MSCALE);
 
         // Comment out if using pre-measured, pre-stored offset accel/gyro biases
-        //imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
+        imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
         printf("accel biases (mg)\n");
         printf("%f\n", 1000.*accelBias[0]);
         printf("%f\n", 1000.*accelBias[1]);
@@ -118,8 +117,8 @@ static void setup()
         printf("%f\n", gyroBias[1]);
         printf("%f\n", gyroBias[2]);
         delay(1000); 
-        
-        imu.initMPU9250(Ascale, Gscale, sampleRate); 
+
+        imu.initMPU9250(ASCALE, GSCALE, SAMPLE_RATE_DIVISOR); 
         printf("MPU9250 initialized for active data mode....\n"); 
 
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
@@ -128,11 +127,10 @@ static void setup()
         delay(1000); 
 
         // Get magnetometer calibration from AK8963 ROM
-        imu.initAK8963(Mscale, Mmode, magCalibration);
+        imu.initAK8963(MSCALE, MMODE, magCalibration);
         printf("AK8963 initialized for active data mode....\n"); 
 
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
-        
         printf("Mag Calibration: Wave device in a figure eight until done!\n");
         delay(4000);
         imu.magcalMPU9250(magBias, magScale);
@@ -162,18 +160,16 @@ static void setup()
     delay(3000);                // wait a bit before looping
 }
 
-static void loop()
+void loop()
 {  
     static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
     static float ax, ay, az, gx, gy, gz, mx, my, mz;
-
-    gotNewData = true; // XXX avoid interrupts for now
 
     // If intPin goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
     if(gotNewData) {   // On interrupt, read data
 
-       //gotNewData = false;     // reset gotNewData flag
+       gotNewData = false;     // reset gotNewData flag
 
         if (imu.checkNewData())  { // data ready interrupt is detected
 
@@ -223,15 +219,4 @@ static void loop()
         }
 
     } // if got new data
-}
-
-int main(int argc, char ** argv)
-{
-    setup();
-
-    while (true) {
-        loop();
-    }
-
-    return 0;
 }

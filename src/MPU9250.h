@@ -308,16 +308,19 @@ class MPU9250_Master : public MPU9250 {
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
 };
 
-class MPU9250_SPI : public MPU9250_Master {
+class MPU9250_SPI : public MPU9250 {
 
     public:
 
-        virtual void begin(void) override;
+        virtual void begin(void);
 
-        virtual void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
-        virtual uint8_t readRegister(uint8_t address, uint8_t subAddress) override;
+        bool checkNewData(void);
 
-        virtual void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) override;
+    protected:
 
+        virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
+
+        virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
 };
