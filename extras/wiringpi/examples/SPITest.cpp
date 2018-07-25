@@ -78,10 +78,8 @@ void setup()
     // Read the WHO_AM_I register, this is a good test of communication
     printf("MPU9250 9-axis motion sensor...\n");
     uint8_t c = imu.getMPU9250ID();
-    while (true) {
-        printf("MPU9250  I AM %02X  I should be 0x71\n", c);
-        delay(1000);
-    }
+    printf("MPU9250  I AM %02X  I should be 0x71\n", c);
+    delay(1000);
 
     if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
 
