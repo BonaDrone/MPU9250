@@ -37,7 +37,7 @@ development board, I<sup>2</sup>C
 
 RaspberryPi users should download and install
 [WiringPi](http://wiringpi.com/), then cd to one of the example folders in 
-<b>MPU9250/extras/wiringpi/examples</b>, and type <b>sudo make run</b>.
+<b>MPU9250/extras/wiringpi/examples</b>, and type <tt>sudo make run</tt>.
 
 NVIDIA Jetson users should install I<sup>2</sup>C support by running the command:
 <pre>
