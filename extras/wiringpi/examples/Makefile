@@ -48,7 +48,7 @@ MPU9250_I2C.o: $(MPUSRC)/MPU9250_I2C.cpp
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_I2C.cpp
 
 MPU9250_SPI.o: $(MPUSRC)/MPU9250_SPI.cpp 
-	g++ -std=c++11 -Wall -I$(SPIINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_SPI.cpp
+	g++ -std=c++11 -Wall -D_SPI -I$(SPIINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_SPI.cpp
 
 WiringPiI2C.o: $(I2CSRC)/WiringPiI2C.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/WiringPiI2C.cpp
