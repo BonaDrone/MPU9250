@@ -1,5 +1,3 @@
-# MPU9250
-
 This repository comes from a few different source files created by [Kris Winer](https://github.com/kriswiner) 
 to support the MPU9250 9-DOF Internal Measurement Unit.  
 
