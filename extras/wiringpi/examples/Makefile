@@ -9,6 +9,7 @@
   
 # Change this to whereever you installed CrossPlatformI2C
 CPI2C = $(HOME)/CrossPlatformI2C/
+CPSPI = $(HOME)/CrossPlatformSPI/
 
 ALL = MasterTest PassthruTest SPITest
 
@@ -16,6 +17,9 @@ MPUSRC = ../../../src
 
 I2CINC = $(CPI2C)/src
 I2CSRC = $(CPI2C)/extras/wiringpi/src
+
+SPIINC = $(CPSPI)/src
+SPISRC = $(CPSPI)/extras/wiringpi/src
 
 all: $(ALL)
 
@@ -31,17 +35,20 @@ PassthruTest: PassthruTest.o MPU9250.o WiringPiI2C.o main.o
 PassthruTest.o: PassthruTest.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c PassthruTest.cpp
 
-SPITest: SPITest.o MPU9250.o WiringPiI2C.o main.o
-	g++ -std=c++11 -o SPITest SPITest.o MPU9250.o WiringPiI2C.o main.o -lwiringPi
+SPITest: SPITest.o MPU9250.o WiringPiSPI.o main.o
+	g++ -std=c++11 -o SPITest SPITest.o MPU9250.o WiringPiSPI.o main.o -lwiringPi
 
 SPITest.o: SPITest.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c SPITest.cpp
+	g++ -std=c++11 -Wall -I$(SPIINC) -I$(MPUSRC) -c SPITest.cpp
 
 MPU9250.o: $(MPUSRC)/MPU9250.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250.cpp
+	g++ -std=c++11 -Wall -I$(SPIINC) -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250.cpp
 
 WiringPiI2C.o: $(I2CSRC)/WiringPiI2C.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/WiringPiI2C.cpp
+
+WiringPiSPI.o: $(SPISRC)/WiringPiSPI.cpp 
+	g++ -std=c++11 -Wall -I$(SPIINC) -c $(SPISRC)/WiringPiSPI.cpp
 
 main.o: main.cpp 
 	g++ -std=c++11 -Wall -c main.cpp

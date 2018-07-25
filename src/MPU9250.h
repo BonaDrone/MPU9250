@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "CrossPlatformI2C.h"
+#include <stdint.h>
 
 typedef enum {
 

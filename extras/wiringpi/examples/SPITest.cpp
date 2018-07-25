@@ -4,11 +4,9 @@
  *
  * Adapted for WiringPi by Simon D. Levy April 2018
  *  
- * Demonstrate basic MPU-9250 functionality in master mode including
- * parameterizing the register addresses, initializing the sensor, getting
- * properly scaled accelerometer, gyroscope, and magnetometer data out. 
- *
- * SDA and SCL have 4K7 pull-up resistors (to 3.3V).
+ * Demonstrate basic MPU-9250 functionality over SPI bus (which supports only master
+ * mode), includingparameterizing the register addresses, initializing the sensor, 
+ * getting * properly scaled accelerometer, gyroscope, and magnetometer data out. 
  *
  * Library may be used freely and without limit with attribution.
  */
@@ -80,11 +78,13 @@ void setup()
     // Read the WHO_AM_I register, this is a good test of communication
     printf("MPU9250 9-axis motion sensor...\n");
     uint8_t c = imu.getMPU9250ID();
-    printf("MPU9250  I AM %02X  I should be 0x71\n", c);
-    delay(1000);
+    while (true) {
+        printf("MPU9250  I AM %02X  I should be 0x71\n", c);
+        delay(1000);
+    }
 
     if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
-    
+
         printf("MPU9250 is online...\n");
 
         imu.resetMPU9250(); // start by resetting MPU9250
