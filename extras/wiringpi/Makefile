@@ -13,7 +13,7 @@ CPSPI = $(HOME)/CrossPlatformSPI/
 
 ALL = MasterTest PassthruTest SPITest
 
-MPUSRC = ../../../src
+MPUSRC = ../../src
 
 I2CINC = $(CPI2C)/src
 I2CSRC = $(CPI2C)/extras/wiringpi/src

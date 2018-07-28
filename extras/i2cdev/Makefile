@@ -12,7 +12,7 @@ CPI2C = $(HOME)/CrossPlatformI2C/
 
 ALL = MasterTest PassthruTest
 
-MPUSRC = ../../../src
+MPUSRC = ../../src
 
 I2CINC = $(CPI2C)/src
 I2CSRC = $(CPI2C)/extras/i2cdev/src
