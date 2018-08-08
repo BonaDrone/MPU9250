@@ -24,9 +24,9 @@ extern void delay(uint32_t msec);
 #endif
 
 
-void MPU9250::begin(void)
+void MPU9250::begin(uint8_t bus)
 {
-    _mpu = cpi2c_open(MPU9250_ADDRESS);
+    _mpu = cpi2c_open(MPU9250_ADDRESS, bus);
 }
 
 uint8_t MPU9250::readRegister(uint8_t address, uint8_t subAddress)
@@ -49,8 +49,8 @@ void MPU9250::writeRegister(uint8_t address, uint8_t subAddress, uint8_t data)
 
 // Passthru ===========================================================================================
 
-void MPU9250_Passthru::begin(void)
+void MPU9250_Passthru::begin(uint8_t i2cbus)
 {
-    MPU9250::begin();
+    MPU9250::begin(i2cbus);
     _mag = cpi2c_open(AK8963_ADDRESS);
 }

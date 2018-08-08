@@ -78,7 +78,7 @@ class MPU9250 {
 
         uint8_t _mpu;
 
-        void begin(void);
+        void begin(uint8_t bus=1);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
@@ -271,7 +271,7 @@ class MPU9250_Passthru : public MPU9250 {
 
     public:
 
-        void begin(void);
+        void begin(uint8_t i2cbus=1);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
@@ -295,7 +295,7 @@ class MPU9250_Master : public MPU9250 {
 
     public:
 
-        virtual void begin(void);
+        virtual void begin(uint8_t i2cbus=1);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 

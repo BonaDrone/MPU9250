@@ -56,8 +56,8 @@ static MPU9250_Passthru imu;
 
 void setup()
 {
-    // Open a connection to the MPU9250
-    imu.begin();
+    // Open a connection to the MPU9250 on I^2C bus 0
+    imu.begin(0);
 
     // Configure the MPU9250 
     // Read the WHO_AM_I register, this is a good test of communication

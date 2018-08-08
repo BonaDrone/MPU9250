@@ -655,9 +655,9 @@ void MPU9250_Passthru::readAK8963Registers(uint8_t subAddress, uint8_t count, ui
 
 // Master ===============================================================================================
 
-void MPU9250_Master::begin(void)
+void MPU9250_Master::begin(uint8_t i2cbus)
 {
-    MPU9250::begin();
+    MPU9250::begin(i2cbus);
 }
 
 void MPU9250_Master::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 

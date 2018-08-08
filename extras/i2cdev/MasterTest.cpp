@@ -55,8 +55,8 @@ static MPU9250_Master imu;
 
 void setup()
 {
-    // Open a connection to the MPU9250
-    imu.begin();
+    // Open a connection to the MPU9250 on I^2C bus 0
+    imu.begin(0);
 
     delay(100);
 
