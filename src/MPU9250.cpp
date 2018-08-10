@@ -32,6 +32,7 @@ float MPU9250::getMres(Mscale_t mscale) {
     {
         // Possible magnetometer scales (and their register bit settings) are:
         // 14 bit resolution (0) and 16 bit resolution (1)
+        // We multiply by 10 to convert microteslas to milligauss
         case MFS_14BITS:
             _mRes = 10.*4912./8190.; // Proper scale to return milliGauss
             return _mRes;
