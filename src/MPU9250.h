@@ -49,24 +49,23 @@ class MPU9250 {
 
     public: 
 
-        uint8_t getMPU9250ID(void);
-        void    resetMPU9250(void);
+        void    accelWakeOnMotion(void);
+        void    calibrate(float accelBias[3], float gyroBias[3]);
+        bool    checkWakeOnMotion(void);
+        uint8_t getId(void);
         float   getAres(Ascale_t ascale);
         float   getGres(Gscale_t gscale);
         float   getMres(Mscale_t mscale);
-        void    magcalMPU9250(float * dest1, float * dest2);
-        void    calibrateMPU9250(float * dest1, float * dest2);
-        void    readMPU9250Data(int16_t * destination);
+        void    magcal(float bias[3], float scale[3]);
         void    readAccelData(int16_t * destination);
         void    readGyroData(int16_t * destination);
-        int16_t readGyroTempData(void);
-        void    accelWakeOnMotion(void);
-        bool    checkWakeOnMotion(void);
-        void    SelfTest(float * destination);
+        int16_t readGyroTemperature(void);
+        void    reset(void);
+        void    selfTest(float * destination);
 
         uint8_t getAK8963CID();
-        void    gyromagSleep();
-        void    gyromagWake(Mmode_t mmode);
+        void    gyroMagSleep();
+        void    gyroMagWake(Mmode_t mmode);
         void    readMagData(int16_t * destination);
         void    initAK8963(Mscale_t mscale, uint8_t Mmode, float * magCalibration);
 

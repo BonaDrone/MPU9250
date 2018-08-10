@@ -5,6 +5,7 @@ Here's what I changed:
 * Reorganized Kris's
 [source code](https://github.com/kriswiner/MPU9250/tree/master/MPU9250_BME280_SPIFlash_Ladybug) 
 into the modern Arduino library [format](https://github.com/arduino/arduino/wiki/arduino-ide-1.5:-library-specification)
+* Regularized the API so that all methods use the same order (accelerometer, gyrometer)
 * Added support for RaspberryPi via [WiringPi](http://wiringpi.com/)
 * Added support for NVIDIA Jetson via i2cdev
 * Simplified the 

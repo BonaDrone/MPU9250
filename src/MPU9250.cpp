@@ -22,7 +22,7 @@
 extern void delay(uint32_t msec);
 #endif
 
-uint8_t MPU9250::getMPU9250ID()
+uint8_t MPU9250::getId()
 {
     return readMPU9250Register(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
 }
@@ -136,29 +136,16 @@ void MPU9250::accelWakeOnMotion()
     c = readMPU9250Register(PWR_MGMT_1);
     writeMPU9250Register(PWR_MGMT_1, c | 0x20);     // Write bit 5 to enable accel cycling
 
-    gyromagSleep();
+    gyroMagSleep();
     delay(100); // Wait for all registers to reset 
 
 }
 
-void MPU9250::resetMPU9250()
+void MPU9250::reset()
 {
     // reset device
     writeMPU9250Register(PWR_MGMT_1, 0x80); // Set bit 7 to reset MPU9250
     delay(100); // Wait for all registers to reset 
-}
-
-void MPU9250::readMPU9250Data(int16_t * destination)
-{
-    uint8_t rawData[14];  // x/y/z accel register data stored here
-    readMPU9250Registers(ACCEL_XOUT_H, 14, &rawData[0]);  // Read the 14 raw data registers into data array
-    destination[0] = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
-    destination[1] = ((int16_t)rawData[2] << 8) | rawData[3] ;  
-    destination[2] = ((int16_t)rawData[4] << 8) | rawData[5] ; 
-    destination[3] = ((int16_t)rawData[6] << 8) | rawData[7] ;   
-    destination[4] = ((int16_t)rawData[8] << 8) | rawData[9] ;  
-    destination[5] = ((int16_t)rawData[10] << 8) | rawData[11] ;  
-    destination[6] = ((int16_t)rawData[12] << 8) | rawData[13] ; 
 }
 
 void MPU9250::readAccelData(int16_t * destination)
@@ -186,7 +173,7 @@ bool MPU9250::checkWakeOnMotion()
 }
 
 
-int16_t MPU9250::readGyroTempData()
+int16_t MPU9250::readGyroTemperature()
 {
     uint8_t rawData[2];  // x/y/z gyro register data stored here
     readMPU9250Registers(TEMP_OUT_H, 2, &rawData[0]);  // Read the two raw data registers sequentially into data array 
@@ -266,7 +253,7 @@ void MPU9250::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDi
     delay(100);
 }
 
-void MPU9250::magcalMPU9250(float * dest1, float * dest2) 
+void MPU9250::magcal(float bias[3], float scale[3])
 {
     uint16_t ii = 0, sample_count = 0;
     int32_t mag_bias[3] = {0, 0, 0}, mag_scale[3] = {0, 0, 0};
@@ -293,9 +280,9 @@ void MPU9250::magcalMPU9250(float * dest1, float * dest2)
     mag_bias[1]  = (mag_max[1] + mag_min[1])/2;  // get average y mag bias in counts
     mag_bias[2]  = (mag_max[2] + mag_min[2])/2;  // get average z mag bias in counts
 
-    dest1[0] = (float) mag_bias[0]*_mRes*_magCalibration[0];  // save mag biases in G for main program
-    dest1[1] = (float) mag_bias[1]*_mRes*_magCalibration[1];   
-    dest1[2] = (float) mag_bias[2]*_mRes*_magCalibration[2];  
+    bias[0] = (float) mag_bias[0]*_mRes*_magCalibration[0];  // save mag biases in G for main program
+    bias[1] = (float) mag_bias[1]*_mRes*_magCalibration[1];   
+    bias[2] = (float) mag_bias[2]*_mRes*_magCalibration[2];  
 
     // Get soft iron correction estimate
     mag_scale[0]  = (mag_max[0] - mag_min[0])/2;  // get average x axis max chord length in counts
@@ -305,14 +292,14 @@ void MPU9250::magcalMPU9250(float * dest1, float * dest2)
     float avg_rad = mag_scale[0] + mag_scale[1] + mag_scale[2];
     avg_rad /= 3.0;
 
-    dest2[0] = avg_rad/((float)mag_scale[0]);
-    dest2[1] = avg_rad/((float)mag_scale[1]);
-    dest2[2] = avg_rad/((float)mag_scale[2]);
+    scale[0] = avg_rad/((float)mag_scale[0]);
+    scale[1] = avg_rad/((float)mag_scale[1]);
+    scale[2] = avg_rad/((float)mag_scale[2]);
 }
 
 // Function which accumulates gyro and accelerometer data after device initialization. It calculates the average
 // of the at-rest readings and then loads the resulting offsets into accelerometer and gyro bias registers.
-void MPU9250::calibrateMPU9250(float * dest1, float * dest2)
+void MPU9250::calibrate(float accelBias[3], float gyroBias[3])
 {  
     uint8_t data[12]; // data array to hold accelerometer and gyro x, y, z, data
     uint16_t ii, packet_count, fifo_count;
@@ -402,9 +389,9 @@ void MPU9250::calibrateMPU9250(float * dest1, float * dest2)
     writeMPU9250Register(ZG_OFFSET_L, data[5]);
 
     // Output scaled gyro biases for display in the main program
-    dest1[0] = (float) gyro_bias[0]/(float) gyrosensitivity;  
-    dest1[1] = (float) gyro_bias[1]/(float) gyrosensitivity;
-    dest1[2] = (float) gyro_bias[2]/(float) gyrosensitivity;
+    gyroBias[0] = (float) gyro_bias[0]/(float) gyrosensitivity;  
+    gyroBias[1] = (float) gyro_bias[1]/(float) gyrosensitivity;
+    gyroBias[2] = (float) gyro_bias[2]/(float) gyrosensitivity;
 
     // Construct the accelerometer biases for push to the hardware accelerometer bias registers. These registers contain
     // factory trim values which must be added to the calculated accelerometer biases; on boot up these registers will hold
@@ -453,13 +440,13 @@ void MPU9250::calibrateMPU9250(float * dest1, float * dest2)
     //  writeMPU9250Register(ZA_OFFSET_L, data[5]);
 
     // Output scaled accelerometer biases for display in the main program
-    dest2[0] = (float)accel_bias[0]/(float)accelsensitivity; 
-    dest2[1] = (float)accel_bias[1]/(float)accelsensitivity;
-    dest2[2] = (float)accel_bias[2]/(float)accelsensitivity;
+    accelBias[0] = (float)accel_bias[0]/(float)accelsensitivity; 
+    accelBias[1] = (float)accel_bias[1]/(float)accelsensitivity;
+    accelBias[2] = (float)accel_bias[2]/(float)accelsensitivity;
 }
 
 // Accelerometer and gyroscope self test; check calibration wrt factory settings
-void MPU9250::SelfTest(float * destination) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
+void MPU9250::selfTest(float * destination) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
 {
     uint8_t rawData[6] = {0, 0, 0, 0, 0, 0};
     uint8_t selfTest[6];
@@ -560,7 +547,7 @@ uint8_t MPU9250::getAK8963CID()
     return readAK8963Register(WHO_AM_I_AK8963);
 }
 
-void MPU9250::gyromagSleep()
+void MPU9250::gyroMagSleep()
 {
     uint8_t temp = 0;
     temp = readAK8963Register(AK8963_CNTL);
@@ -570,7 +557,7 @@ void MPU9250::gyromagSleep()
     delay(10); // Wait for all registers to reset 
 }
 
-void MPU9250::gyromagWake(Mmode_t mmode)
+void MPU9250::gyroMagWake(Mmode_t mmode)
 {
     uint8_t temp = 0;
     temp = readAK8963Register(AK8963_CNTL);
