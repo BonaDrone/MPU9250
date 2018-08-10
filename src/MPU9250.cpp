@@ -621,7 +621,7 @@ void MPU9250::readMPU9250Registers(uint8_t subAddress, uint8_t count, uint8_t * 
 
 // Passthru ===========================================================================================
 
-void MPU9250_Passthru::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
+void MPU9250_Passthru::init(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
 { 
     MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true); 
 }

@@ -272,7 +272,7 @@ class MPU9250_Passthru : public MPU9250 {
 
         void begin(uint8_t i2cbus=1);
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
+        void init(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
         bool checkNewAccelGyroData(void);
 

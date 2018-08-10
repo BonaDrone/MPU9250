@@ -95,7 +95,7 @@ void setup()
     // Configure the MPU9250 
     // Read the WHO_AM_I register, this is a good test of communication
     Serial.println("MPU9250 9-axis motion sensor...");
-    uint8_t c = imu.getMPU9250ID();
+    uint8_t c = imu.getId();
     Serial.print("MPU9250 ");
     Serial.print("I AM ");
     Serial.print(c, HEX);
@@ -107,29 +107,29 @@ void setup()
     
         Serial.println("MPU9250 is online...");
 
-        imu.resetMPU9250(); // start by resetting MPU9250
+        imu.reset(); // start by resetting MPU9250
 
-        float SelfTest[6];    // holds results of gyro and accelerometer self test
+        float selfTest[6];    // holds results of gyro and accelerometer self test
 
-        imu.SelfTest(SelfTest); // Start by performing self test and reporting values
+        imu.selfTest(selfTest); // Start by performing self test and reporting values
 
         Serial.print("x-axis self test: acceleration trim within : "); 
-        Serial.print(SelfTest[0],1); 
+        Serial.print(selfTest[0],1); 
         Serial.println("% of factory value");
         Serial.print("y-axis self test: acceleration trim within : "); 
-        Serial.print(SelfTest[1],1); 
+        Serial.print(selfTest[1],1); 
         Serial.println("% of factory value");
         Serial.print("z-axis self test: acceleration trim within : "); 
-        Serial.print(SelfTest[2],1); 
+        Serial.print(selfTest[2],1); 
         Serial.println("% of factory value");
         Serial.print("x-axis self test: gyration trim within : "); 
-        Serial.print(SelfTest[3],1); 
+        Serial.print(selfTest[3],1); 
         Serial.println("% of factory value");
         Serial.print("y-axis self test: gyration trim within : "); 
-        Serial.print(SelfTest[4],1); 
+        Serial.print(selfTest[4],1); 
         Serial.println("% of factory value");
         Serial.print("z-axis self test: gyration trim within : "); 
-        Serial.print(SelfTest[5],1); 
+        Serial.print(selfTest[5],1); 
         Serial.println("% of factory value");
         delay(1000);
 
@@ -139,7 +139,7 @@ void setup()
         mRes = imu.getMres(MSCALE);
 
         // Comment out if using pre-measured, pre-stored offset accel/gyro biases
-        imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
+        imu.calibrate(accelBias, gyroBias); // Calibrate gyro and accelerometers, load biases in bias registers
         Serial.println("accel biases (mg)");
         Serial.println(1000.*accelBias[0]);
         Serial.println(1000.*accelBias[1]);
@@ -150,7 +150,7 @@ void setup()
         Serial.println(gyroBias[2]);
         delay(1000); 
 
-        imu.initMPU9250(ASCALE, GSCALE, SAMPLE_RATE_DIVISOR); 
+        imu.init(ASCALE, GSCALE, SAMPLE_RATE_DIVISOR); 
         Serial.println("MPU9250 initialized for active data mode...."); 
 
         // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
@@ -169,7 +169,7 @@ void setup()
         // Comment out if using pre-measured, pre-stored offset magnetometer biases
         Serial.println("Mag Calibration: Wave device in a figure eight until done!");
         delay(4000);
-        imu.magcalMPU9250(magBias, magScale);
+        imu.magcal(magBias, magScale);
         Serial.println("Mag Calibration done!");
         Serial.println("AK8963 mag biases (mG)");
         Serial.println(magBias[0]);
@@ -216,17 +216,21 @@ void loop()
 
         if (imu.checkNewAccelGyroData())  { // data ready interrupt is detected
 
-            imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
+            int16_t accelData[3];
+            imu.readAccelData(accelData);
 
             // Convert the accleration value into g's
-            ax = (float)MPU9250Data[0]*aRes - accelBias[0];  
-            ay = (float)MPU9250Data[1]*aRes - accelBias[1];   
-            az = (float)MPU9250Data[2]*aRes - accelBias[2];  
+            ax = (float)accelData[0]*aRes - accelBias[0];  
+            ay = (float)accelData[1]*aRes - accelBias[1];   
+            az = (float)accelData[2]*aRes - accelBias[2];  
+
+            int16_t gyroData[3];
+            imu.readGyroData(gyroData);
 
             // Convert the gyro value into degrees per second
-            gx = (float)MPU9250Data[4]*gRes;  
-            gy = (float)MPU9250Data[5]*gRes;  
-            gz = (float)MPU9250Data[6]*gRes; 
+            gx = (float)gyroData[0]*gRes;  
+            gy = (float)gyroData[1]*gRes;  
+            gz = (float)gyroData[2]*gRes; 
 
             if(imu.checkNewMagData()) { // wait for magnetometer data ready bit to be set
 
