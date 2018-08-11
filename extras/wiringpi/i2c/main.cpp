@@ -10,6 +10,12 @@
 
 extern void setup(), loop();
 
+void error(const char * errmsg) 
+{
+    fprintf(stderr, "%s\n", errmsg);
+    exit(1);
+}
+
 int main(int argc, char ** argv)
 {
     setup();

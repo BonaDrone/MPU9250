@@ -15,6 +15,13 @@
 
 extern void setup(), loop();
 
+void error(const char * errmsg) 
+{
+    Serial.println(errmsg);
+    while (true) ;
+}
+
+
 void delay(unsigned int msec)
 {
     usleep(msec*1000);
