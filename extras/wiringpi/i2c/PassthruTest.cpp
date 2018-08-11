@@ -40,14 +40,7 @@ static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;
 
 
 // Pin definitions
-static const uint8_t intPin = 0;   //  MPU9250 interrupt
-
-// Interrupt support 
-static bool gotNewData;
-static void myinthandler()
-{
-    gotNewData = true;
-}
+static const uint8_t INTERRUPT_PIN = 0;   //  MPU9250 interrupt
 
 // Instantiate MPU9250 class in pass-through mode
 static MPU9250_Passthru imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
@@ -71,40 +64,30 @@ void setup()
         case MPU_ERROR_SELFTEST:
             error("Failed self-test");
         default:
-            Serial.println("MPU6050 online!\n");
+            printf("MPU6050 online!\n");
     }
     // Comment out if using pre-measured, pre-stored offset magnetometer biases
     printf("Mag Calibration: Wave device in a figure eight until done!\n");
     imu.calibrateMagnetometer();
-
-    attachInterrupt(INTERRUPT_PIN, myinthandler, RISING);  // define interrupt for INTERRUPT_PIN output of MPU9250
-
-
- }
+}
 
 void loop()
 {  
     static float ax, ay, az, gx, gy, gz, mx, my, mz, temperature;
 
-    // If INTERRUPT_PIN goes high, either all data registers have new data
-    // or the accel wake on motion threshold has been crossed
-    if (true /*gotNewData*/) {   // On interrupt, read data
+    if (imu.checkNewAccelGyroData())  { 
 
-        gotNewData = false;     
+        imu.readAccelerometer(ax, ay, az);
 
-        if (imu.checkNewAccelGyroData())  { 
+        imu.readGyrometer(gx, gy, gz);
 
-            imu.readAccelerometer(ax, ay, az);
+        temperature = imu.readTemperature();
 
-            imu.readGyrometer(gx, gy, gz);
+        if(imu.checkNewMagData()) { 
 
-            temperature = imu.readTemperature();
-
-            if(imu.checkNewMagData()) { 
-
-                imu.readMagnetometer(mx, my, mz);
-            }
+            imu.readMagnetometer(mx, my, mz);
         }
+    }
 
     // Report at 4 Hz
     static uint32_t msec_prev;
@@ -114,14 +97,14 @@ void loop()
 
         msec_prev = msec_curr;
 
+        printf("\n");
+
         printf("ax = %d  ay = %d  az = %d mg\n", (int)(1000*ax), (int)(1000*ay), (int)(1000*az));
         printf("gx = %+2.2f  gy = %+2.2f  gz = %+2.2f deg/s\n", gx, gy, gz);
         printf("mx = %d  my = %d  mz = %d mG\n", (int)mx, (int)my, (int)mz);
 
-        float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
-
         // Print temperature in degrees Centigrade      
         printf("Gyro temperature is %+1.1f degrees C\n", temperature);  
     }
-} // if got new data
+
 }
