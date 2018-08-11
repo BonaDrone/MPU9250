@@ -34,8 +34,8 @@ MPU9250_SPI.o: $(MPUSRC)/MPU9250_SPI.cpp
 WiringPiSPI.o: $(SPISRC)/WiringPiSPI.cpp 
 	g++ -std=c++11 -Wall -I$(SPIINC) -c $(SPISRC)/WiringPiSPI.cpp
 
-main.o: main.cpp 
-	g++ -std=c++11 -Wall -c main.cpp
+main.o: ../../main.cpp 
+	g++ -std=c++11 -Wall -c ../../main.cpp
 
 run: MasterTest
 	./MasterTest

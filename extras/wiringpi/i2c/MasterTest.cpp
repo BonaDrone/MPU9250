@@ -76,7 +76,6 @@ void setup()
 
 void loop()
 {  
-
     static float ax, ay, az, gx, gy, gz, mx, my, mz, temperature;
 
     // If INTERRUPT_PIN goes high, either all data registers have new data

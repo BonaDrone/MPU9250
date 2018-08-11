@@ -37,157 +37,53 @@ static const Mscale_t MSCALE    = MFS_16BITS;
 static const Mmode_t  MMODE     = M_100Hz;
 static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;         
 
-
-// scale resolutions per LSB for the sensors
-static float aRes, gRes, mRes;
-
 // Pin definitions
 static const uint8_t intPin = 0;   //  MPU9250 interrupt
 
-// Factory mag calibration and mag bias
-static float   magCalibration[3]; 
-
-// Bias corrections for gyro and accelerometer. These can be measured once and
-// entered here or can be calculated each time the device is powered on.
-static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};      
-
 // Instantiate MPU9250 class in master mode
-static MPU9250_SPI imu;
+static MPU9250_SPI imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
 
 void setup()
 {
+    void error(const char * errmsg);
+
     // Setup WirinPi
     wiringPiSetup();
 
     // Set up SPI
     wiringPiSPISetup(1, 400000);
 
-    // Open a connection to the MPU9250
-    imu.begin();
+    // Start the MPU9250
+    switch (imu.begin()) {
 
-    delay(100);
-
-    // Configure the MPU9250 
-    // Read the WHO_AM_I register, this is a good test of communication
-    printf("MPU9250 9-axis motion sensor...\n");
-    uint8_t c = imu.getMPU9250ID();
-    printf("MPU9250  I AM %02X  I should be 0x71\n", c);
-    delay(1000);
-
-    if (c == 0x71 ) { // WHO_AM_I should always be 0x71 for MPU9250, 0x73 for MPU9255 
-
-        printf("MPU9250 is online...\n");
-
-        imu.resetMPU9250(); // start by resetting MPU9250
-
-        float SelfTest[6];    // holds results of gyro and accelerometer self test
-
-        imu.SelfTest(SelfTest); // Start by performing self test and reporting values
-
-        printf("x-axis self test: acceleration trim within : %+3.3f%% of factory value\n", SelfTest[0]); 
-        printf("y-axis self test: acceleration trim within : %+3.3f%% of factory value\n", SelfTest[1]); 
-        printf("z-axis self test: acceleration trim within : %+3.3f%% of factory value\n", SelfTest[2]); 
-        printf("x-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[3]); 
-        printf("y-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[4]); 
-        printf("z-axis self test: gyration trim within : %+3.3f%% of factory value\n", SelfTest[5]); 
-        delay(1000);
-
-        // get sensor resolutions, only need to do this once
-        aRes = imu.getAres(ASCALE);
-        gRes = imu.getGres(GSCALE);
-        mRes = imu.getMres(MSCALE);
-
-        // Comment out if using pre-measured, pre-stored offset accel/gyro biases
-        imu.calibrateMPU9250(gyroBias, accelBias); // Calibrate gyro and accelerometers, load biases in bias registers
-        printf("accel biases (mg)\n");
-        printf("%f\n", 1000.*accelBias[0]);
-        printf("%f\n", 1000.*accelBias[1]);
-        printf("%f\n", 1000.*accelBias[2]);
-        printf("gyro biases (dps)\n");
-        printf("%f\n", gyroBias[0]);
-        printf("%f\n", gyroBias[1]);
-        printf("%f\n", gyroBias[2]);
-        delay(1000); 
-
-        imu.initMPU9250(ASCALE, GSCALE, SAMPLE_RATE_DIVISOR); 
-        printf("MPU9250 initialized for active data mode....\n"); 
-
-        // Read the WHO_AM_I register of the magnetometer, this is a good test of communication
-        uint8_t d = imu.getAK8963CID();  // Read WHO_AM_I register for AK8963
-        printf("AK8963  I AM 0x%02x  I should be 0x48\n", d);
-        delay(1000); 
-
-        // Get magnetometer calibration from AK8963 ROM
-        imu.initAK8963(MSCALE, MMODE, magCalibration);
-        printf("AK8963 initialized for active data mode....\n"); 
-
-        // Comment out if using pre-measured, pre-stored offset magnetometer biases
-        printf("Mag Calibration: Wave device in a figure eight until done!\n");
-        delay(4000);
-        imu.magcalMPU9250(magBias, magScale);
-        printf("Mag Calibration done!\n");
-        printf("AK8963 mag biases (mG)\n");
-        printf("%f\n", magBias[0]);
-        printf("%f\n", magBias[1]);
-        printf("%f\n", magBias[2]); 
-        printf("AK8963 mag scale (mG)\n");
-        printf("%f\n", magScale[0]);
-        printf("%f\n", magScale[1]);
-        printf("%f\n", magScale[2]); 
-        delay(2000); // add delay to see results before serial spew of data
-        printf("Calibration values:\n");
-        printf("X-Axis sensitivity adjustment value %+2.2f\n", magCalibration[0]);
-        printf("Y-Axis sensitivity adjustment value %+2.2f\n", magCalibration[1]);
-        printf("Z-Axis sensitivity adjustment value %+2.2f\n", magCalibration[2]);
+        case MPU_ERROR_IMU_ID:
+            error("Bad IMU device ID");
+        case MPU_ERROR_MAG_ID:
+            error("Bad magnetometer device ID");
+        case MPU_ERROR_SELFTEST:
+            error("Failed self-test");
+        default:
+            printf("MPU6050 online!\n");
     }
-    else {
-
-        printf("Could not connect to MPU9250: 0x%02x", c);
-        while(true) ; // Loop forever if communication doesn't happen
-    }
-
-    delay(3000);                // wait a bit before looping
 }
 
 void loop()
 {  
-    static int16_t MPU9250Data[7]; // used to read all 14 bytes at once from the MPU9250 accel/gyro
-    static float ax, ay, az, gx, gy, gz, mx, my, mz;
-
-    if (imu.checkNewData())  { // data ready interrupt is detected
-
-        imu.readMPU9250Data(MPU9250Data); // INT cleared on any read
-
-        // Convert the accleration value into g's
-        ax = (float)MPU9250Data[0]*aRes - accelBias[0];  
-        ay = (float)MPU9250Data[1]*aRes - accelBias[1];   
-        az = (float)MPU9250Data[2]*aRes - accelBias[2];  
-
-        // Convert the gyro value into degrees per second
-        gx = (float)MPU9250Data[4]*gRes;  
-        gy = (float)MPU9250Data[5]*gRes;  
-        gz = (float)MPU9250Data[6]*gRes; 
-
-        int16_t magCount[3];    // Stores the 16-bit signed magnetometer sensor output
-
-        imu.readMagData(magCount);  // Read the x/y/z adc values
-
-        // Calculate the magnetometer values in milliGauss
-        // Include factory calibration per data sheet and user environmental corrections
-        // Get actual magnetometer value, this depends on scale being set
-        mx = (float)magCount[0]*mRes*magCalibration[0] - magBias[0];  
-        my = (float)magCount[1]*mRes*magCalibration[1] - magBias[1];  
-        mz = (float)magCount[2]*mRes*magCalibration[2] - magBias[2];  
-        mx *= magScale[0];
-        my *= magScale[1];
-        mz *= magScale[2]; 
-    }
-
-    // Report at 1Hz
+    // Report at 4 Hz
     static uint32_t msec_prev;
     uint32_t msec_curr = millis();
 
-    if (msec_curr-msec_prev > 1000) {
+    static float ax, ay, az, gx, gy, gz, mx, my, mz, temperature;
+
+    if (imu.checkNewData())  { // data ready interrupt is detected
+
+        imu.readAccelerometer(ax, ay, az);
+        imu.readGyrometer(gx, gy, gz);
+        imu.readMagnetometer(mx, my, mz);
+        temperature = imu.readTemperature();
+    }
+
+    if (msec_curr-msec_prev > 250) {
 
         msec_prev = msec_curr;
 
