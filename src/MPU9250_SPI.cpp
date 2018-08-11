@@ -25,9 +25,15 @@
 extern void delay(uint32_t msec);
 #endif
 
-
-MPU_Error_t MPU9250::begin(void)
+MPU9250_SPI::MPU9250_SPI(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor) :
+    MPU9250(ascale, gscale, mscale, mmode, sampleRateDivisor, false)
 {
+}
+
+
+MPU_Error_t MPU9250::begin(uint8_t ignore)
+{
+    (void)ignore;
     return runTests();
 }
 

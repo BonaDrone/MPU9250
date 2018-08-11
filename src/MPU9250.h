@@ -344,6 +344,8 @@ class MPU9250_SPI : public MPU9250 {
 
     public:
 
+        MPU9250_SPI(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor);
+
         virtual MPU_Error_t begin(void);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
