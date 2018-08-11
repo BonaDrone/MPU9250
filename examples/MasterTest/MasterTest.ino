@@ -66,6 +66,37 @@ static float magCalibration[3];
 // Instantiate MPU9250 class in master mode
 static MPU9250_Master imu;
 
+static void error(const char * errmsg) 
+{
+    Serial.println(errmsg);
+    while (true) ;
+}
+
+static void reportAcceleration(const char * dim, float val)
+{
+    Serial.print(dim);
+    Serial.print("-acceleration: ");
+    Serial.print(1000*val);
+    Serial.print(" milliG  "); 
+}
+
+static void reportGyroRate(const char * dim, float val)
+{
+    Serial.print(dim);
+    Serial.print("-gyro rate: ");
+    Serial.print(val, 1);
+    Serial.print(" degrees/sec  "); 
+}
+
+static void reportMagnetometer(const char * dim, float val)
+{
+    Serial.print(dim);
+    Serial.print("-magnetometer: ");
+    Serial.print(val);
+    Serial.print(" milligauss  "); 
+}
+
+
 void setup(void)
 {
     // Start serial comms
@@ -211,7 +242,7 @@ void loop(void)
 
     // If INTERRUPT_PIN goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
-    if(gotNewData) {   // On interrupt, read data
+    if(true /*gotNewData*/) {   // On interrupt, read data
 
         gotNewData = false;     // reset gotNewData flag
 
@@ -255,34 +286,30 @@ void loop(void)
 
                 msec_prev = msec_curr;
 
-                Serial.print("ax = ");
-                Serial.print((int)1000*ax);  
-                Serial.print(" ay = ");
-                Serial.print((int)1000*ay); 
-                Serial.print(" az = ");
-                Serial.print((int)1000*az);
-                Serial.println(" mg");
-                Serial.print("gx = ");
-                Serial.print( gx, 2); 
-                Serial.print(" gy = ");
-                Serial.print( gy, 2); 
-                Serial.print(" gz = ");
-                Serial.print( gz, 2);
-                Serial.println(" deg/s");
-                Serial.print("mx = ");
-                Serial.print( (int)mx ); 
-                Serial.print(" my = ");
-                Serial.print( (int)my ); 
-                Serial.print(" mz = ");
-                Serial.print( (int)mz );
-                Serial.println(" mG");
+                reportAcceleration("X", ax);
+                reportAcceleration("Y", ay);
+                reportAcceleration("Z", az);
+
+                Serial.println();
+
+                reportGyroRate("X", gx);
+                reportGyroRate("Y", gy);
+                reportGyroRate("Z", gz);
+
+                Serial.println();;
+
+                reportMagnetometer("X", mx);
+                reportMagnetometer("Y", my);
+                reportMagnetometer("Z", mz);
+
+                Serial.println();;
 
                 float temperature = ((float)imu.readGyroTemperature()) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
 
                 // Print temperature in degrees Centigrade      
                 Serial.print("Gyro temperature is ");  
                 Serial.print(temperature, 1);  
-                Serial.println(" degrees C"); 
+                Serial.println(" degrees C\n"); 
             }
         }
     }
