@@ -45,6 +45,15 @@ typedef enum {
 
 } Mmode_t;
 
+typedef enum {
+
+    MPU_ERROR_NONE,
+    MPU_ERROR_CONNECT,
+    MPU_ERROR_ID,
+    MPU_ERROR_SELFTEST
+
+} MPU_Error_t;
+
 class MPU9250 {
 
     public: 
@@ -77,7 +86,7 @@ class MPU9250 {
 
         uint8_t _mpu;
 
-        void begin(uint8_t bus=1);
+        MPU_Error_t begin(uint8_t bus=1);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
@@ -270,7 +279,7 @@ class MPU9250_Passthru : public MPU9250 {
 
     public:
 
-        void begin(uint8_t i2cbus=1);
+        MPU_Error_t begin(uint8_t i2cbus=1);
 
         void init(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
@@ -296,7 +305,7 @@ class MPU9250_Master : public MPU9250 {
 
         MPU9250_Master(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor);
 
-        virtual void begin(uint8_t i2cbus=1);
+        virtual MPU_Error_t begin(uint8_t i2cbus=1);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
@@ -313,7 +322,7 @@ class MPU9250_SPI : public MPU9250 {
 
     public:
 
-        virtual void begin(void);
+        virtual MPU_Error_t begin(void);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 

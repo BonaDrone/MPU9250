@@ -647,9 +647,11 @@ MPU9250_Master::MPU9250_Master(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale
 {
 }
 
-void MPU9250_Master::begin(uint8_t i2cbus)
+MPU_Error_t MPU9250_Master::begin(uint8_t i2cbus)
 {
     MPU9250::begin(i2cbus);
+
+    return MPU_ERROR_NONE;
 }
 
 void MPU9250_Master::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
@@ -684,9 +686,9 @@ bool MPU9250_Master::checkNewData(void)
 
 // Master ===============================================================================================
 
-void MPU9250_SPI::begin(void)
+MPU_Error_t MPU9250_SPI::begin(void)
 {
-    MPU9250::begin();
+    return MPU9250::begin();
 }
 
 void MPU9250_SPI::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 

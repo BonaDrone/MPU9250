@@ -26,9 +26,11 @@ extern void delay(uint32_t msec);
 #endif
 
 
-void MPU9250::begin(void)
+MPU_Error_t MPU9250::begin(void)
 {
     // No action needed.  Perhaps we should specify the SPI bus and speed.
+
+    return MPU_ERROR_NONE;
 }
 
 uint8_t MPU9250::readRegister(uint8_t address, uint8_t subAddress)
