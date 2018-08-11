@@ -48,7 +48,7 @@ void setup()
     void error(const char * msg);
 
     // Start the MPU9250
-    switch (imu.begin()) {
+    switch (imu.begin(0)) {
 
         case MPU_ERROR_IMU_ID:
             error("Bad IMU device ID");
@@ -57,7 +57,7 @@ void setup()
         case MPU_ERROR_SELFTEST:
             error("Failed self-test");
         default:
-            Serial.println("MPU6050 online!\n");
+            printf("MPU6050 online!\n");
     }
 
     // Comment out if using pre-measured, pre-stored offset magnetometer biases
@@ -67,6 +67,7 @@ void setup()
 
 void loop()
 {  
+    static float ax, ay, az, gx, gy, gz, mx, my, mz, temperature;
 
     if (imu.checkNewData())  {
 
@@ -77,6 +78,8 @@ void loop()
     }
 
     // Report at 4 HZ
+    uint32_t usec_curr = micros();
+    static uint32_t usec_prev;
     if (usec_curr-usec_prev > 250000) {
 
         usec_prev = usec_curr;

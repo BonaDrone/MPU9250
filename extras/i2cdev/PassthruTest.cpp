@@ -50,7 +50,7 @@ void setup()
     void error(const char * errmsg);
 
     // Start the MPU9250
-    switch (imu.begin()) {
+    switch (imu.begin(0)) {
 
         case MPU_ERROR_IMU_ID:
             error("Bad IMU device ID");
@@ -59,7 +59,7 @@ void setup()
         case MPU_ERROR_SELFTEST:
             error("Failed self-test");
         default:
-            Serial.println("MPU6050 online!\n");
+            printf("MPU6050 online!\n");
     }
 
     printf("Mag Calibration: Wave device in a figure eight until done!\n");
@@ -68,6 +68,8 @@ void setup()
 
 void loop()
 {  
+    static float ax, ay, az, gx, gy, gz, mx, my, mz, temperature;
+
     if (imu.checkNewAccelGyroData())  { 
 
         imu.readAccelerometer(ax, ay, az);
@@ -93,8 +95,6 @@ void loop()
         printf("ax = %d  ay = %d  az = %d mg\n", (int)(1000*ax), (int)(1000*ay), (int)(1000*az));
         printf("gx = %+2.2f  gy = %+2.2f  gz = %+2.2f deg/s\n", gx, gy, gz);
         printf("mx = %d  my = %d  mz = %d mG\n", (int)mx, (int)my, (int)mz);
-
-        float temperature = ((float) MPU9250Data[3]) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade
 
         // Print temperature in degrees Centigrade      
         printf("Gyro temperature is %+1.1f degrees C\n", temperature);  

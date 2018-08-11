@@ -5,7 +5,7 @@ Here's what I changed:
 * Reorganized Kris's
 [source code](https://github.com/kriswiner/MPU9250/tree/master/MPU9250_BME280_SPIFlash_Ladybug) 
 into the modern Arduino library [format](https://github.com/arduino/arduino/wiki/arduino-ide-1.5:-library-specification)
-* Regularized the API so that all methods use the same order (accelerometer, gyrometer)
+* Simplified the API
 * Added support for RaspberryPi via [WiringPi](http://wiringpi.com/)
 * Added support for NVIDIA Jetson via i2cdev
 * Simplified the 
@@ -32,7 +32,7 @@ development board, I<sup>2</sup>C
 
 * Raspberry Pi Zero with [PXFMini](http://erlerobotics.com/blog/product/pxfmini/) autopilot shield, SPI 
 
-* NVIDIA Jetson TX1, I<sup>2</sup>C
+* NVIDIA Jetson TX1, I<sup>2</sup>C (fails tolerance self-test)
 
 RaspberryPi users should download and install
 [WiringPi](http://wiringpi.com/), then cd to one of the example folders in 
