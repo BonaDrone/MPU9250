@@ -22,17 +22,49 @@
 extern void delay(uint32_t msec);
 #endif
 
-MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor)
+MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor, bool passthru)
 {
+    _aRes = getAres(ascale);
+    _gRes = getGres(gscale);
+    _mRes = getMres(mscale);
+
     _aScale = ascale;
     _gScale = gscale;
     _mScale = mscale;
     _mMode = mmode;
     _sampleRateDivisor = sampleRateDivisor;
+    _passthru = passthru;
 }
 
 MPU_Error_t MPU9250::runTests(void) 
 { 
+    // Read the WHO_AM_I register, this is a good test of communication
+    if (getId() != 0x71) {
+        return MPU_ERROR_IMU_ID;
+    }
+
+    reset(); // start by resetting MPU9250
+
+    float tolerances[6]; 
+    selfTest(tolerances); 
+    for (uint8_t k=0; k<6; ++k) {
+        if (tolerances[k] >= 1.0f) {
+            return MPU_ERROR_SELFTEST;
+        }
+    }
+    // Comment out if using pre-measured, pre-stored accel/gyro offset biases
+    calibrate(_accelBias, _gyroBias); // Calibrate gyro and accelerometers, load biases in bias registers
+
+    initMPU9250(_aScale, _gScale, _sampleRateDivisor, _passthru); 
+
+    // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
+    if (getAK8963CID() != 0x48) {
+        return MPU_ERROR_MAG_ID;
+    }
+
+    // Get magnetometer calibration from AK8963 ROM
+    initAK8963(_mScale, _mMode, _magCalibration);
+
     return MPU_ERROR_NONE;
 }
 
@@ -50,11 +82,9 @@ float MPU9250::getMres(Mscale_t mscale) {
         case MFS_14BITS:
             _mRes = 10.*4912./8190.; // Proper scale to return milliGauss
             return _mRes;
-            break;
         case MFS_16BITS:
             _mRes = 10.*4912./32760.0; // Proper scale to return milliGauss
             return _mRes;
-            break;
     }
 
     // For type safety
@@ -162,23 +192,33 @@ void MPU9250::reset()
     delay(100); // Wait for all registers to reset 
 }
 
-void MPU9250::readAccelData(int16_t * destination)
+void MPU9250::readAccelerometer(float & ax, float & ay, float & az)
 {
     uint8_t rawData[6];  // x/y/z accel register data stored here
     readMPU9250Registers(ACCEL_XOUT_H, 6, &rawData[0]);  // Read the six raw data registers into data array
-    destination[0] = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
-    destination[1] = ((int16_t)rawData[2] << 8) | rawData[3] ;  
-    destination[2] = ((int16_t)rawData[4] << 8) | rawData[5] ; 
+    int16_t x  = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
+    int16_t y  = ((int16_t)rawData[2] << 8) | rawData[3] ;  
+    int16_t z  = ((int16_t)rawData[4] << 8) | rawData[5] ; 
+
+    // Convert the accleration value into g's
+    ax = (float)x*_aRes - _accelBias[0];  
+    ay = (float)y*_aRes - _accelBias[1];   
+    az = (float)z*_aRes - _accelBias[2];  
 }
 
 
-void MPU9250::readGyroData(int16_t * destination)
+void MPU9250::readGyrometer(float & gx, float & gy, float & gz)
 {
     uint8_t rawData[6];  // x/y/z gyro register data stored here
     readMPU9250Registers(GYRO_XOUT_H, 6, &rawData[0]);  // Read the six raw data registers sequentially into data array
-    destination[0] = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
-    destination[1] = ((int16_t)rawData[2] << 8) | rawData[3] ;  
-    destination[2] = ((int16_t)rawData[4] << 8) | rawData[5] ; 
+    int16_t x = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
+    int16_t y = ((int16_t)rawData[2] << 8) | rawData[3] ;  
+    int16_t z = ((int16_t)rawData[4] << 8) | rawData[5] ; 
+
+    // Convert the gyro value into degrees per second
+    gx = (float)x*_gRes;  
+    gy = (float)y*_gRes;  
+    gz = (float)z*_gRes; 
 }
 
 bool MPU9250::checkWakeOnMotion()
@@ -187,13 +227,13 @@ bool MPU9250::checkWakeOnMotion()
 }
 
 
-int16_t MPU9250::readGyroTemperature()
+float MPU9250::readTemperature()
 {
     uint8_t rawData[2];  // x/y/z gyro register data stored here
     readMPU9250Registers(TEMP_OUT_H, 2, &rawData[0]);  // Read the two raw data registers sequentially into data array 
-    return ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a 16-bit value
+    int16_t t = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a 16-bit value
+    return ((float)t) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade)
 }
-
 
 void MPU9250::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru)
 {  
@@ -267,7 +307,7 @@ void MPU9250::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDi
     delay(100);
 }
 
-void MPU9250::magcal(float bias[3], float scale[3])
+void MPU9250::calibrateMagnetometer(void)
 {
     uint16_t ii = 0, sample_count = 0;
     int32_t mag_bias[3] = {0, 0, 0}, mag_scale[3] = {0, 0, 0};
@@ -294,9 +334,9 @@ void MPU9250::magcal(float bias[3], float scale[3])
     mag_bias[1]  = (mag_max[1] + mag_min[1])/2;  // get average y mag bias in counts
     mag_bias[2]  = (mag_max[2] + mag_min[2])/2;  // get average z mag bias in counts
 
-    bias[0] = (float) mag_bias[0]*_mRes*_magCalibration[0];  // save mag biases in G for main program
-    bias[1] = (float) mag_bias[1]*_mRes*_magCalibration[1];   
-    bias[2] = (float) mag_bias[2]*_mRes*_magCalibration[2];  
+    _magBias[0] = (float) mag_bias[0]*_mRes*_magCalibration[0];  // save mag biases in G for main program
+    _magBias[1] = (float) mag_bias[1]*_mRes*_magCalibration[1];   
+    _magBias[2] = (float) mag_bias[2]*_mRes*_magCalibration[2];  
 
     // Get soft iron correction estimate
     mag_scale[0]  = (mag_max[0] - mag_min[0])/2;  // get average x axis max chord length in counts
@@ -306,9 +346,9 @@ void MPU9250::magcal(float bias[3], float scale[3])
     float avg_rad = mag_scale[0] + mag_scale[1] + mag_scale[2];
     avg_rad /= 3.0;
 
-    scale[0] = avg_rad/((float)mag_scale[0]);
-    scale[1] = avg_rad/((float)mag_scale[1]);
-    scale[2] = avg_rad/((float)mag_scale[2]);
+    _magScale[0] = avg_rad/((float)mag_scale[0]);
+    _magScale[1] = avg_rad/((float)mag_scale[1]);
+    _magScale[2] = avg_rad/((float)mag_scale[2]);
 }
 
 // Function which accumulates gyro and accelerometer data after device initialization. It calculates the average
@@ -460,7 +500,7 @@ void MPU9250::calibrate(float accelBias[3], float gyroBias[3])
 }
 
 // Accelerometer and gyroscope self test; check calibration wrt factory settings
-void MPU9250::selfTest(float * destination) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
+void MPU9250::selfTest(float  tolerances[6]) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
 {
     uint8_t rawData[6] = {0, 0, 0, 0, 0, 0};
     uint8_t selfTest[6];
@@ -539,8 +579,8 @@ void MPU9250::selfTest(float * destination) // Should return percent deviation f
     // Report results as a ratio of (STR - FT)/FT; the change from Factory Trim of the Self-Test Response
     // To get percent, must multiply by 100
     for (int i = 0; i < 3; i++) {
-        destination[i]   = 100.0f*((float)(aSTAvg[i] - aAvg[i]))/factoryTrim[i] - 100.0f;   // Report percent differences
-        destination[i+3] = 100.0f*((float)(gSTAvg[i] - gAvg[i]))/factoryTrim[i+3] - 100.0f; // Report percent differences
+        tolerances[i]   = 100.0f*((float)(aSTAvg[i] - aAvg[i]))/factoryTrim[i] - 100.0f;   // Report percent differences
+        tolerances[i+3] = 100.0f*((float)(gSTAvg[i] - gAvg[i]))/factoryTrim[i+3] - 100.0f; // Report percent differences
     }
 }
 
@@ -574,6 +614,22 @@ void MPU9250::gyroMagWake(Mmode_t mmode)
     temp = readMPU9250Register(PWR_MGMT_1);
     writeMPU9250Register(PWR_MGMT_1, 0x01);   // return gyro and accel normal mode
     delay(10); // Wait for all registers to reset 
+}
+
+void MPU9250::readMagnetometer(float & mx, float & my, float & mz)
+{
+    int16_t magCount[3];
+    readMagData(magCount);
+
+    // Calculate the magnetometer values in milliGauss
+    // Include factory calibration per data sheet and user environmental corrections
+    // Get actual magnetometer value, this depends on scale being set
+    mx = (float)magCount[0]*_mRes*_magCalibration[0] - _magBias[0];  
+    my = (float)magCount[1]*_mRes*_magCalibration[1] - _magBias[1];  
+    mz = (float)magCount[2]*_mRes*_magCalibration[2] - _magBias[2];  
+    mx *= _magScale[0];
+    my *= _magScale[1];
+    mz *= _magScale[2]; 
 }
 
 void MPU9250::readMagData(int16_t * destination)
@@ -631,7 +687,7 @@ void MPU9250::readMPU9250Registers(uint8_t subAddress, uint8_t count, uint8_t * 
 // Passthru ===========================================================================================
 
 MPU9250_Passthru::MPU9250_Passthru(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor) :
-    MPU9250(ascale, gscale, mscale, mmode, sampleRateDivisor)
+    MPU9250(ascale, gscale, mscale, mmode, sampleRateDivisor, true)
 {
 }
 
@@ -663,7 +719,7 @@ void MPU9250_Passthru::readAK8963Registers(uint8_t subAddress, uint8_t count, ui
 // Master ===============================================================================================
 
 MPU9250_Master::MPU9250_Master(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor) :
-    MPU9250(ascale, gscale, mscale, mmode, sampleRateDivisor)
+    MPU9250(ascale, gscale, mscale, mmode, sampleRateDivisor, false)
 {
 }
 

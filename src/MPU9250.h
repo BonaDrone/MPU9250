@@ -60,28 +60,20 @@ class MPU9250 {
     public: 
 
         void    accelWakeOnMotion(void);
-        void    calibrate(float accelBias[3], float gyroBias[3]);
         bool    checkWakeOnMotion(void);
-        uint8_t getId(void);
-        float   getAres(Ascale_t ascale);
-        float   getGres(Gscale_t gscale);
-        float   getMres(Mscale_t mscale);
-        void    magcal(float bias[3], float scale[3]);
-        void    readAccelData(int16_t * destination);
-        void    readGyroData(int16_t * destination);
-        int16_t readGyroTemperature(void);
-        void    reset(void);
-        void    selfTest(float * destination);
+        void    calibrateMagnetometer(void);
+        void    readAccelerometer(float & ax, float & ay, float & az);
+        void    readGyrometer(float & ax, float & ay, float & az);
+        void    readMagnetometer(float & mx, float & my, float & mz);
+        float   readTemperature(void);
 
-        uint8_t getAK8963CID();
         void    gyroMagSleep();
         void    gyroMagWake(Mmode_t mmode);
-        void    readMagData(int16_t * destination);
         void    initAK8963(Mscale_t mscale, Mmode_t Mmode, float * magCalibration);
 
     protected:
 
-        MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor);
+        MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor, bool passthru);
 
         MPU_Error_t runTests(void);
 
@@ -282,6 +274,25 @@ class MPU9250 {
         float   _fuseROMy;
         float   _fuseROMz;
         float   _magCalibration[3];
+
+    private:
+
+        void    reset(void);
+        uint8_t getId(void);
+        void    selfTest(float tolerances[6]);
+        void    calibrate(float accelBias[6], float gyroBias[6]);
+        uint8_t getAK8963CID(void);
+        float   getAres(Ascale_t ascale);
+        float   getGres(Gscale_t gscale);
+        float   getMres(Mscale_t mscale);
+        void    readMagData(int16_t * destination);
+
+        float _accelBias[3];
+        float _gyroBias[3];
+
+        // These can be overridden by calibrateMagnetometer()
+        float _magBias[3] = {0,0,0};
+        float _magScale[3] = {1,1,1};
 
 }; // class MPU9250
 
