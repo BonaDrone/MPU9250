@@ -151,7 +151,7 @@ void loop(void)
         }
     }
 
-    // Report at 1Hz
+    // Report at 4 Hz
     static uint32_t msec_prev;
     uint32_t msec_curr = millis();
 
