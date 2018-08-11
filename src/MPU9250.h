@@ -62,14 +62,12 @@ class MPU9250 {
         void    accelWakeOnMotion(void);
         bool    checkWakeOnMotion(void);
         void    calibrateMagnetometer(void);
+        void    gyroMagSleep();
+        void    gyroMagWake(Mmode_t mmode);
         void    readAccelerometer(float & ax, float & ay, float & az);
         void    readGyrometer(float & ax, float & ay, float & az);
         void    readMagnetometer(float & mx, float & my, float & mz);
         float   readTemperature(void);
-
-        void    gyroMagSleep();
-        void    gyroMagWake(Mmode_t mmode);
-        void    initAK8963(Mscale_t mscale, Mmode_t Mmode, float * magCalibration);
 
     protected:
 
@@ -277,15 +275,16 @@ class MPU9250 {
 
     private:
 
-        void    reset(void);
-        uint8_t getId(void);
-        void    selfTest(float tolerances[6]);
         void    calibrate(float accelBias[6], float gyroBias[6]);
         uint8_t getAK8963CID(void);
         float   getAres(Ascale_t ascale);
         float   getGres(Gscale_t gscale);
         float   getMres(Mscale_t mscale);
+        uint8_t getId(void);
+        void    reset(void);
+        void    selfTest(float tolerances[6]);
         void    readMagData(int16_t * destination);
+        void    initAK8963(Mscale_t mscale, Mmode_t Mmode, float * magCalibration);
 
         float _accelBias[3];
         float _gyroBias[3];
@@ -303,8 +302,6 @@ class MPU9250_Passthru : public MPU9250 {
         MPU9250_Passthru(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor);
 
         MPU_Error_t begin(uint8_t i2cbus=1);
-
-        void init(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
         bool checkNewAccelGyroData(void);
 
@@ -330,8 +327,6 @@ class MPU9250_Master : public MPU9250 {
 
         virtual MPU_Error_t begin(uint8_t i2cbus=1);
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
-
         bool checkNewData(void);
 
     protected:
@@ -339,6 +334,10 @@ class MPU9250_Master : public MPU9250 {
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
+
+    private:
+
+        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 };
 
 class MPU9250_SPI : public MPU9250 {

@@ -691,11 +691,6 @@ MPU9250_Passthru::MPU9250_Passthru(Ascale_t ascale, Gscale_t gscale, Mscale_t ms
 {
 }
 
-void MPU9250_Passthru::init(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
-{ 
-    MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true); 
-}
-
 bool MPU9250_Passthru::checkNewAccelGyroData()
 {
     return (readMPU9250Register(INT_STATUS) & 0x01);

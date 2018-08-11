@@ -2,39 +2,31 @@
 # Datatypes (KEYWORD1)
 ################################################################################
 
+MPU9250_Passthru	KEYWORD1
+MPU9250_Master		KEYWORD1
 MPU9250	KEYWORD1
 Ascale_t	KEYWORD1
 Gscale_t	KEYWORD1
 Mscale_t	KEYWORD1
 Mmode_t	KEYWORD1
+MPU_Error_t	KEYWORD1
 
 ################################################################################
 # Methods and Functions (KEYWORD2)
-################################################################################
+########################kkkkk########################################################
 
 accelWakeOnMotion	KEYWORD2
 begin	KEYWORD2
-calibrateMPU9250	KEYWORD2
+calibrateMagnetometer   KEYWORD2
 checkNewAccelGyroData	KEYWORD2
 checkNewMagData	KEYWORD2
 checkWakeOnMotion	KEYWORD2
-getAK8963CID	KEYWORD2
-getAres	KEYWORD2
-getGres	KEYWORD2
-getMPU9250ID	KEYWORD2
-getMres	KEYWORD2
-gyromagSleep	KEYWORD2
-gyromagWake	KEYWORD2
-initAK8963	KEYWORD2
-initMPU9250	KEYWORD2
-magcalMPU9250	KEYWORD2
-readAccelData	KEYWORD2
-readGyroData	KEYWORD2
-readGyroTempData	KEYWORD2
-readMagData	KEYWORD2
-readMPU9250Data	KEYWORD2
-resetMPU9250	KEYWORD2
-SelfTest	KEYWORD2
+gyroMagSleep	KEYWORD2
+gyroMagWake	KEYWORD2
+readAccelerometer	KEYWORD2
+readGyrometer	KEYWORD2
+readTemperature	KEYWORD2
+readMagnetometer	KEYWORD2
 
 ################################################################################
 # Constants (LITERAL1)
@@ -54,4 +46,12 @@ MFS_14BITS	LITERAL1
 MFS_16BITS	LITERAL1
 
 M_8HZ	LITERAL1
-M_100HZ	LITERAL1
+M_100HZ	LITERAL1    
+
+MPU_ERROR_NONE	LITERAL1
+MPU_ERROR_CONNECT	LITERAL1
+MPU_ERROR_IMU_ID	LITERAL1
+MPU_ERROR_MAG_ID	LITERAL1
+MPU_ERROR_SELFTEST  LITERAL1
+
+
