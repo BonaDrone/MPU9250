@@ -31,6 +31,11 @@ MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmod
     _sampleRateDivisor = sampleRateDivisor;
 }
 
+MPU_Error_t MPU9250::runTests(void) 
+{ 
+    return MPU_ERROR_NONE;
+}
+
 uint8_t MPU9250::getId()
 {
     return readMPU9250Register(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
@@ -666,7 +671,7 @@ MPU_Error_t MPU9250_Master::begin(uint8_t i2cbus)
 {
     MPU9250::begin(i2cbus);
 
-    return MPU_ERROR_NONE;
+    return runTests();
 }
 
 void MPU9250_Master::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
@@ -703,7 +708,7 @@ bool MPU9250_Master::checkNewData(void)
 
 MPU_Error_t MPU9250_SPI::begin(void)
 {
-    return MPU9250::begin();
+    return runTests();
 }
 
 void MPU9250_SPI::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 

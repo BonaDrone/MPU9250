@@ -121,9 +121,18 @@ void setup(void)
     digitalWrite(LED_PIN, HIGH); 
 
     // Start the MPU9250
-    imu.begin();
+    switch (imu.begin()) {
 
-    // Configure the MPU9250 
+        case MPU_ERROR_IMU_ID:
+            error("Bad IMU device ID");
+        case MPU_ERROR_MAG_ID:
+            error("Bad magnetometer device ID");
+        case MPU_ERROR_SELFTEST:
+            error("Failed self-test");
+        default:
+            Serial.println("MPU6050 online!\n");
+    }
+
     // Read the WHO_AM_I register, this is a good test of communication
     Serial.println("MPU9250 9-axis motion sensor...");
     uint8_t c = imu.getId();

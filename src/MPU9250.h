@@ -49,7 +49,8 @@ typedef enum {
 
     MPU_ERROR_NONE,
     MPU_ERROR_CONNECT,
-    MPU_ERROR_ID,
+    MPU_ERROR_IMU_ID,
+    MPU_ERROR_MAG_ID,
     MPU_ERROR_SELFTEST
 
 } MPU_Error_t;
@@ -81,6 +82,8 @@ class MPU9250 {
     protected:
 
         MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor);
+
+        MPU_Error_t runTests(void);
 
         //static const uint8_t MPU9250_ADDRESS = 0x69; // When AD0 = 1
         static const uint8_t MPU9250_ADDRESS = 0x68;   // When AD0 = 0
