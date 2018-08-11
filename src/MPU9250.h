@@ -76,9 +76,11 @@ class MPU9250 {
         void    gyroMagSleep();
         void    gyroMagWake(Mmode_t mmode);
         void    readMagData(int16_t * destination);
-        void    initAK8963(Mscale_t mscale, uint8_t Mmode, float * magCalibration);
+        void    initAK8963(Mscale_t mscale, Mmode_t Mmode, float * magCalibration);
 
     protected:
+
+        MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor);
 
         //static const uint8_t MPU9250_ADDRESS = 0x69; // When AD0 = 1
         static const uint8_t MPU9250_ADDRESS = 0x68;   // When AD0 = 0
@@ -262,12 +264,17 @@ class MPU9250 {
         uint8_t readMPU9250Register(uint8_t subAddress);
 
         uint8_t readAK8963Register(uint8_t subAddress);
+        
+        Ascale_t _aScale;
+        Gscale_t _gScale;
+        Mscale_t _mScale;
+        Mmode_t  _mMode;
+        uint8_t  _sampleRateDivisor;
 
         bool    _passthru;
         float   _aRes;
         float   _gRes;
         float   _mRes;
-        uint8_t _Mmode;
         float   _fuseROMx;
         float   _fuseROMy;
         float   _fuseROMz;
@@ -278,6 +285,8 @@ class MPU9250 {
 class MPU9250_Passthru : public MPU9250 {
 
     public:
+
+        MPU9250_Passthru(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor);
 
         MPU_Error_t begin(uint8_t i2cbus=1);
 

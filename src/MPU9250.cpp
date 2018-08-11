@@ -22,6 +22,15 @@
 extern void delay(uint32_t msec);
 #endif
 
+MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor)
+{
+    _aScale = ascale;
+    _gScale = gscale;
+    _mScale = mscale;
+    _mMode = mmode;
+    _sampleRateDivisor = sampleRateDivisor;
+}
+
 uint8_t MPU9250::getId()
 {
     return readMPU9250Register(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
@@ -259,8 +268,8 @@ void MPU9250::magcal(float bias[3], float scale[3])
     int32_t mag_bias[3] = {0, 0, 0}, mag_scale[3] = {0, 0, 0};
     int16_t mag_max[3] = {-32767, -32767, -32767}, mag_min[3] = {32767, 32767, 32767}, mag_temp[3] = {0, 0, 0};
 
-    if(_Mmode == 0x02) sample_count = 128;  // at 8 Hz ODR, new mag data is available every 125 ms
-    if(_Mmode == 0x06) sample_count = 1500;  // at 100 Hz ODR, new mag data is available every 10 ms
+    if(_mMode == M_8Hz) sample_count = 128;  // at 8 Hz ODR, new mag data is available every 125 ms
+    if(_mMode == M_100Hz) sample_count = 1500;  // at 100 Hz ODR, new mag data is available every 10 ms
 
     for(ii = 0; ii < sample_count; ii++) {
 
@@ -271,8 +280,8 @@ void MPU9250::magcal(float bias[3], float scale[3])
             if(mag_temp[jj] < mag_min[jj]) mag_min[jj] = mag_temp[jj];
         }
 
-        if(_Mmode == 0x02) delay(135);  // at 8 Hz ODR, new mag data is available every 125 ms
-        if(_Mmode == 0x06) delay(12);  // at 100 Hz ODR, new mag data is available every 10 ms
+        if(_mMode == M_8Hz) delay(135);  // at 8 Hz ODR, new mag data is available every 125 ms
+        if(_mMode == M_100Hz) delay(12);  // at 100 Hz ODR, new mag data is available every 10 ms
     }
 
     // Get hard iron correction
@@ -537,11 +546,6 @@ uint8_t MPU9250::readAK8963Register(uint8_t subAddress)
     return buffer;
 }
 
-bool MPU9250_Passthru::checkNewMagData()
-{
-    return readAK8963Register(AK8963_ST1) & 0x01;
-}
-
 uint8_t MPU9250::getAK8963CID()
 {
     return readAK8963Register(WHO_AM_I_AK8963);
@@ -579,7 +583,7 @@ void MPU9250::readMagData(int16_t * destination)
     }
 }
 
-void MPU9250::initAK8963(Mscale_t mscale, uint8_t Mmode, float * magCalibration)
+void MPU9250::initAK8963(Mscale_t mscale, Mmode_t Mmode, float * magCalibration)
 {
     // First extract the factory calibration for each magnetometer axis
     uint8_t rawData[3];  // x/y/z gyro calibration data stored here
@@ -594,7 +598,7 @@ void MPU9250::initAK8963(Mscale_t mscale, uint8_t Mmode, float * magCalibration)
     _magCalibration[0] = magCalibration[0];
     _magCalibration[1] = magCalibration[1];
     _magCalibration[2] = magCalibration[2];
-    _Mmode = Mmode;
+    _mMode = Mmode;
     writeAK8963Register(AK8963_CNTL, 0x00); // Power down magnetometer  
     delay(10);
     // Configure the magnetometer for continuous read and highest resolution
@@ -621,6 +625,11 @@ void MPU9250::readMPU9250Registers(uint8_t subAddress, uint8_t count, uint8_t * 
 
 // Passthru ===========================================================================================
 
+MPU9250_Passthru::MPU9250_Passthru(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor) :
+    MPU9250(ascale, gscale, mscale, mmode, sampleRateDivisor)
+{
+}
+
 void MPU9250_Passthru::init(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
 { 
     MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, true); 
@@ -629,6 +638,11 @@ void MPU9250_Passthru::init(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRate
 bool MPU9250_Passthru::checkNewAccelGyroData()
 {
     return (readMPU9250Register(INT_STATUS) & 0x01);
+}
+
+bool MPU9250_Passthru::checkNewMagData()
+{
+    return readAK8963Register(AK8963_ST1) & 0x01;
 }
 
 void MPU9250_Passthru::writeAK8963Register(uint8_t subAddress, uint8_t data)
@@ -643,7 +657,8 @@ void MPU9250_Passthru::readAK8963Registers(uint8_t subAddress, uint8_t count, ui
 
 // Master ===============================================================================================
 
-MPU9250_Master::MPU9250_Master(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor)
+MPU9250_Master::MPU9250_Master(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor) :
+    MPU9250(ascale, gscale, mscale, mmode, sampleRateDivisor)
 {
 }
 
