@@ -36,11 +36,11 @@ Mmode:  Mmode = M_8Hz for 8 Hz data rate or Mmode = M_100Hz for 100 Hz data rate
 SAMPLE_RATE_DIVISOR: (1 + SAMPLE_RATE_DIVISOR) is a simple divisor of the fundamental 1000 kHz rate of the gyro and accel, so 
 SAMPLE_RATE_DIVISOR = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
  */
-static const Gscale_t GSCALE     = GFS_250DPS;
 static const Ascale_t ASCALE     = AFS_2G;
+static const Gscale_t GSCALE     = GFS_250DPS;
 static const Mscale_t MSCALE     = MFS_16BITS;
 static const Mmode_t  MMODE      = M_100Hz;
-static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;         
+static const uint8_t SAMPLE_RATE_DIVISOR = 4;         
 
 // scale resolutions per LSB for the sensors
 static float aRes, gRes, mRes;
@@ -64,7 +64,7 @@ static float gyroBias[3], accelBias[3], magBias[3]={0,0,0}, magScale[3]={1,1,1};
 static float magCalibration[3]; 
 
 // Instantiate MPU9250 class in master mode
-static MPU9250_Master imu;
+static MPU9250_Master imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
 
 static void error(const char * errmsg) 
 {

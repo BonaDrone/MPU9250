@@ -294,6 +294,8 @@ class MPU9250_Master : public MPU9250 {
 
     public:
 
+        MPU9250_Master(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor);
+
         virtual void begin(uint8_t i2cbus=1);
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
