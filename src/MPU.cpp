@@ -249,3 +249,9 @@ void MPUIMU::readGyrometer(float & gx, float & gy, float & gz)
     gz = (float)z*_gRes; 
 }
 
+int16_t MPUIMU::readRawTemperature(void)
+{
+    uint8_t rawData[2];  // x/y/z gyro register data stored here
+    readMPURegisters(TEMP_OUT_H, 2, &rawData[0]);  // Read the two raw data registers sequentially into data array 
+    return ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a 16-bit value
+}

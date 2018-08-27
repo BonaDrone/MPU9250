@@ -178,7 +178,9 @@ class MPUIMU {
         virtual uint8_t yAOffsetH(void) = 0;
         virtual uint8_t zAOffsetH(void) = 0;
 
-        void readGyrometer(float & gx, float & gy, float & gz);
+        void    readGyrometer(float & gx, float & gy, float & gz);
+
+        int16_t readRawTemperature(void);
 
     public:
 
