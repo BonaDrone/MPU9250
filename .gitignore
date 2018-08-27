@@ -1,6 +1,3 @@
-MasterTest
-PassthruTest
-SPITest
 *.o
 *.so
 *.swp
