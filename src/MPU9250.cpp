@@ -70,7 +70,7 @@ MPU_Error_t MPU9250::runTests(void)
 
 uint8_t MPU9250::getId()
 {
-    return readMPU9250Register(WHO_AM_I_MPU9250);  // Read WHO_AM_I register for MPU-9250
+    return readMPU9250Register(WHO_AM_I);  // Read WHO_AM_I register for MPU-9250
 }
 
 float MPU9250::getMres(Mscale_t mscale) {
