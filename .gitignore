@@ -1,3 +1,4 @@
+extras/MPU6050/wiringpi/Basic
 extras/MPU9250/wiringpi/i2c/MasterTest
 extras/MPU9250/wiringpi/i2c/PassthruTest
 *.o
