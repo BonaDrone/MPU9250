@@ -74,11 +74,6 @@ MPU_Error_t MPU6050::begin(uint8_t bus)
     return MPU_ERROR_NONE;
 }
 
-uint8_t  MPU6050::getId(void)
-{
-    return readMPURegister(WHO_AM_I);  
-}
-
 bool MPU6050::checkNewData(void)
 {
     return (bool)(readMPURegister(INT_STATUS) & 0x01);
@@ -415,9 +410,4 @@ void MPU6050::selfTest(float * destination) // Should return percent deviation f
     }
 }
 
-uint8_t MPU6050::readMPURegister(uint8_t subAddress)
-{
-    uint8_t data;
-    readMPURegisters(subAddress, 1, &data);
-    return data;
-}
+

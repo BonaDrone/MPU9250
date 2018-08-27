@@ -56,3 +56,15 @@ float MPUIMU::getAres(Ascale_t ascale)
 
     return 0;
 }
+
+uint8_t MPUIMU::getId()
+{
+    return readMPURegister(WHO_AM_I);  // Read WHO_AM_I register for MPU-9250
+}
+
+uint8_t MPUIMU::readMPURegister(uint8_t subAddress)
+{
+    uint8_t data;
+    readMPURegisters(subAddress, 1, &data);
+    return data;
+}

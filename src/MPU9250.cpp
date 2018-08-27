@@ -68,11 +68,6 @@ MPU_Error_t MPU9250::runTests(void)
     return MPU_ERROR_NONE;
 }
 
-uint8_t MPU9250::getId()
-{
-    return readMPURegister(WHO_AM_I);  // Read WHO_AM_I register for MPU-9250
-}
-
 float MPU9250::getMres(Mscale_t mscale) {
     switch (mscale)
     {
@@ -610,11 +605,6 @@ void MPU9250::initAK8963(Mscale_t mscale, Mmode_t Mmode, float * magCalibration)
     // and enable continuous mode data acquisition Mmode (bits [3:0]), 0010 for 8 Hz and 0110 for 100 Hz sample rates
     writeAK8963Register(AK8963_CNTL, mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
     delay(10);
-}
-
-uint8_t MPU9250::readMPURegister(uint8_t subAddress)
-{
-    return readRegister(_mpu, subAddress);
 }
 
 void MPU9250::writeMPURegister(uint8_t subAddress, uint8_t data)

@@ -139,5 +139,12 @@ class MPUIMU {
 
         float    getAres(Ascale_t ascale);
         float    getGres(Gscale_t gscale);
+        uint8_t  getId(void);
+
+        uint8_t readMPURegister(uint8_t subAddress);
+
+        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) = 0;
+
+        virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
 
 }; // class MPU

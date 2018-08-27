@@ -1,10 +1,13 @@
-/* MPU6050 library header code
-by: Kris Winer
-date: May 1, 2014
-updated: 2018 Simon D. Levy
-license: Beerware - Use this code however you'd like. If you
-find it useful you can buy me a beer some time.
-*/
+/*  Header file for MPU6050 class library
+ *
+ *  Copyright 2017 Tlera Corporation
+ *  
+ *  Created by Kris Winer
+ *
+ *  Adapted by Simon D. Levy 19 April 2018
+ *  
+ *  Library may be used freely and without limit with attribution.
+ */
 
 #include "MPU.h"
 
@@ -21,6 +24,12 @@ class MPU6050 : public MPUIMU {
         void        readAccelerometer(float & ax, float & ay, float & az);
         void        readGyrometer(float & gx, float & gy, float & gz);
         float       readTemperature(void);
+
+    protected:
+
+        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
+
+        virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 
     private:
 
@@ -60,15 +69,10 @@ class MPU6050 : public MPUIMU {
         const uint8_t ZRMOT_DUR        		= 0x22;  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
 
         void     calibrate(float accelBias[3], float gyroBias[3]);
-        uint8_t  getId(void);
         void     selfTest(float * destination);
 
         void     init(Ascale_t ascale, Gscale_t gscale);
 
-        uint8_t  readMPURegister(uint8_t subAddress);
-
         // Cross-platform support
-        void     writeMPURegister(uint8_t subAddress, uint8_t data);
-        void     readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest);
         uint8_t  _i2c;
 }; 

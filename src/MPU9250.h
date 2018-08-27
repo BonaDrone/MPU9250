@@ -142,12 +142,6 @@ class MPU9250 : public MPUIMU {
         const uint8_t I2C_READ_FLAG     = 0x80;
         const uint8_t I2C_MST_EN        = 0x20;
 
-        void    writeMPURegister(uint8_t subAddress, uint8_t data);
-
-        void    readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * data);
-
-        uint8_t readMPURegister(uint8_t subAddress);
-
         uint8_t readAK8963Register(uint8_t subAddress);
         
         Mscale_t _mScale;
@@ -161,10 +155,13 @@ class MPU9250 : public MPUIMU {
         float   _fuseROMz;
         float   _magCalibration[3];
 
+        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
+
+        virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+
     private:
 
         void    calibrate(float accelBias[6], float gyroBias[6]);
-        uint8_t getId(void);
         void    selfTest(float tolerances[6]);
 
         uint8_t getAK8963CID(void);

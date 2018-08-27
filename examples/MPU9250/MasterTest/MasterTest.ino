@@ -118,13 +118,14 @@ void setup(void)
         case MPU_ERROR_MAG_ID:
             error("Bad magnetometer device ID");
         case MPU_ERROR_SELFTEST:
-            error("Failed self-test");
+            //error("Failed self-test");
+            break;
         default:
             Serial.println("MPU9250 online!\n");
     }
 
     // Comment out if using pre-measured, pre-stored offset magnetometer biases
-    Serial.println("Mag Calibration: Wave device in a figure eight until done!");
+    //Serial.println("Mag Calibration: Wave device in a figure eight until done!");
     //imu.calibrateMagnetometer();
 
     attachInterrupt(INTERRUPT_PIN, myinthandler, RISING);  // define interrupt for INTERRUPT_PIN output of MPU9250
@@ -138,7 +139,7 @@ void loop(void)
 
     // If INTERRUPT_PIN goes high, either all data registers have new data
     // or the accel wake on motion threshold has been crossed
-    if (gotNewData) {   // On interrupt, read data
+    if (true /*gotNewData*/) {   // On interrupt, read data
 
         gotNewData = false;     // reset gotNewData flag
 
