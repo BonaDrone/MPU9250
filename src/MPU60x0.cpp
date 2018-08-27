@@ -39,7 +39,7 @@ MPU60x0::MPU60x0(Ascale_t ascale, Gscale_t gscale)
 MPU_Error_t MPU60x0::begin(void)
 {
     if (getId() != 0x68) {
-        return MPU_ERROR_ID;
+        return MPU_ERROR_IMU_ID;
     }
 
     float tolerances[6]; 

@@ -9,32 +9,8 @@ find it useful you can buy me a beer some time.
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef enum {
+#include "MPU.h"
 
-  AFS_2G,
-  AFS_4G,
-  AFS_8G,
-  AFS_16G
-
-} Ascale_t;
-
-typedef enum {
-
-  GFS_250DPS,
-  GFS_500DPS,
-  GFS_1000DPS,
-  GFS_2000DPS
-
-} Gscale_t;
-
-typedef enum {
-
-    MPU_ERROR_NONE,
-    MPU_ERROR_CONNECT,
-    MPU_ERROR_ID,
-    MPU_ERROR_SELFTEST
-
-} MPU_Error_t;
 
 class MPU60x0 {
 
