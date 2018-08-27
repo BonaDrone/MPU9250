@@ -13,6 +13,22 @@
 
 #include <stdint.h>
 
+// One ifdef needed to support delay() cross-platform
+#if defined(ARDUINO)
+#include <Arduino.h>
+
+#elif defined(__arm__) 
+#if defined(STM32F303)
+extern "C" { void delay(uint32_t msec); }
+#else
+#include <wiringPi.h>
+#endif
+
+#else
+void delay(uint32_t msec);
+#endif
+
+
 typedef enum {
 
     AFS_2G,
@@ -47,6 +63,16 @@ class MPUIMU {
 
         // Register map
 
+        const uint8_t XG_OFFSET_H           = 0x13; 
+        const uint8_t XG_OFFSET_L           = 0x14;
+        const uint8_t YG_OFFSET_H           = 0x15;
+        const uint8_t YG_OFFSET_L           = 0x16;
+        const uint8_t ZG_OFFSET_H           = 0x17;
+        const uint8_t ZG_OFFSET_L           = 0x18;
+        const uint8_t SMPLRT_DIV       		= 0x19;
+        const uint8_t CONFIG           		= 0x1A;
+        const uint8_t GYRO_CONFIG      		= 0x1B;
+        const uint8_t ACCEL_CONFIG     		= 0x1C;
         const uint8_t FIFO_EN          		= 0x23;
         const uint8_t I2C_MST_CTRL     		= 0x24;
         const uint8_t I2C_SLV0_ADDR    		= 0x25;
@@ -137,6 +163,7 @@ class MPUIMU {
         float _accelBias[3];
         float _gyroBias[3];
 
+        void     calibrate(float accelBias[3], float gyroBias[3]);
         float    getAres(Ascale_t ascale);
         float    getGres(Gscale_t gscale);
         uint8_t  getId(void);
@@ -146,5 +173,9 @@ class MPUIMU {
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) = 0;
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
+
+        virtual uint8_t xAOffsetH(void) = 0;
+        virtual uint8_t yAOffsetH(void) = 0;
+        virtual uint8_t zAOffsetH(void) = 0;
 
 }; // class MPU

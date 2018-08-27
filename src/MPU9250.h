@@ -95,17 +95,6 @@ class MPU9250 : public MPUIMU {
         const uint8_t SELF_TEST_Y_GYRO  = 0x01;                                                                          
         const uint8_t SELF_TEST_Z_GYRO  = 0x02;
 
-        /*
-           const uint8_t X_FINE_GAIN       = 0x03; // [7:0] fine gain
-           const uint8_t Y_FINE_GAIN       = 0x04;
-           const uint8_t Z_FINE_GAIN       = 0x05;
-           const uint8_t XA_OFFSET_H       = 0x06; // User-defined trim values for accelerometer
-           const uint8_t XA_OFFSET_L_TC    = 0x07;
-           const uint8_t YA_OFFSET_H       = 0x08;
-           const uint8_t YA_OFFSET_L_TC    = 0x09;
-           const uint8_t ZA_OFFSET_H       = 0x0A;
-           const uint8_t ZA_OFFSET_L_TC    = 0x0B; 
-         */
 
         const uint8_t SELF_TEST_X_ACCEL  = 0x0D;
         const uint8_t SELF_TEST_Y_ACCEL  = 0x0E;    
@@ -113,16 +102,7 @@ class MPU9250 : public MPUIMU {
 
         const uint8_t SELF_TEST_A       = 0x10;
 
-        const uint8_t XG_OFFSET_H       = 0x13;  // User-defined trim values for gyroscope
-        const uint8_t XG_OFFSET_L       = 0x14;
-        const uint8_t YG_OFFSET_H       = 0x15;
-        const uint8_t YG_OFFSET_L       = 0x16;
-        const uint8_t ZG_OFFSET_H       = 0x17;
-        const uint8_t ZG_OFFSET_L       = 0x18;
-        const uint8_t SMPLRT_DIV        = 0x19;
-        const uint8_t CONFIG            = 0x1A;
         const uint8_t GYRO_CONFIG       = 0x1B;
-        const uint8_t ACCEL_CONFIG      = 0x1C;
         const uint8_t ACCEL_CONFIG2     = 0x1D;
         const uint8_t LP_ACCEL_ODR      = 0x1E;
         const uint8_t WOM_THR           = 0x1F;   
@@ -159,9 +139,12 @@ class MPU9250 : public MPUIMU {
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 
+        virtual uint8_t xAOffsetH(void) override;
+        virtual uint8_t yAOffsetH(void) override;
+        virtual uint8_t zAOffsetH(void) override;
+
     private:
 
-        void    calibrate(float accelBias[6], float gyroBias[6]);
         void    selfTest(float tolerances[6]);
 
         uint8_t getAK8963CID(void);
@@ -216,6 +199,7 @@ class MPU9250_Master : public MPU9250 {
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
+
 
     private:
 
