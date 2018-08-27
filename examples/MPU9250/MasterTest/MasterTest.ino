@@ -120,7 +120,7 @@ void setup(void)
         case MPU_ERROR_SELFTEST:
             error("Failed self-test");
         default:
-            Serial.println("MPU6050 online!\n");
+            Serial.println("MPU9250 online!\n");
     }
 
     // Comment out if using pre-measured, pre-stored offset magnetometer biases

@@ -112,8 +112,9 @@ void setup()
             error("Bad magnetometer device ID");
         case MPU_ERROR_SELFTEST:
             error("Failed self-test");
+            break;
         default:
-            Serial.println("MPU6050 online!\n");
+            Serial.println("MPU9250 online!\n");
     }
 
     delay(100);
