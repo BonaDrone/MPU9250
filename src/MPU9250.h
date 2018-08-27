@@ -150,15 +150,11 @@ class MPU9250 : public MPUIMU {
 
         uint8_t readAK8963Register(uint8_t subAddress);
         
-        Ascale_t _aScale;
-        Gscale_t _gScale;
         Mscale_t _mScale;
         Mmode_t  _mMode;
         uint8_t  _sampleRateDivisor;
 
         bool    _passthru;
-        float   _aRes;
-        float   _gRes;
         float   _mRes;
         float   _fuseROMx;
         float   _fuseROMy;
@@ -168,18 +164,17 @@ class MPU9250 : public MPUIMU {
     private:
 
         void    calibrate(float accelBias[6], float gyroBias[6]);
-        uint8_t getAK8963CID(void);
         float   getAres(Ascale_t ascale);
         float   getGres(Gscale_t gscale);
-        float   getMres(Mscale_t mscale);
         uint8_t getId(void);
-        void    reset(void);
         void    selfTest(float tolerances[6]);
+
+        uint8_t getAK8963CID(void);
+        float   getMres(Mscale_t mscale);
+        void    reset(void);
         void    readMagData(int16_t * destination);
         void    initAK8963(Mscale_t mscale, Mmode_t Mmode, float * magCalibration);
 
-        float _accelBias[3];
-        float _gyroBias[3];
 
         // These can be overridden by calibrateMagnetometer()
         float _magBias[3] = {0,0,0};

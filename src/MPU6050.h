@@ -58,19 +58,14 @@ class MPU6050 : public MPUIMU {
         const uint8_t MOT_DUR          		= 0x20;  // Duration counter threshold for motion interrupt generation, 1 kHz rate, LSB = 1 ms
         const uint8_t ZMOT_THR         		= 0x21;  // Zero-motion detection threshold bits [7:0]
         const uint8_t ZRMOT_DUR        		= 0x22;  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
-        Ascale_t _aScale;
-        Gscale_t _gScale;
-        float    _aRes;
-        float    _gRes;
-        float    _accelBias[3];
-        float    _gyroBias[3];
 
         void     calibrate(float accelBias[3], float gyroBias[3]);
-        void     init(Ascale_t ascale, Gscale_t gscale);
-        float    getGres(Gscale_t gscale);
         float    getAres(Ascale_t ascale);
+        float    getGres(Gscale_t gscale);
         uint8_t  getId(void);
         void     selfTest(float * destination);
+
+        void     init(Ascale_t ascale, Gscale_t gscale);
 
         uint8_t  readMPURegister(uint8_t subAddress);
 

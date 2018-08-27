@@ -45,6 +45,8 @@ class MPUIMU {
 
     protected:
 
+        // Register map
+
         const uint8_t FIFO_EN          		= 0x23;
         const uint8_t I2C_MST_CTRL     		= 0x24;
         const uint8_t I2C_SLV0_ADDR    		= 0x25;
@@ -127,5 +129,13 @@ class MPUIMU {
         const uint8_t FIFO_COUNTL           = 0x73;
         const uint8_t FIFO_R_W              = 0x74;
         const uint8_t WHO_AM_I              = 0x75; // Should return = 0x68
+
+        Ascale_t _aScale;
+        Gscale_t _gScale;
+        float   _aRes;
+        float   _gRes;
+        float _accelBias[3];
+        float _gyroBias[3];
+
 
 }; // class MPU
