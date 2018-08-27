@@ -12,7 +12,7 @@ CPI2C = $(HOME)/CrossPlatformI2C/
 
 ALL = MasterTest PassthruTest
 
-MPUSRC = ../../../src
+MPUSRC = ../../../../src/
 
 I2CINC = $(CPI2C)/src
 I2CSRC = $(CPI2C)/extras/wiringpi/src
@@ -40,8 +40,8 @@ MPU9250_I2C.o: $(MPUSRC)/MPU9250_I2C.cpp
 WiringPiI2C.o: $(I2CSRC)/WiringPiI2C.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/WiringPiI2C.cpp
 
-main.o: ../../main.cpp 
-	g++ -std=c++11 -Wall -c ../../main.cpp
+main.o: ../../../main.cpp 
+	g++ -std=c++11 -Wall -c ../../../main.cpp
 
 run: MasterTest
 	./MasterTest
