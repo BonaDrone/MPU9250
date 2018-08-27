@@ -122,21 +122,6 @@ void MPU9250::reset()
 }
 
 
-void MPU9250::readGyrometer(float & gx, float & gy, float & gz)
-{
-    uint8_t rawData[6];  // x/y/z gyro register data stored here
-
-    readMPURegisters(GYRO_XOUT_H, 6, &rawData[0]);  // Read the six raw data registers sequentially into data array
-
-    int16_t x = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
-    int16_t y = ((int16_t)rawData[2] << 8) | rawData[3] ;  
-    int16_t z = ((int16_t)rawData[4] << 8) | rawData[5] ; 
-
-    // Convert the gyro value into degrees per second
-    gx = (float)x*_gRes;  
-    gy = (float)y*_gRes;  
-    gz = (float)z*_gRes; 
-}
 
 bool MPU9250::checkWakeOnMotion()
 {
@@ -353,6 +338,12 @@ void MPU9250::selfTest(float  tolerances[6]) // Should return percent deviation 
         tolerances[i+3] = 100.0f*((float)(gSTAvg[i] - gAvg[i]))/factoryTrim[i+3] - 100.0f; // Report percent differences
     }
 }
+
+void MPU9250::readGyrometer(float & gx, float & gy, float & gz)
+{
+    MPUIMU::readGyrometer(gx, gy, gz);
+}
+
 
 uint8_t MPU9250::readAK8963Register(uint8_t subAddress)
 {

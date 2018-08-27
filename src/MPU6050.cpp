@@ -66,21 +66,11 @@ bool MPU6050::checkNewData(void)
 
 void MPU6050::readGyrometer(float & gx, float & gy, float & gz)
 {
-    // x/y/z gyro register data stored here
-    uint8_t rawData[6];  
+    MPUIMU::readGyrometer(gx, gy, gz);
 
-    // Read the six raw data registers sequentially into data array
-    readMPURegisters(GYRO_XOUT_H, 6, &rawData[0]);  
-
-    // Turn the MSB and LSB into a signed 16-bit value
-    int16_t x = (int16_t)((rawData[0] << 8) | rawData[1]) ;  
-    int16_t y = (int16_t)((rawData[2] << 8) | rawData[3]) ;
-    int16_t z = (int16_t)((rawData[4] << 8) | rawData[5]) ;
-
-    // Calculate the gyro value into actual degrees per second
-    gx = (float)x*_gRes - _gyroBias[0];  // get actual gyro value, this depends on scale being set
-    gy = (float)y*_gRes - _gyroBias[1];  
-    gz = (float)z*_gRes - _gyroBias[2];   
+    gx -= _gyroBias[0];
+    gy -= _gyroBias[1];  
+    gz -= _gyroBias[2];   
 }
 
 float MPU6050::readTemperature()

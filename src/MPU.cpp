@@ -232,3 +232,20 @@ void MPUIMU::readAccelerometer(float & ax, float & ay, float & az)
     ay = (float)y*_aRes - _accelBias[1];   
     az = (float)z*_aRes - _accelBias[2];  
 }
+
+void MPUIMU::readGyrometer(float & gx, float & gy, float & gz)
+{
+    uint8_t rawData[6];  // x/y/z gyro register data stored here
+
+    readMPURegisters(GYRO_XOUT_H, 6, &rawData[0]);  // Read the six raw data registers sequentially into data array
+
+    int16_t x = ((int16_t)rawData[0] << 8) | rawData[1] ;  // Turn the MSB and LSB into a signed 16-bit value
+    int16_t y = ((int16_t)rawData[2] << 8) | rawData[3] ;  
+    int16_t z = ((int16_t)rawData[4] << 8) | rawData[5] ; 
+
+    // Convert the gyro value into degrees per second
+    gx = (float)x*_gRes;  
+    gy = (float)y*_gRes;  
+    gz = (float)z*_gRes; 
+}
+
