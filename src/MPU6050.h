@@ -60,8 +60,6 @@ class MPU6050 : public MPUIMU {
         const uint8_t ZRMOT_DUR        		= 0x22;  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
 
         void     calibrate(float accelBias[3], float gyroBias[3]);
-        float    getAres(Ascale_t ascale);
-        float    getGres(Gscale_t gscale);
         uint8_t  getId(void);
         void     selfTest(float * destination);
 

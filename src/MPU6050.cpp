@@ -1,9 +1,12 @@
-/* MPU6050 implementation code
-by: Kris Winer
-date: May 1, 2014
-updated: August 2018 Simon D. Levy
-license: Beerware - Use this code however you'd like. If you
-find it useful you can buy me a beer some time.
+/*  Implementation of MPU6050 class library
+ *
+ *  Copyright 2017 Tlera Corporation
+ *  
+ *  Created by Kris Winer
+ *
+ *  Adapted by Simon D. 2018
+ *  
+ *  Library may be used freely and without limit with attribution.
  */
 
 #include "MPU6050.h"
@@ -80,53 +83,6 @@ bool MPU6050::checkNewData(void)
 {
     return (bool)(readMPURegister(INT_STATUS) & 0x01);
 }
-
-float MPU6050::getGres(Gscale_t gscale) 
-{
-    switch (gscale) {
-        // Possible gyro scales (and their register bit settings) are:
-        // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11).
-        // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
-        case GFS_250DPS:
-            return 250.0 / 32768.0;
-            break;
-        case GFS_500DPS:
-            return 500.0 / 32768.0;
-            break;
-        case GFS_1000DPS:
-            return 1000.0 / 32768.0;
-            break;
-        case GFS_2000DPS:
-            return 2000.0 / 32768.0;
-            break;
-    }
-
-    return 0;
-}
-
-float MPU6050::getAres(Ascale_t ascale) 
-{
-    switch (ascale) {
-        // Possible accelerometer scales (and their register bit settings) are:
-        // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11).
-        // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
-        case AFS_2G:
-            return 2.0 / 32768.0;
-            break;
-        case AFS_4G:
-            return 4.0 / 32768.0;
-            break;
-        case AFS_8G:
-            return 8.0 / 32768.0;
-            break;
-        case AFS_16G:
-            return 16.0 / 32768.0;
-            break;
-    }
-
-    return 0;
-}
-
 
 void MPU6050::readAccelerometer(float & ax, float & ay, float & az)
 {

@@ -1,4 +1,4 @@
-/*  Header file for MPU9250 class library
+/*  Header file for all MPU classes
  *
  *  Copyright 2017 Tlera Corporation
  *  
@@ -137,5 +137,7 @@ class MPUIMU {
         float _accelBias[3];
         float _gyroBias[3];
 
+        float    getAres(Ascale_t ascale);
+        float    getGres(Gscale_t gscale);
 
 }; // class MPU

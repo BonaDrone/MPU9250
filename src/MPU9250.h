@@ -164,8 +164,6 @@ class MPU9250 : public MPUIMU {
     private:
 
         void    calibrate(float accelBias[6], float gyroBias[6]);
-        float   getAres(Ascale_t ascale);
-        float   getGres(Gscale_t gscale);
         uint8_t getId(void);
         void    selfTest(float tolerances[6]);
 

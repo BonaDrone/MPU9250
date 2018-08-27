@@ -91,63 +91,6 @@ float MPU9250::getMres(Mscale_t mscale) {
     return 0.f;
 }
 
-float MPU9250::getGres(Gscale_t gscale) {
-    switch (gscale)
-    {
-        // Possible gyro scales (and their register bit settings) are:
-        // 250 DPS (00), 500 DPS (01), 1000 DPS (10), and 2000 DPS  (11). 
-        case GFS_250DPS:
-            _gRes = 250.0/32768.0;
-            return _gRes;
-            break;
-        case GFS_500DPS:
-            _gRes = 500.0/32768.0;
-            return _gRes;
-            break;
-        case GFS_1000DPS:
-            _gRes = 1000.0/32768.0;
-            return _gRes;
-            break;
-        case GFS_2000DPS:
-            _gRes = 2000.0/32768.0;
-            return _gRes;
-            break;
-    }
-
-    // For type safety
-    return 0.f;
-}
-
-float MPU9250::getAres(Ascale_t ascale) {
-    switch (ascale)
-    {
-        // Possible accelerometer scales (and their register bit settings) are:
-        // 2 Gs (00), 4 Gs (01), 8 Gs (10), and 16 Gs  (11). 
-        // Here's a bit of an algorith to calculate DPS/(ADC tick) based on that 2-bit value:
-        case AFS_2G:
-            _aRes = 2.0f/32768.0f;
-            return _aRes;
-            break;
-        case AFS_4G:
-            _aRes = 4.0f/32768.0f;
-            return _aRes;
-            break;
-        case AFS_8G:
-            _aRes = 8.0f/32768.0f;
-            return _aRes;
-            break;
-        case AFS_16G:
-            _aRes = 16.0f/32768.0f;
-            return _aRes;
-            break;
-    }
-
-    // For type safety
-    return 0.f;
-}
-
-
-
 void MPU9250::accelWakeOnMotion()
 {
     // Set accelerometer sample rate configuration
