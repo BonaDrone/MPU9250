@@ -142,11 +142,11 @@ class MPU9250 : public MPUIMU {
         const uint8_t I2C_READ_FLAG     = 0x80;
         const uint8_t I2C_MST_EN        = 0x20;
 
-        void    writeMPU9250Register(uint8_t subAddress, uint8_t data);
+        void    writeMPURegister(uint8_t subAddress, uint8_t data);
 
-        void    readMPU9250Registers(uint8_t subAddress, uint8_t count, uint8_t * data);
+        void    readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * data);
 
-        uint8_t readMPU9250Register(uint8_t subAddress);
+        uint8_t readMPURegister(uint8_t subAddress);
 
         uint8_t readAK8963Register(uint8_t subAddress);
         
