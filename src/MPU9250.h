@@ -34,13 +34,19 @@ class MPU9250 : public MPUIMU {
     public: 
 
         void    accelWakeOnMotion(void);
+
         bool    checkWakeOnMotion(void);
+
         void    calibrateMagnetometer(void);
+
         void    gyroMagSleep();
+
         void    gyroMagWake(Mmode_t mmode);
-        void    readAccelerometer(float & ax, float & ay, float & az);
+
         void    readGyrometer(float & ax, float & ay, float & az);
+
         void    readMagnetometer(float & mx, float & my, float & mz);
+
         float   readTemperature(void);
 
     protected:

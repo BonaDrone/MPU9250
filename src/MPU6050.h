@@ -18,11 +18,13 @@ class MPU6050 : public MPUIMU {
         MPU6050(Ascale_t ascale, Gscale_t gscale);
 
         MPU_Error_t begin(uint8_t bus=1);
+
         bool        checkNewData(void);
+
         void        lowPowerAccelOnly(void);
 
-        void        readAccelerometer(float & ax, float & ay, float & az);
         void        readGyrometer(float & gx, float & gy, float & gz);
+
         float       readTemperature(void);
 
     protected:

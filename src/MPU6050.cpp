@@ -64,25 +64,6 @@ bool MPU6050::checkNewData(void)
     return (bool)(readMPURegister(INT_STATUS) & 0x01);
 }
 
-void MPU6050::readAccelerometer(float & ax, float & ay, float & az)
-{
-    // x/y/z accel register data stored here    
-    uint8_t rawData[6];  
-
-    // Read the six raw data registers into data array
-    readMPURegisters(ACCEL_XOUT_H, 6, &rawData[0]);  
-
-    // Turn the MSB and LSB into a signed 16-bit value
-    int16_t x = (int16_t)((rawData[0] << 8) | rawData[1]) ;  
-    int16_t y = (int16_t)((rawData[2] << 8) | rawData[3]) ;
-    int16_t z = (int16_t)((rawData[4] << 8) | rawData[5]) ;
-
-    // Convert to Gs
-    ax = (float)x*_aRes - _accelBias[0];  
-    ay = (float)y*_aRes - _accelBias[1];   
-    az = (float)z*_aRes - _accelBias[2];  
-}
-
 void MPU6050::readGyrometer(float & gx, float & gy, float & gz)
 {
     // x/y/z gyro register data stored here
