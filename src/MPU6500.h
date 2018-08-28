@@ -17,8 +17,6 @@ class MPU6500 : public MPUIMU {
 
         bool checkNewData(void);
 
-        void readAccelerometer(float & ax, float & ay, float & az);
-
         void readGyrometer(float & gx, float & gy, float & gz);
 
     protected:
