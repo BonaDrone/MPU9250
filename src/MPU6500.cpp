@@ -15,28 +15,28 @@ MPU6500::MPU6500(Ascale_t ascale, Gscale_t gscale) : MPUIMU(ascale, gscale)
 
 MPU_Error_t MPU6500::begin(void)
 {
-    cpspi_writeRegister(PWR_MGMT_1, 0x80);
+    writeMPURegister(PWR_MGMT_1, 0x80);
     delay(100);
-    cpspi_writeRegister(SIGNAL_PATH_RESET, 0x80);
+    writeMPURegister(SIGNAL_PATH_RESET, 0x80);
     delay(100);
-    cpspi_writeRegister(PWR_MGMT_1, 0);
+    writeMPURegister(PWR_MGMT_1, 0);
     delay(100);
-    cpspi_writeRegister(PWR_MGMT_1, INV_CLK_PLL);
+    writeMPURegister(PWR_MGMT_1, INV_CLK_PLL);
     delay(15);
-    cpspi_writeRegister(GYRO_CONFIG, 0x00);//_gScale << 3);
+    writeMPURegister(GYRO_CONFIG, 0x00);//_gScale << 3);
     delay(15);
-    cpspi_writeRegister(ACCEL_CONFIG, 0x00);//_aScale << 3);
+    writeMPURegister(ACCEL_CONFIG, 0x00);//_aScale << 3);
     delay(15);
-    cpspi_writeRegister(CONFIG, 0); // no DLPF bits
+    writeMPURegister(CONFIG, 0); // no DLPF bits
     delay(15);
-    cpspi_writeRegister(SMPLRT_DIV, 0); 
+    writeMPURegister(SMPLRT_DIV, 0); 
     delay(100);
 
     // Data ready interrupt configuration
-    cpspi_writeRegister(INT_PIN_CFG, 0x10);  
+    writeMPURegister(INT_PIN_CFG, 0x10);  
     delay(15);
 
-    cpspi_writeRegister(INT_ENABLE, 0x01); 
+    writeMPURegister(INT_ENABLE, 0x01); 
     delay(15);
 
     _accelBias[0] = 0;
@@ -49,7 +49,7 @@ MPU_Error_t MPU6500::begin(void)
 bool MPU6500::checkNewData(void)
 {
     uint8_t data;
-    cpspi_readRegisters(INT_STATUS | 0x80, 1, &data);
+    readMPURegisters(INT_STATUS, 1, &data);
     return (bool)(data & 0x01);
 }
 

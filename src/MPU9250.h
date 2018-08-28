@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include "MPU.h"
+#include "MPU6500.h"
 
 typedef enum {
 
@@ -29,7 +29,8 @@ typedef enum {
 
 } Mmode_t;
 
-class MPU9250 : public MPUIMU {
+// MPU9250 is MPU6500 plus magnetometer
+class MPU9250 : public MPU6500 {
 
     public: 
 
@@ -100,11 +101,6 @@ class MPU9250 : public MPUIMU {
         const uint8_t AK8963_ASAX       = 0x10;  // Fuse ROM x-axis sensitivity adjustment value
         const uint8_t AK8963_ASAY       = 0x11;  // Fuse ROM y-axis sensitivity adjustment value
         const uint8_t AK8963_ASAZ       = 0x12;  // Fuse ROM z-axis sensitivity adjustment value
-
-        const uint8_t SELF_TEST_X_GYRO  = 0x00;                  
-        const uint8_t SELF_TEST_Y_GYRO  = 0x01;                                                                          
-        const uint8_t SELF_TEST_Z_GYRO  = 0x02;
-
 
         const uint8_t SELF_TEST_X_ACCEL  = 0x0D;
         const uint8_t SELF_TEST_Y_ACCEL  = 0x0E;    
