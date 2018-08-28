@@ -10,7 +10,7 @@ into the modern Arduino library [format](https://github.com/arduino/arduino/wiki
 * Added support for NVIDIA Jetson via i2cdev
 * Simplified the 
 [examples](https://github.com/kriswiner/MPU9250/blob/master/MPU9250_BME280_SPIFlash_Ladybug/MPU9250_BME280_SPIFlash_Ladybug.ino) 
-by removing code requiring components other than the MPU9250
+by removing code requiring components other than the MPU sensors
 
 The following sensors are currently supported:
 
