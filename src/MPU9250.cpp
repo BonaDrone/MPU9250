@@ -108,12 +108,7 @@ void MPU9250::calibrate(void)
     data[5] = (-gyro_bias[2]/4)       & 0xFF;
 
     // Push gyro biases to hardware registers
-    writeMPURegister(XG_OFFSET_H, data[0]);
-    writeMPURegister(XG_OFFSET_L, data[1]);
-    writeMPURegister(YG_OFFSET_H, data[2]);
-    writeMPURegister(YG_OFFSET_L, data[3]);
-    writeMPURegister(ZG_OFFSET_H, data[4]);
-    writeMPURegister(ZG_OFFSET_L, data[5]);
+    pushGyroBiases(data);
 
     // Output scaled gyro biases for display in the main program
     _gyroBias[0] = (float) gyro_bias[0]/(float) gyrosensitivity;  
@@ -172,6 +167,15 @@ void MPU9250::calibrate(void)
     _accelBias[2] = (float)accel_bias[2]/(float)accelsensitivity;
 }
 
+void MPU9250::pushGyroBiases(uint8_t data[12])
+{
+    writeMPURegister(XG_OFFSET_H, data[0]);
+    writeMPURegister(XG_OFFSET_L, data[1]);
+    writeMPURegister(YG_OFFSET_H, data[2]);
+    writeMPURegister(YG_OFFSET_L, data[3]);
+    writeMPURegister(ZG_OFFSET_H, data[4]);
+    writeMPURegister(ZG_OFFSET_L, data[5]);
+}
 
 MPU_Error_t MPU9250::runTests(void) 
 { 
