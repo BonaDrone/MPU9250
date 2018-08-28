@@ -36,7 +36,7 @@ void setup()
 {
     switch (imu.begin(0)) {
 
-        case MPU_ERROR_ID:
+        case MPU_ERROR_IMU_ID:
             error("Bad device ID");
         case MPU_ERROR_SELFTEST:
             error("Failed self-test");

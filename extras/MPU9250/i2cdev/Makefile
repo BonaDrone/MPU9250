@@ -12,24 +12,27 @@ CPI2C = $(HOME)/CrossPlatformI2C/
 
 ALL = MasterTest PassthruTest
 
-MPUSRC = ../../../../src/
+MPUSRC = ../../../src/
 
 I2CINC = $(CPI2C)/src
 I2CSRC = $(CPI2C)/extras/i2cdev/src
 
 all: $(ALL)
 
-MasterTest: MasterTest.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
-	g++ -std=c++11 -o MasterTest MasterTest.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+MasterTest: MasterTest.o MPU.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+	g++ -std=c++11 -o MasterTest MasterTest.o MPU.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
 
 MasterTest.o: MasterTest.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c MasterTest.cpp
 
-PassthruTest: PassthruTest.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
-	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+PassthruTest: PassthruTest.o MPU.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
 
 PassthruTest.o: PassthruTest.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c PassthruTest.cpp
+
+MPU.o: $(MPUSRC)/MPU.cpp 
+	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU.cpp
 
 MPU9250.o: $(MPUSRC)/MPU9250.cpp 
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU9250.cpp
@@ -44,7 +47,7 @@ timing.o: timing.cpp
 	g++ -std=c++11 -Wall -c timing.cpp
 
 main.o: ../../main.cpp 
-	g++ -std=c++11 -Wall -c ../main.cpp
+	g++ -std=c++11 -Wall -c ../../main.cpp
 
 run: MasterTest
 	./MasterTest
