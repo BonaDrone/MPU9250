@@ -41,7 +41,7 @@ MPU_Error_t MPU9250::runTests(void)
         }
     }
     // Comment out if using pre-measured, pre-stored accel/gyro offset biases
-    calibrate(_accelBias, _gyroBias); // Calibrate gyro and accelerometers, load biases in bias registers
+    calibrate(); // Calibrate gyro and accelerometers, load biases in bias registers
 
     initMPU9250(_aScale, _gScale, _sampleRateDivisor, _passthru); 
 

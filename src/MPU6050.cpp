@@ -47,7 +47,7 @@ MPU_Error_t MPU6050::begin(uint8_t bus)
         }
     }
 
-    calibrate(_accelBias, _gyroBias);
+    calibrate();
 
     init(_aScale, _gScale);
 

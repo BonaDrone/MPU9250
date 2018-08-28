@@ -22,7 +22,7 @@ MPUIMU::MPUIMU(Ascale_t ascale, Gscale_t gscale)
 
 // Function which accumulates gyro and accelerometer data after device initialization. It calculates the average
 // of the at-rest readings and then loads the resulting offsets into accelerometer and gyro bias registers.
-void MPUIMU::calibrate(float accelBias[3], float gyroBias[3])
+void MPUIMU::calibrate(void)
 {  
     uint8_t data[12]; // data array to hold accelerometer and gyro x, y, z, data
     uint16_t ii, packet_count, fifo_count;
@@ -112,9 +112,9 @@ void MPUIMU::calibrate(float accelBias[3], float gyroBias[3])
     writeMPURegister(ZG_OFFSET_L, data[5]);
 
     // Output scaled gyro biases for display in the main program
-    gyroBias[0] = (float) gyro_bias[0]/(float) gyrosensitivity;  
-    gyroBias[1] = (float) gyro_bias[1]/(float) gyrosensitivity;
-    gyroBias[2] = (float) gyro_bias[2]/(float) gyrosensitivity;
+    _gyroBias[0] = (float) gyro_bias[0]/(float) gyrosensitivity;  
+    _gyroBias[1] = (float) gyro_bias[1]/(float) gyrosensitivity;
+    _gyroBias[2] = (float) gyro_bias[2]/(float) gyrosensitivity;
 
     // Construct the accelerometer biases for push to the hardware accelerometer bias registers. These registers contain
     // factory trim values which must be added to the calculated accelerometer biases; on boot up these registers will hold
@@ -163,9 +163,9 @@ void MPUIMU::calibrate(float accelBias[3], float gyroBias[3])
     //  writeMPURegister(ZA_OFFSET_L, data[5]);
 
     // Output scaled accelerometer biases for display in the main program
-    accelBias[0] = (float)accel_bias[0]/(float)accelsensitivity; 
-    accelBias[1] = (float)accel_bias[1]/(float)accelsensitivity;
-    accelBias[2] = (float)accel_bias[2]/(float)accelsensitivity;
+    _accelBias[0] = (float)accel_bias[0]/(float)accelsensitivity; 
+    _accelBias[1] = (float)accel_bias[1]/(float)accelsensitivity;
+    _accelBias[2] = (float)accel_bias[2]/(float)accelsensitivity;
 }
 
 float MPUIMU::getGres(Gscale_t gscale) 
