@@ -1,5 +1,5 @@
 This repository comes from a few different source files created by [Kris Winer](https://github.com/kriswiner) 
-to support the Invensense MPU line of Internal Measurement Unit sensors.  
+to support the Invensense MPU line of Internal Measurement Unit (IMU) sensors.  
 
 Here's what I changed:
 * Reorganized Kris's
