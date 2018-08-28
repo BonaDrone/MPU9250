@@ -23,9 +23,9 @@ MPU_Error_t MPU6500::begin(void)
     delay(100);
     cpspi_writeRegister(PWR_MGMT_1, INV_CLK_PLL);
     delay(15);
-    cpspi_writeRegister(GYRO_CONFIG, _gScale << 3);
+    cpspi_writeRegister(GYRO_CONFIG, 0x00);//_gScale << 3);
     delay(15);
-    cpspi_writeRegister(ACCEL_CONFIG, _aScale << 3);
+    cpspi_writeRegister(ACCEL_CONFIG, 0x00);//_aScale << 3);
     delay(15);
     cpspi_writeRegister(CONFIG, 0); // no DLPF bits
     delay(15);
@@ -38,6 +38,10 @@ MPU_Error_t MPU6500::begin(void)
 
     cpspi_writeRegister(INT_ENABLE, 0x01); 
     delay(15);
+
+    _accelBias[0] = 0;
+    _accelBias[1] = 0;
+    _accelBias[2] = 0;
     
     return MPU_ERROR_NONE;
 }
