@@ -169,13 +169,17 @@ class MPUIMU {
         float    getGres(Gscale_t gscale);
         uint8_t  getId(void);
 
+        void calibrate(void);
+
         uint8_t readMPURegister(uint8_t subAddress);
 
         void    readGyrometer(float & gx, float & gy, float & gz);
 
         int16_t readRawTemperature(void);
 
-        virtual void calibrate(void) = 0;
+        virtual void pushGyroBiases(uint8_t data[12]) { (void)data; }
+
+        virtual void readAccelOffsets(uint8_t data[12], int32_t accel_bias_reg[3]) { (void)data; (void)accel_bias_reg; }
 
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) = 0;
 

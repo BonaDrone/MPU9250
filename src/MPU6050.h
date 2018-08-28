@@ -29,8 +29,6 @@ class MPU6050 : public MPUIMU {
 
     protected:
 
-        virtual void calibrate(void) override;
-
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;

@@ -65,9 +65,9 @@ class MPU9250 : public MPUIMU {
 
         void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
-        void pushGyroBiases(uint8_t data[12]);
+        virtual void pushGyroBiases(uint8_t data[12]) override;
 
-        void readAccelOffsets(uint8_t data[12], int32_t accel_bias_reg[3]);
+        virtual void readAccelOffsets(uint8_t data[12], int32_t accel_bias_reg[3]) override;
 
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
 
@@ -151,8 +151,6 @@ class MPU9250 : public MPUIMU {
         float   _fuseROMy;
         float   _fuseROMz;
         float   _magCalibration[3];
-
-        virtual void calibrate(void) override;
 
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 
