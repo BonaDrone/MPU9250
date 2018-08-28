@@ -29,13 +29,11 @@ class MPU6050 : public MPUIMU {
 
     protected:
 
+        virtual void calibrate(void) override;
+
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
-
-        virtual uint8_t xAOffsetH(void) override;
-        virtual uint8_t yAOffsetH(void) override;
-        virtual uint8_t zAOffsetH(void) override;
 
     private:
 
@@ -48,7 +46,7 @@ class MPU6050 : public MPUIMU {
         const uint8_t Y_FINE_GAIN      		= 0x04;
         const uint8_t Z_FINE_GAIN      		= 0x05;
 
-        const uint8_t XA_OFFSET_H      		= 0x06; // User-defined trim values for accelerometer
+        const uint8_t XA_OFFSET_H      		= 0x06; 
         const uint8_t XA_OFFSET_L_TC   		= 0x07;
         const uint8_t YA_OFFSET_H      		= 0x08;
         const uint8_t YA_OFFSET_L_TC   		= 0x09;

@@ -69,12 +69,6 @@ class MPUIMU {
 
         // Register map
 
-        const uint8_t XG_OFFSET_H           = 0x13; 
-        const uint8_t XG_OFFSET_L           = 0x14;
-        const uint8_t YG_OFFSET_H           = 0x15;
-        const uint8_t YG_OFFSET_L           = 0x16;
-        const uint8_t ZG_OFFSET_H           = 0x17;
-        const uint8_t ZG_OFFSET_L           = 0x18;
         const uint8_t SMPLRT_DIV       		= 0x19;
         const uint8_t CONFIG           		= 0x1A;
         const uint8_t GYRO_CONFIG      		= 0x1B;
@@ -171,24 +165,21 @@ class MPUIMU {
 
         MPUIMU(Ascale_t ascale, Gscale_t gscale);
 
-        void     calibrate(void);
         float    getAres(Ascale_t ascale);
         float    getGres(Gscale_t gscale);
         uint8_t  getId(void);
 
         uint8_t readMPURegister(uint8_t subAddress);
 
-        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) = 0;
-
-        virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
-
-        virtual uint8_t xAOffsetH(void) = 0;
-        virtual uint8_t yAOffsetH(void) = 0;
-        virtual uint8_t zAOffsetH(void) = 0;
-
         void    readGyrometer(float & gx, float & gy, float & gz);
 
         int16_t readRawTemperature(void);
+
+        virtual void calibrate(void) = 0;
+
+        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) = 0;
+
+        virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
 
     public:
 

@@ -117,12 +117,19 @@ class MPU9250 : public MPUIMU {
         const uint8_t ZMOT_THR          = 0x21;  // Zero-motion detection threshold bits [7:0]
         const uint8_t ZRMOT_DUR         = 0x22;  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
 
+        const uint8_t XG_OFFSET_H       = 0x13; 
+        const uint8_t XG_OFFSET_L       = 0x14;
+        const uint8_t YG_OFFSET_H       = 0x15;
+        const uint8_t YG_OFFSET_L       = 0x16;
+        const uint8_t ZG_OFFSET_H       = 0x17;
+        const uint8_t ZG_OFFSET_L       = 0x18;
         const uint8_t XA_OFFSET_H       = 0x77;
         const uint8_t XA_OFFSET_L       = 0x78;
         const uint8_t YA_OFFSET_H       = 0x7A;
         const uint8_t YA_OFFSET_L       = 0x7B;
         const uint8_t ZA_OFFSET_H       = 0x7D;
         const uint8_t ZA_OFFSET_L       = 0x7E;
+
         const uint8_t I2C_SLV0_EN       = 0x80;
 
         const uint8_t I2C_READ_FLAG     = 0x80;
@@ -141,13 +148,11 @@ class MPU9250 : public MPUIMU {
         float   _fuseROMz;
         float   _magCalibration[3];
 
+        virtual void calibrate(void) override;
+
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
-
-        virtual uint8_t xAOffsetH(void) override;
-        virtual uint8_t yAOffsetH(void) override;
-        virtual uint8_t zAOffsetH(void) override;
 
     private:
 

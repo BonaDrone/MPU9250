@@ -24,8 +24,4 @@ class MPU6500 : public MPUIMU {
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
-
-        virtual uint8_t xAOffsetH(void) override;
-        virtual uint8_t yAOffsetH(void) override;
-        virtual uint8_t zAOffsetH(void) override;
 }; 

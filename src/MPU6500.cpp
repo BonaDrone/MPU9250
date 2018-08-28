@@ -67,18 +67,3 @@ void MPU6500::readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest
 {
     cpspi_readRegisters(subAddress | 0x80, count, dest);
 }
-
-uint8_t MPU6500::xAOffsetH(void) 
-{
-    return 0;
-}
-
-uint8_t MPU6500::yAOffsetH(void) 
-{
-    return 0;
-}
-
-uint8_t MPU6500::zAOffsetH(void) 
-{
-    return 0;
-}
