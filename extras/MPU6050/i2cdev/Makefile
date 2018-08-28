@@ -19,14 +19,17 @@ I2CSRC = $(CPI2C)/extras/i2cdev/src
 
 all: $(ALL)
 
-Basic: Basic.o MPU.o MPU6050.o I2CDevI2C.o main.o
-	g++ -std=c++11 -o Basic Basic.o MPU.o MPU6050.o I2CDevI2C.o main.o
+Basic: Basic.o MPU.o MPU60x0.o MPU6050.o I2CDevI2C.o main.o
+	g++ -std=c++11 -o Basic Basic.o MPU.o MPU60x0.o MPU6050.o I2CDevI2C.o main.o
 
 Basic.o: Basic.cpp 
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c Basic.cpp
 
 MPU6050.o: $(MPUSRC)/MPU6050.cpp  $(MPUSRC)/MPU6050.h
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU6050.cpp
+
+MPU60x0.o: $(MPUSRC)/MPU60x0.cpp  $(MPUSRC)/MPU60x0.h
+	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU60x0.cpp
 
 MPU.o: $(MPUSRC)/MPU.cpp  $(MPUSRC)/MPU.h
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU.cpp
