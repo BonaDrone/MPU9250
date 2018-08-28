@@ -122,13 +122,8 @@ void MPU9250::calibrate(void)
     // the accelerometer biases calculated above must be divided by 8.
 
     int32_t accel_bias_reg[3] = {0, 0, 0}; // A place to hold the factory accelerometer trim biases
-    readMPURegisters(XA_OFFSET_H, 2, &data[0]); // Read factory accelerometer trim values
-    accel_bias_reg[0] = (int32_t) (((int16_t)data[0] << 8) | data[1]);
-    readMPURegisters(YA_OFFSET_H, 2, &data[0]);
-    accel_bias_reg[1] = (int32_t) (((int16_t)data[0] << 8) | data[1]);
-    readMPURegisters(ZA_OFFSET_H, 2, &data[0]);
-    accel_bias_reg[2] = (int32_t) (((int16_t)data[0] << 8) | data[1]);
-
+    readAccelOffsets(data, accel_bias_reg);
+   
     uint32_t mask = 1uL; // Define mask for temperature compensation bit 0 of lower byte of accelerometer bias registers
     uint8_t mask_bit[3] = {0, 0, 0}; // Define array to hold mask bit for each accelerometer bias axis
 
@@ -175,6 +170,16 @@ void MPU9250::pushGyroBiases(uint8_t data[12])
     writeMPURegister(YG_OFFSET_L, data[3]);
     writeMPURegister(ZG_OFFSET_H, data[4]);
     writeMPURegister(ZG_OFFSET_L, data[5]);
+}
+
+void MPU9250::readAccelOffsets(uint8_t data[12], int32_t accel_bias_reg[3])
+{
+    readMPURegisters(XA_OFFSET_H, 2, &data[0]); // Read factory accelerometer trim values
+    accel_bias_reg[0] = (int32_t) (((int16_t)data[0] << 8) | data[1]);
+    readMPURegisters(YA_OFFSET_H, 2, &data[0]);
+    accel_bias_reg[1] = (int32_t) (((int16_t)data[0] << 8) | data[1]);
+    readMPURegisters(ZA_OFFSET_H, 2, &data[0]);
+    accel_bias_reg[2] = (int32_t) (((int16_t)data[0] << 8) | data[1]);
 }
 
 MPU_Error_t MPU9250::runTests(void) 

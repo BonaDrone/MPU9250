@@ -171,16 +171,6 @@ void MPU6050::calibrate(void)
     data[5] = (accel_bias_reg[2])      & 0xFF;
     data[5] = data[5] | mask_bit[2]; // preserve temperature compensation bit when writing back to accelerometer bias registers
 
-    // Apparently this is not working for the acceleration biases in the MPU-9250
-    // Are we handling the temperature correction bit properly?
-    // Push accelerometer biases to hardware registers
-    //  writeMPURegister(XAOffsetH(), data[0]);
-    //  writeMPURegister(XA_OFFSET_L, data[1]);
-    //  writeMPURegister(YAOffsetH(), data[2]);
-    //  writeMPURegister(YA_OFFSET_L, data[3]);
-    //  writeMPURegister(ZAOffsetH(), data[4]);
-    //  writeMPURegister(ZA_OFFSET_L, data[5]);
-
     // Output scaled accelerometer biases for display in the main program
     _accelBias[0] = (float)accel_bias[0]/(float)accelsensitivity; 
     _accelBias[1] = (float)accel_bias[1]/(float)accelsensitivity;

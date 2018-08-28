@@ -67,6 +67,8 @@ class MPU9250 : public MPUIMU {
 
         void pushGyroBiases(uint8_t data[12]);
 
+        void readAccelOffsets(uint8_t data[12], int32_t accel_bias_reg[3]);
+
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) = 0;
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
