@@ -28,6 +28,12 @@ extern "C" { void delay(uint32_t msec); }
 void delay(uint32_t msec);
 #endif
 
+typedef enum {
+
+    INV_CLK_INTERNAL,
+    INV_CLK_PLL
+
+} Clock_e;
 
 typedef enum {
 

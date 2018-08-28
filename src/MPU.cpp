@@ -34,8 +34,8 @@ void MPUIMU::calibrate(float accelBias[3], float gyroBias[3])
 
     // get stable time source; Auto select clock source to be PLL gyroscope reference if ready 
     // else use the internal oscillator, bits 2:0 = 001
-    writeMPURegister(PWR_MGMT_1, 0x01);  
-    writeMPURegister(PWR_MGMT_2, 0x00);
+    writeMPURegister(PWR_MGMT_1, INV_CLK_PLL);  
+    writeMPURegister(PWR_MGMT_2, INV_CLK_INTERNAL);
     delay(200);                                    
 
     // Configure device for bias calculation
