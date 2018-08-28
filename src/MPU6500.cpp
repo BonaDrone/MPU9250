@@ -48,9 +48,7 @@ MPU_Error_t MPU6500::begin(void)
 
 bool MPU6500::checkNewData(void)
 {
-    uint8_t data;
-    readMPURegisters(INT_STATUS, 1, &data);
-    return (bool)(data & 0x01);
+    return MPUIMU::checkNewData();
 }
 
 void MPU6500::readGyrometer(float & gx, float & gy, float & gz)

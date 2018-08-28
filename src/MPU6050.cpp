@@ -16,6 +16,11 @@
 
 #include <stdio.h>
 
+bool MPU6050::checkNewData(void)
+{
+    return MPUIMU::checkNewData();
+}
+
 void MPU6050::writeMPURegister(uint8_t subAddress, uint8_t data)
 {
     cpi2c_writeRegister(_i2c, subAddress, data);
@@ -54,10 +59,7 @@ MPU_Error_t MPU6050::begin(uint8_t bus)
     return MPU_ERROR_NONE;
 }
 
-bool MPU6050::checkNewData(void)
-{
-    return (bool)(readMPURegister(INT_STATUS) & 0x01);
-}
+
 
 void MPU6050::readGyrometer(float & gx, float & gy, float & gz)
 {

@@ -171,6 +171,8 @@ class MPUIMU {
 
         void calibrate(void);
 
+        bool checkNewData(void);
+
         uint8_t readMPURegister(uint8_t subAddress);
 
         void    readGyrometer(float & gx, float & gy, float & gz);

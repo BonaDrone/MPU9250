@@ -256,3 +256,7 @@ void MPUIMU::calibrate(void)
     _accelBias[2] = (float)accel_bias[2]/(float)accelsensitivity;
 }
 
+bool MPUIMU::checkNewData(void)
+{
+    return (bool)(readMPURegister(INT_STATUS) & 0x01);
+}

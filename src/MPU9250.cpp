@@ -466,7 +466,7 @@ MPU9250_Passthru::MPU9250_Passthru(Ascale_t ascale, Gscale_t gscale, Mscale_t ms
 
 bool MPU9250_Passthru::checkNewAccelGyroData()
 {
-    return (readMPURegister(INT_STATUS) & 0x01);
+    return MPUIMU::checkNewData();
 }
 
 bool MPU9250_Passthru::checkNewMagData()
