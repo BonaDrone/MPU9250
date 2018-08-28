@@ -13,17 +13,14 @@
 
 #include <math.h>
 
-MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor, bool passthru)
+MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor, bool passthru) : MPUIMU(ascale, gscale)
 {
-    _aRes = getAres(ascale);
-    _gRes = getGres(gscale);
     _mRes = getMres(mscale);
-
-    _aScale = ascale;
-    _gScale = gscale;
     _mScale = mscale;
     _mMode = mmode;
+
     _sampleRateDivisor = sampleRateDivisor;
+
     _passthru = passthru;
 }
 

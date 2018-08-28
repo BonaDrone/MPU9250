@@ -7,10 +7,8 @@
 
 #include "MPU6500.h"
 
-MPU6500::MPU6500(Ascale_t ascale, Gscale_t gscale) 
+MPU6500::MPU6500(Ascale_t ascale, Gscale_t gscale) : MPUIMU(ascale, gscale)
 {
-    (void)ascale;
-    (void)gscale;
 }
 
 MPU_Error_t MPU6500::begin(void)

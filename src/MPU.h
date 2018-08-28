@@ -163,6 +163,8 @@ class MPUIMU {
         float _accelBias[3];
         float _gyroBias[3];
 
+        MPUIMU(Ascale_t ascale, Gscale_t gscale);
+
         void     calibrate(float accelBias[3], float gyroBias[3]);
         float    getAres(Ascale_t ascale);
         float    getGres(Gscale_t gscale);

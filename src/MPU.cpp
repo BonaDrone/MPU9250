@@ -11,6 +11,15 @@
 
 #include "MPU.h"
 
+MPUIMU::MPUIMU(Ascale_t ascale, Gscale_t gscale)
+{
+    _aRes = getAres(ascale);
+    _gRes = getGres(gscale);
+
+    _aScale = ascale;
+    _gScale = gscale;
+}
+
 // Function which accumulates gyro and accelerometer data after device initialization. It calculates the average
 // of the at-rest readings and then loads the resulting offsets into accelerometer and gyro bias registers.
 void MPUIMU::calibrate(float accelBias[3], float gyroBias[3])

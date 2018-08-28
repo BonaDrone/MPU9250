@@ -27,13 +27,8 @@ void MPU6050::readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest
 }
 
 
-MPU6050::MPU6050(Ascale_t ascale, Gscale_t gscale)
+MPU6050::MPU6050(Ascale_t ascale, Gscale_t gscale) : MPUIMU(ascale, gscale)
 {
-    _aRes = getAres(ascale);
-    _gRes = getGres(gscale);
-
-    _aScale = ascale;
-    _gScale = gscale;
 }
 
 MPU_Error_t MPU6050::begin(uint8_t bus)

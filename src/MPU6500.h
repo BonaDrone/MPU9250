@@ -15,11 +15,11 @@ class MPU6500 : public MPUIMU {
 
         MPU_Error_t begin(void);
 
-        bool        checkNewData(void);
+        bool checkNewData(void);
 
-        void        readAccelerometer(float & ax, float & ay, float & az);
+        void readAccelerometer(float & ax, float & ay, float & az);
 
-        void        readGyrometer(float & gx, float & gy, float & gz);
+        void readGyrometer(float & gx, float & gy, float & gz);
 
     protected:
 
