@@ -27,8 +27,6 @@ class MPU60x0 : public MPUIMU {
 
     protected:
 
-        const uint8_t MPU60x0_ADDRESS = 0x68;
-
         MPU60x0(Ascale_t ascale, Gscale_t gscale);
 
     private:
@@ -37,7 +35,6 @@ class MPU60x0 : public MPUIMU {
         const uint8_t SELF_TEST_Y      		= 0x0E;
         const uint8_t SELF_TEST_Z      		= 0x0F;
         const uint8_t SELF_TEST_A      		= 0x10;
-
         const uint8_t MOT_THR          		= 0x1F;  
         const uint8_t MOT_DUR          		= 0x20; 
 

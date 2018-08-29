@@ -26,7 +26,7 @@ extern void delay(uint32_t msec);
 
 MPU_Error_t MPU9250::begin(uint8_t bus)
 {
-    _mpu = cpi2c_open(MPU9250_ADDRESS, bus);
+    _mpu = cpi2c_open(MPU_ADDRESS, bus);
 
     return runTests();
 }

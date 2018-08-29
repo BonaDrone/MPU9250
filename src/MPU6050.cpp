@@ -19,7 +19,7 @@ MPU6050::MPU6050(Ascale_t ascale, Gscale_t gscale) : MPU60x0(ascale, gscale)
 
 MPU_Error_t MPU6050::begin(uint8_t bus)
 {
-    _i2c = cpi2c_open(MPU60x0_ADDRESS, bus);
+    _i2c = cpi2c_open(MPU_ADDRESS, bus);
 
     return MPU60x0::begin();
 }

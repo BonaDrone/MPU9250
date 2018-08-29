@@ -56,8 +56,6 @@ class MPU9250 : public MPU6500 {
 
         MPU_Error_t runTests(void);
 
-        //static const uint8_t MPU9250_ADDRESS = 0x69; // When AD0 = 1
-        static const uint8_t MPU9250_ADDRESS = 0x68;   // When AD0 = 0
         static const uint8_t AK8963_ADDRESS  = 0x0C;
 
         uint8_t _mpu;

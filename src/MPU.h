@@ -67,6 +67,8 @@ class MPUIMU {
 
     protected:
 
+        const uint8_t MPU_ADDRESS           = 0x68;
+
         // Register map
 
         const uint8_t SMPLRT_DIV       		= 0x19;

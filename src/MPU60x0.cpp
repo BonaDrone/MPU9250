@@ -26,7 +26,7 @@ MPU60x0::MPU60x0(Ascale_t ascale, Gscale_t gscale) : MPUIMU(ascale, gscale)
 
 MPU_Error_t MPU60x0::begin(void)
 {
-    if (getId() != 0x68) {
+    if (getId() != MPU_ADDRESS) {
         return MPU_ERROR_IMU_ID;
     }
 
