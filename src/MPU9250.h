@@ -34,21 +34,21 @@ class MPU9250 : public MPU6500 {
 
     public: 
 
-        void    accelWakeOnMotion(void);
+        void  accelWakeOnMotion(void);
 
-        bool    checkWakeOnMotion(void);
+        bool  checkWakeOnMotion(void);
 
-        void    calibrateMagnetometer(void);
+        void  calibrateMagnetometer(void);
 
-        void    gyroMagSleep();
+        void  gyroMagSleep();
 
-        void    gyroMagWake(Mmode_t mmode);
+        void  gyroMagWake(Mmode_t mmode);
 
-        void    readGyrometer(float & ax, float & ay, float & az);
+        void  readGyrometer(float & ax, float & ay, float & az);
 
-        void    readMagnetometer(float & mx, float & my, float & mz);
+        void  readMagnetometer(float & mx, float & my, float & mz);
 
-        float   readTemperature(void);
+        float readTemperature(void);
 
     protected:
 
