@@ -82,27 +82,27 @@ class MPU9250 : public MPU6500 {
         // for registers not listed in above document; the MPU9250 and MPU9150 are virtually identical but 
         // the latter has a different register map
         
-        //Magnetometer Registers
-        const uint8_t WHO_AM_I_AK8963   = 0x00; // should return  = 0x48
+        // Magnetometer Registers
+        const uint8_t WHO_AM_I_AK8963   = 0x00; 
         const uint8_t INFO              = 0x01;
-        const uint8_t AK8963_ST1        = 0x02; // data ready status bit 0
-        const uint8_t AK8963_XOUT_L     = 0x03;  // data
+        const uint8_t AK8963_ST1        = 0x02; 
+        const uint8_t AK8963_XOUT_L     = 0x03; 
         const uint8_t AK8963_XOUT_H     = 0x04;
         const uint8_t AK8963_YOUT_L     = 0x05;
         const uint8_t AK8963_YOUT_H     = 0x06;
         const uint8_t AK8963_ZOUT_L     = 0x07;
         const uint8_t AK8963_ZOUT_H     = 0x08;
-        const uint8_t AK8963_ST2        = 0x09;  // Data overflow bit 3 and data read error status bit 2
-        const uint8_t AK8963_CNTL       = 0x0A;  // Power down (0000), single-measurement (0001), self-test (1000) and Fuse ROM (1111) modes on bits 3:0
-        const uint8_t AK8963_ASTC       = 0x0C;  // Self test control
-        const uint8_t AK8963_I2CDIS     = 0x0F;  // I2C disable
-        const uint8_t AK8963_ASAX       = 0x10;  // Fuse ROM x-axis sensitivity adjustment value
-        const uint8_t AK8963_ASAY       = 0x11;  // Fuse ROM y-axis sensitivity adjustment value
-        const uint8_t AK8963_ASAZ       = 0x12;  // Fuse ROM z-axis sensitivity adjustment value
+        const uint8_t AK8963_ST2        = 0x09; 
+        const uint8_t AK8963_CNTL       = 0x0A;  
+        const uint8_t AK8963_ASTC       = 0x0C; 
+        const uint8_t AK8963_I2CDIS     = 0x0F;
+        const uint8_t AK8963_ASAX       = 0x10;
+        const uint8_t AK8963_ASAY       = 0x11;
+        const uint8_t AK8963_ASAZ       = 0x12;
 
-        const uint8_t SELF_TEST_X_ACCEL  = 0x0D;
-        const uint8_t SELF_TEST_Y_ACCEL  = 0x0E;    
-        const uint8_t SELF_TEST_Z_ACCEL  = 0x0F;
+        const uint8_t SELF_TEST_X_ACCEL = 0x0D;
+        const uint8_t SELF_TEST_Y_ACCEL = 0x0E;    
+        const uint8_t SELF_TEST_Z_ACCEL = 0x0F;
 
         const uint8_t SELF_TEST_A       = 0x10;
 
@@ -111,9 +111,9 @@ class MPU9250 : public MPU6500 {
         const uint8_t LP_ACCEL_ODR      = 0x1E;
         const uint8_t WOM_THR           = 0x1F;   
 
-        const uint8_t MOT_DUR           = 0x20;  // Duration counter threshold for motion interrupt generation, 1 kHz rate, LSB = 1 ms
-        const uint8_t ZMOT_THR          = 0x21;  // Zero-motion detection threshold bits [7:0]
-        const uint8_t ZRMOT_DUR         = 0x22;  // Duration counter threshold for zero motion interrupt generation, 16 Hz rate, LSB = 64 ms
+        const uint8_t MOT_DUR           = 0x20;  
+        const uint8_t ZMOT_THR          = 0x21;  
+        const uint8_t ZRMOT_DUR         = 0x22;  
 
         const uint8_t XG_OFFSET_H       = 0x13; 
         const uint8_t XG_OFFSET_L       = 0x14;
