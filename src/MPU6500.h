@@ -23,7 +23,7 @@ class MPU6500 : public MPUIMU {
 
         // Register map
         const uint8_t SELF_TEST_X_GYRO  = 0x00;                  
-        const uint8_t SELF_TEST_Y_GYRO  = 0x01;                                                                          
+        const uint8_t SELF_TEST_Y_GYRO  = 0x01;
         const uint8_t SELF_TEST_Z_GYRO  = 0x02;
 
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;

@@ -62,10 +62,12 @@ MPU_Error_t MPU9250::runTests(void)
             return MPU_ERROR_SELFTEST;
         }
     }
-    // Comment out if using pre-measured, pre-stored accel/gyro offset biases
-    calibrate(); // Calibrate gyro and accelerometers, load biases in bias registers
 
-    initMPU9250(_aScale, _gScale, _sampleRateDivisor, _passthru); 
+    // Calibrate gyro and accelerometers, load biases in bias registers.
+    // Comment out if using pre-measured, pre-stored accel/gyro offset biases.
+    calibrate(); 
+
+    initMPU6500(_aScale, _gScale, _sampleRateDivisor, _passthru); 
 
     // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
     if (getAK8963CID() != 0x48) {
@@ -154,7 +156,7 @@ float MPU9250::readTemperature()
     return ((float)t) / 333.87f + 21.0f; // Gyro chip temperature in degrees Centigrade)
 }
 
-void MPU9250::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru)
+void MPU9250::initMPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru)
 {  
     // wake up device
     //writeMPURegister(PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors 
@@ -498,9 +500,9 @@ MPU_Error_t MPU9250_Master::begin(uint8_t i2cbus)
     return runTests();
 }
 
-void MPU9250_Master::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
+void MPU9250_Master::initMPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
 { 
-    MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, false); 
+    MPU9250::initMPU6500(ascale, gscale, sampleRateDivisor, false); 
 }
 
 void MPU9250_Master::writeAK8963Register(uint8_t subAddress, uint8_t data)
@@ -535,9 +537,9 @@ MPU_Error_t MPU9250_SPI::begin(void)
     return runTests();
 }
 
-void MPU9250_SPI::initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
+void MPU9250_SPI::initMPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) 
 { 
-    MPU9250::initMPU9250(ascale, gscale, sampleRateDivisor, false); 
+    MPU9250::initMPU6500(ascale, gscale, sampleRateDivisor, false); 
 }
 
 void MPU9250_SPI::writeAK8963Register(uint8_t subAddress, uint8_t data)

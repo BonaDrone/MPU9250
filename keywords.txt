@@ -2,10 +2,12 @@
 # Datatypes (KEYWORD1)
 ################################################################################
 
+MPU6000	KEYWORD1
+MPU6050	KEYWORD1
+MPU6500	KEYWORD1
 MPU9250_Passthru	KEYWORD1
 MPU9250_Master		KEYWORD1
 MPU9250	KEYWORD1
-MPU6050	KEYWORD1
 Ascale_t	KEYWORD1
 Gscale_t	KEYWORD1
 Mscale_t	KEYWORD1

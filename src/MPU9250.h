@@ -64,7 +64,7 @@ class MPU9250 : public MPU6500 {
 
         MPU_Error_t begin(uint8_t bus=1);
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
+        void initMPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
         virtual void pushGyroBiases(uint8_t data[12]) override;
 
@@ -212,7 +212,7 @@ class MPU9250_Master : public MPU9250 {
 
     private:
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
+        void initMPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 };
 
 class MPU9250_SPI : public MPU9250 {
@@ -223,7 +223,7 @@ class MPU9250_SPI : public MPU9250 {
 
         virtual MPU_Error_t begin(void);
 
-        void initMPU9250(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
+        void initMPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
         bool checkNewData(void);
 
