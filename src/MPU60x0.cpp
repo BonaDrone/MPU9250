@@ -40,7 +40,7 @@ MPU_Error_t MPU60x0::begin(void)
 
     calibrate();
 
-    init(_aScale, _gScale);
+    init();
 
     return MPU_ERROR_NONE;
 }
@@ -113,7 +113,7 @@ void MPU60x0::lowPowerAccelOnly()
 
 }
 
-void MPU60x0::init(Ascale_t ascale, Gscale_t gscale)
+void MPU60x0::init(void)
 {
     // wake up device-don't need this here if using calibration function below
     //  writeMPURegister(PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors
@@ -136,13 +136,13 @@ void MPU60x0::init(Ascale_t ascale, Gscale_t gscale)
     uint8_t c =  readMPURegister(GYRO_CONFIG);
     writeMPURegister(GYRO_CONFIG, c & ~0xE0); // Clear self-test bits [7:5]
     writeMPURegister(GYRO_CONFIG, c & ~0x18); // Clear AFS bits [4:3]
-    writeMPURegister(GYRO_CONFIG, c | gscale << 3); // Set full scale range for the gyro
+    writeMPURegister(GYRO_CONFIG, c | _gScale << 3); // Set full scale range for the gyro
 
     // Set accelerometer configuration
     c =  readMPURegister(ACCEL_CONFIG);
     writeMPURegister(ACCEL_CONFIG, c & ~0xE0); // Clear self-test bits [7:5]
     writeMPURegister(ACCEL_CONFIG, c & ~0x18); // Clear AFS bits [4:3]
-    writeMPURegister(ACCEL_CONFIG, c | ascale << 3); // Set full scale range for the accelerometer
+    writeMPURegister(ACCEL_CONFIG, c | _aScale << 3); // Set full scale range for the accelerometer
 
     // Configure Interrupts and Bypass Enable
     // Set interrupt pin active high, push-pull, and clear on read of INT_STATUS, enable I2C_BYPASS_EN so additional chips

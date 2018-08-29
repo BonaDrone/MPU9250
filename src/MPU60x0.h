@@ -43,5 +43,5 @@ class MPU60x0 : public MPUIMU {
 
         void     selfTest(float * destination);
 
-        void     init(Ascale_t ascale, Gscale_t gscale);
+        void     init(void);
 }; 
