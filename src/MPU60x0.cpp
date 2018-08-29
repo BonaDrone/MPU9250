@@ -22,6 +22,8 @@
 
 #include "MPU60x0.h"
 
+#include <math.h>
+
 bool MPU60x0::checkNewData(void)
 {
     return MPUIMU::checkNewData();
