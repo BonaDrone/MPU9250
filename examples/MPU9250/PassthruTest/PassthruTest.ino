@@ -19,7 +19,7 @@
 #include <Wire.h>   
 #endif
 
-#include "MPU9250.h"
+#include "MPU9250_Passthru.h"
 
 /*
    MPU9250 Configuration
@@ -111,7 +111,7 @@ void setup()
         case MPU_ERROR_MAG_ID:
             error("Bad magnetometer device ID");
         case MPU_ERROR_SELFTEST:
-            error("Failed self-test");
+            //error("Failed self-test");
             break;
         default:
             Serial.println("MPU9250 online!\n");
@@ -127,8 +127,8 @@ void setup()
     digitalWrite(LED_PIN, HIGH); 
 
     // Comment out if using pre-measured, pre-stored offset magnetometer biases
-    Serial.println("Mag Calibration: Wave device in a figure eight until done!");
-    imu.calibrateMagnetometer();
+    //Serial.println("Mag Calibration: Wave device in a figure eight until done!");
+    //imu.calibrateMagnetometer();
 
     attachInterrupt(INTERRUPT_PIN, myinthandler, RISING);  // define interrupt for INTERRUPT_PIN output of MPU9250
 
@@ -145,7 +145,7 @@ void loop()
 
         gotNewData = false;     
 
-        if (imu.checkNewAccelGyroData())  { 
+        if (true /*imu.checkNewAccelGyroData()*/ )  { 
 
             imu.readAccelerometer(ax, ay, az);
 

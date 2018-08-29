@@ -20,7 +20,7 @@
 #include <Wire.h>   
 #endif
 
-#include "MPU9250.h"
+#include "MPU9250_Master.h"
 
 /*
    MPU9250 Configuration

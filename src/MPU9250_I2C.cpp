@@ -49,13 +49,5 @@ void MPU9250::writeRegister(uint8_t address, uint8_t subAddress, uint8_t data)
     cpi2c_writeRegister(address, subAddress, data);
 }
 
-// Passthru ===========================================================================================
 
-MPU_Error_t MPU9250_Passthru::begin(uint8_t i2cbus)
-{
-    MPU9250::begin(i2cbus);
 
-    _mag = cpi2c_open(AK8963_ADDRESS);
-
-    return runTests();
-}
