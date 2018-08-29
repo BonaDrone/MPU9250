@@ -152,7 +152,7 @@ void MPU60x0::init(void)
 }
 
 // Accelerometer and gyroscope self test; check calibration wrt factory settings
-void MPU60x0::selfTest(float * destination) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
+void MPU60x0::selfTest(float * tolerances) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
 {
     uint8_t rawData[4];
     uint8_t selfTest[6];
@@ -191,6 +191,6 @@ void MPU60x0::selfTest(float * destination) // Should return percent deviation f
     // Report results as a ratio of (STR - FT)/FT; the change from Factory Trim of the Self-Test Response
     // To get to percent, must multiply by 100 and subtract result from 100
     for (int i = 0; i < 6; i++) {
-        destination[i] = 100.0 + 100.0 * ((float)selfTest[i] - factoryTrim[i]) / factoryTrim[i]; // Report percent differences
+        tolerances[i] = 100.0 + 100.0 * ((float)selfTest[i] - factoryTrim[i]) / factoryTrim[i]; // Report percent differences
     }
 }

@@ -38,7 +38,7 @@ class MPU60x0 : public MPUIMU {
         const uint8_t MOT_THR          		= 0x1F;  
         const uint8_t MOT_DUR          		= 0x20; 
 
-        void     selfTest(float * destination);
+        void     selfTest(float * tolerances);
 
         void     init(void);
 }; 
