@@ -38,13 +38,10 @@ class MPU60x0 : public MPUIMU {
         const uint8_t SELF_TEST_Z      		= 0x0F;
         const uint8_t SELF_TEST_A      		= 0x10;
 
-        const uint8_t MOT_THR          		= 0x1F;  // Motion detection threshold bits [7:0]
-        const uint8_t MOT_DUR          		= 0x20;  // Duration counter threshold for motion interrupt generation, 1 kHz rate, LSB = 1 ms
+        const uint8_t MOT_THR          		= 0x1F;  
+        const uint8_t MOT_DUR          		= 0x20; 
 
         void     selfTest(float * destination);
 
         void     init(Ascale_t ascale, Gscale_t gscale);
-
-        // Cross-platform support
-        uint8_t  _i2c;
 }; 

@@ -10,7 +10,6 @@
  */
 
 #include "MPU60x0.h"
-#include "CrossPlatformI2C_Core.h"
 
 #include <math.h>
 
