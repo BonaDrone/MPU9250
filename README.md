@@ -18,20 +18,17 @@ The following sensors are currently supported:
 * MPU9250
 * MPU6500
 
-The MPU6050 supports communication via the I<sup>2</sup>C bus.To use this bus, you should also clone the
-[CrossPlatformI2C](https://github.com/simondlevy/CrossPlatformI2C) repository.
+To use this library you will also need to clone the cross-platform support
+[library](https://github.com/simondlevy/CrossPlatformDataBus).
 
-The MPU6500 supports communication via the SPI bus.To use this bus, you should also clone the
-[CrossPlatformSPI](https://github.com/simondlevy/CrossPlatformSPI) repository.
-
-The MPU9250 supports communication via either bus.  With I<sup>2</sup>C you can run the
-MPU9250 in &ldquo;master mode&rdquo;, meaning that you access both sensors
-(MPU6500 accelerometer/gyrometer, AK8963 magnetometer) at once, or in &ldquo;pass-through
-mode&rdquo; allowing you to communicate directly with the magnetometer for more efficient data acquisition.  
-With the SPI bus you get only master mode.  To use the I<sup>2</sup>C bus, you should also clone the
-[CrossPlatformI2C](https://github.com/simondlevy/CrossPlatformI2C) repository.
-To use the SPI bus, you should also clone the
-[CrossPlatformSPI](https://github.com/simondlevy/CrossPlatformSPI) repository.  
+The MPU6050 supports communication via the I<sup>2</sup>C bus.  The MPU6500
+supports communication via the SPI bus.  The MPU9250 supports communication via
+either bus.  With I<sup>2</sup>C you can run the MPU9250 in &ldquo;master
+mode&rdquo;, meaning that you access both sensors (MPU6500
+accelerometer/gyrometer, AK8963 magnetometer) at once, or in
+&ldquo;pass-through mode&rdquo; allowing you to communicate directly with the
+magnetometer for more efficient data acquisition.  With the SPI bus you get
+only master mode.  
 
 I have tested this library on the following hardware:
 
