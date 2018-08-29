@@ -1,13 +1,24 @@
-/*  Implementation code for MPU9250 class library
- *
- *  Copyright 2017 Tlera Corporation
- *  
- *  Created by Kris Winer
- *
- *  Adapted by Simon D. Levy 19 April 2018
- *  
- *  Library may be used freely and without limit with attribution.
- */
+/* 
+   MPU9250_Passthru.cpp: implementation of pass-through-mode MPU9250 class methods
+
+   Copyright (C) 2018 Simon D. Levy
+
+   Adapted from https://github.com/kriswiner/MPU9250/blob/master/MPU9250_MS5637_AHRS_t3.ino
+
+   This file is part of MPU.
+
+   MPU is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   MPU is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with MPU.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "MPU9250_Passthru.h"
 

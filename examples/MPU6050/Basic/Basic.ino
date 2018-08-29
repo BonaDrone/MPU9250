@@ -1,30 +1,24 @@
-/* MPU6050 Basic Example Code
-by: Kris Winer
-date: May 1, 2014
-Modified August 2018 by Simon D. Levy
-license: Beerware - Use this code however you'd like. If you 
-find it useful you can buy me a beer some time.
+/* 
+   Basic.ino: MPU6050 basic example
 
-Demonstrate  MPU-6050 basic functionality including initialization, accelerometer trimming, sleep mode functionality as well as
-parameterizing the register addresses. Added display functions to allow display to on breadboard monitor. 
-No DMP use. We just want to get out the accelerations, temperature, and gyro readings.
+   Copyright (C) 2018 Simon D. Levy
 
-SDA and SCL should have external pull-up resistors (to 3.3V).
-10k resistors worked for me. They should be on the breakout
-board.
+   Adapted from https://github.com/kriswiner/MPU6050/blob/master/MPU6050BasicExample.ino
 
-Hardware setup:
-MPU6050 Breakout --------- Arduino
-3.3V --------------------- 3.3V
-SDA ----------------------- A4
-SCL ----------------------- A5
-GND ---------------------- GND
+   This file is part of MPU.
 
-Note: The MPU6050 is an I2C sensor and uses the Arduino Wire library. 
-Because the sensor is not 5V tolerant, we are using a 3.3 V 8 MHz Pro Mini or a 3.3 V Teensy 3.1.
-We have disabled the internal pull-ups used by the Wire library in the Wire.h/twi.c utility file.
-We are also using the 400 kHz fast I2C mode by setting the TWI_FREQ  to 400000L /twi.h utility file.
- */
+   MPU is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   MPU is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with MPU.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "MPU6050.h"
 
