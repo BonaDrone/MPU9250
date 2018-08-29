@@ -1,5 +1,5 @@
 /* 
-   MasterTest.ino: example of how to use MPU9250 in pass-through mode
+   PassthruTest.ino: example of how to use MPU9250 in pass-through mode
 
    Copyright (C) 2018 Simon D. Levy
 

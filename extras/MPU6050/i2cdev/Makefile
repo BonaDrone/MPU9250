@@ -1,6 +1,6 @@
 #   Makefile for MPU6050 I2CDEV examples
 #  
-#   Copyright 
+#   Copyright (C) 2018 Simon D. Levy
 #
 #   This file is part of MPU.
 #

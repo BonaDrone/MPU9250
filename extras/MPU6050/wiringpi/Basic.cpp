@@ -1,15 +1,24 @@
-/* MPU6050 Basic Example Code
-by: Kris Winer
-date: May 1, 2014
-Modified August 2018 by Simon D. Levy
-license: Beerware - Use this code however you'd like. If you 
-find it useful you can buy me a beer some time.
+/* 
+   Basic.cpp: MPU6050 basic example
 
-Demonstrate  MPU-6050 basic functionality including initialization,
-accelerometer trimming, sleep mode functionality as well as
-parameterizing the register addresses. Added display functions to allow display to on breadboard monitor. 
-No DMP use. We just want to get out the accelerations, temperature, and gyro readings.
- */
+   Copyright (C) 2018 Simon D. Levy
+
+   Adapted from https://github.com/kriswiner/MPU6050/blob/master/MPU6050BasicExample.ino
+
+   This file is part of MPU.
+
+   MPU is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   MPU is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with MPU.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include "MPU6050.h"
 #include <wiringPi.h>

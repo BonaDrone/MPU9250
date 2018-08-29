@@ -1,11 +1,20 @@
-# 
-# Makefile for MPU9250 I2CDEV examples
+#   Makefile for MPU9250 I2CDEV examples
+#  
+#   Copyright (C) 2018 Simon D. Levy
 #
-# Copyright (c) 2018 Simon D. Levy
+#   This file is part of MPU.
 #
-# This file is part of MPU9250.
+#   MPU is free software: you can redistribute it and/or modify
+#   it under the terms of the GNU General Public License as published by
+#   the Free Software Foundation, either version 3 of the License, or
+#   (at your option) any later version.
 #
-# Library may be used freely and without limit with attribution.
+#   MPU is distributed in the hope that it will be useful,
+#   but WITHOUT ANY WARRANTY; without even the implied warranty of
+#   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#   GNU General Public License for more details.
+#   You should have received a copy of the GNU General Public License
+#   along with MPU.  If not, see <http://www.gnu.org/licenses/>.
   
 # Change this to whereever you installed CrossPlatformI2C
 CPI2C = $(HOME)/CrossPlatformI2C/

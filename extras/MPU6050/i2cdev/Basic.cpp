@@ -1,6 +1,8 @@
 /* 
    Basic.cpp: MPU6050 basic example
 
+   Copyright (C) 2018 Simon D. Levy
+
    Adapted from https://github.com/kriswiner/MPU6050/blob/master/MPU6050BasicExample.ino
 
    This file is part of MPU.
@@ -17,7 +19,6 @@
    You should have received a copy of the GNU General Public License
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
 */
-
 
 #include "MPU6050.h"
 #include <stdio.h>

@@ -1,15 +1,22 @@
-/* 07/6/2017 Copyright Tlera Corporation
- *  
- * Created by Kris Winer
- *
- * Adapted for WiringPi by Simon D. Levy April 2018
- *  
- * Demonstrate basic MPU-9250 functionality over SPI bus (which supports only master
- * mode), includingparameterizing the register addresses, initializing the sensor, 
- * getting * properly scaled accelerometer, gyroscope, and magnetometer data out. 
- *
- * Library may be used freely and without limit with attribution.
- */
+/* 
+   SPITest.cpp: example of how to use MPU9250 over SPI bus
+
+   Copyright (C) 2018 Simon D. Levy
+
+   This file is part of MPU.
+
+   MPU is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   MPU is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+   You should have received a copy of the GNU General Public License
+   along with MPU.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
 #include <stdio.h>
 #include <MPU9250.h>
