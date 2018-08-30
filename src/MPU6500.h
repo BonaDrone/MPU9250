@@ -18,9 +18,9 @@
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "MPU.h"
+#include "MPU6xx0.h"
 
-class MPU6500 : public MPUIMU {
+class MPU6500 : public MPU6xx0 {
 
     friend class MPU9250; // eventually should probably subclass MPU9250 from MPU6500
 

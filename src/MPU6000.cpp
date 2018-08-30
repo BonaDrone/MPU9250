@@ -29,48 +29,48 @@ MPU6000::MPU6000(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) :
 
 MPU_Error_t MPU6000::begin(void)
 {
-    if (getId() != MPU_ADDRESS) {
-        return MPU_ERROR_IMU_ID;
-    }
+    //if (getId() != MPU_ADDRESS) {
+    //    return MPU_ERROR_IMU_ID;
+    //}
 
-    if (!selfTest()) {
-        return MPU_ERROR_SELFTEST;
-    }
+    //if (!selfTest()) {
+    //    return MPU_ERROR_SELFTEST;
+    //}
 
-    writeMPURegister(PWR_MGMT_1, 0x80);
+    cpspi_writeRegister(PWR_MGMT_1, 0x80);
     delay(100);
 
-    writeMPURegister(SIGNAL_PATH_RESET, 0x80);
+    cpspi_writeRegister(SIGNAL_PATH_RESET, 0x80);
     delay(100);
 
-    writeMPURegister(PWR_MGMT_1, 0x00);
+    cpspi_writeRegister(PWR_MGMT_1, 0x00);
     delay(100);
-    writeMPURegister(PWR_MGMT_1, INV_CLK_PLL);
+
+    cpspi_writeRegister(PWR_MGMT_1, INV_CLK_PLL);
     delay(15);
 
-    writeMPURegister(GYRO_CONFIG, _gScale << 3);
-    delay(15);
-    writeMPURegister(ACCEL_CONFIG, _aScale << 3);
+    cpspi_writeRegister(GYRO_CONFIG, _gScale << 3);
     delay(15);
 
-    writeMPURegister(CONFIG, 0); // no DLPF bits
+    cpspi_writeRegister(ACCEL_CONFIG, _aScale << 3);
     delay(15);
 
-    writeMPURegister(SMPLRT_DIV, _sampleRateDivisor); 
+    cpspi_writeRegister(CONFIG, 0); // no DLPF bits
+    delay(15);
+
+    cpspi_writeRegister(SMPLRT_DIV, _sampleRateDivisor); 
     delay(100);
+
+    // Data ready interrupt configuration
+    cpspi_writeRegister(INT_PIN_CFG, 0x10);  
+    delay(15);
+
+    cpspi_writeRegister(INT_ENABLE, 0x01); 
+    delay(15);
 
     _accelBias[0] = 0;
     _accelBias[1] = 0;
     _accelBias[2] = 0;
-
-    //calibrate();
-
-    // Data ready interrupt configuration
-    writeMPURegister(INT_PIN_CFG, 0x10);  
-    delay(15);
-
-    writeMPURegister(INT_ENABLE, 0x01); 
-    delay(15);
 
     return MPU_ERROR_NONE;
 }

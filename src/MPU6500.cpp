@@ -23,31 +23,46 @@
 #include <CrossPlatformSPI.h>
 
 MPU6500::MPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) : 
-    MPUIMU(ascale, gscale, sampleRateDivisor)
+    MPU6xx0(ascale, gscale, sampleRateDivisor)
 {
 }
 
 MPU_Error_t MPU6500::begin(void)
 {
-    writeMPURegister(PWR_MGMT_1, 0x80);
+    //if (getId() != MPU_ADDRESS) {
+    //    return MPU_ERROR_IMU_ID;
+    //}
+
+    //if (!selfTest()) {
+    //    return MPU_ERROR_SELFTEST;
+    //}
+
+    cpspi_writeRegister(PWR_MGMT_1, 0x80);
     delay(100);
-    writeMPURegister(SIGNAL_PATH_RESET, 0x80);
+
+    cpspi_writeRegister(SIGNAL_PATH_RESET, 0x80);
     delay(100);
-    writeMPURegister(PWR_MGMT_1, 0);
+
+    cpspi_writeRegister(PWR_MGMT_1, 0x00);
     delay(100);
-    writeMPURegister(PWR_MGMT_1, INV_CLK_PLL);
+
+    cpspi_writeRegister(PWR_MGMT_1, INV_CLK_PLL);
     delay(15);
-    writeMPURegister(GYRO_CONFIG, 0x00);//_gScale << 3);
+
+    cpspi_writeRegister(GYRO_CONFIG, _gScale << 3);
     delay(15);
-    writeMPURegister(ACCEL_CONFIG, 0x00);//_aScale << 3);
+
+    cpspi_writeRegister(ACCEL_CONFIG, _aScale << 3);
     delay(15);
-    writeMPURegister(CONFIG, 0); // no DLPF bits
+
+    cpspi_writeRegister(CONFIG, 0); // no DLPF bits
     delay(15);
-    writeMPURegister(SMPLRT_DIV, _sampleRateDivisor); 
+
+    cpspi_writeRegister(SMPLRT_DIV, _sampleRateDivisor); 
     delay(100);
 
     // Data ready interrupt configuration
-    writeMPURegister(INT_PIN_CFG, 0x10);  
+    cpspi_writeRegister(INT_PIN_CFG, 0x10);  
     delay(15);
 
     writeMPURegister(INT_ENABLE, 0x01); 
