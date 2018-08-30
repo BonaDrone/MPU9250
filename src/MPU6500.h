@@ -22,6 +22,8 @@
 
 class MPU6500 : public MPUIMU {
 
+    friend class MPU9250; // eventually should probably subclass MPU9250 from MPU6500
+
     public:
 
         MPU6500(Ascale_t ascale, Gscale_t gscale);
@@ -35,9 +37,9 @@ class MPU6500 : public MPUIMU {
     protected:
 
         // Register map
-        const uint8_t SELF_TEST_X_GYRO  = 0x00;                  
-        const uint8_t SELF_TEST_Y_GYRO  = 0x01;
-        const uint8_t SELF_TEST_Z_GYRO  = 0x02;
+        static const uint8_t SELF_TEST_X_GYRO  = 0x00;                  
+        static const uint8_t SELF_TEST_Y_GYRO  = 0x01;
+        static const uint8_t SELF_TEST_Z_GYRO  = 0x02;
 
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 

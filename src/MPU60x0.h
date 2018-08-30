@@ -42,13 +42,6 @@ class MPU60x0 : public MPUIMU {
 
     private:
 
-        const uint8_t SELF_TEST_X      		= 0x0D;
-        const uint8_t SELF_TEST_Y      		= 0x0E;
-        const uint8_t SELF_TEST_Z      		= 0x0F;
-        const uint8_t SELF_TEST_A      		= 0x10;
-        const uint8_t MOT_THR          		= 0x1F;  
-        const uint8_t MOT_DUR          		= 0x20; 
-
         void     selfTest(float * tolerances);
 
         void     init(void);

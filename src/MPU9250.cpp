@@ -24,8 +24,9 @@
 
 #include <math.h>
 
-MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor, bool passthru) : 
-    MPU6500(ascale, gscale)
+MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, 
+        Mmode_t mmode, uint8_t sampleRateDivisor, bool passthru) : 
+    MPUIMU(ascale, gscale)
 {
     _mRes = getMres(mscale);
     _mScale = mscale;
@@ -130,7 +131,7 @@ void MPU9250::accelWakeOnMotion()
     writeMPURegister(MOT_DETECT_CTRL, 0xC0);  
 
     // set accel threshold for wake up at  mG per LSB, 1 - 255 LSBs == 0 - 1020 mg), pic 0x19 for 25 mg
-    writeMPURegister(WOM_THR, 0x19);
+    writeMPURegister(MOT_THR, 0x19);
 
     // set sample rate in low power mode
     /* choices are 0 == 0.24 Hz, 1 == 0.49 Hz, 2 == 0.98 Hz, 3 == 1.958 Hz, 4 == 3.91 Hz, 5 == 7.81 Hz
@@ -349,9 +350,9 @@ void MPU9250::selfTest(float  tolerances[6]) // Should return percent deviation 
     selfTest[0] = readMPURegister(SELF_TEST_X_ACCEL); // X-axis accel self-test results
     selfTest[1] = readMPURegister(SELF_TEST_Y_ACCEL); // Y-axis accel self-test results
     selfTest[2] = readMPURegister(SELF_TEST_Z_ACCEL); // Z-axis accel self-test results
-    selfTest[3] = readMPURegister(SELF_TEST_X_GYRO);  // X-axis gyro self-test results
-    selfTest[4] = readMPURegister(SELF_TEST_Y_GYRO);  // Y-axis gyro self-test results
-    selfTest[5] = readMPURegister(SELF_TEST_Z_GYRO);  // Z-axis gyro self-test results
+    selfTest[3] = readMPURegister(MPU6500::SELF_TEST_X_GYRO);  // X-axis gyro self-test results
+    selfTest[4] = readMPURegister(MPU6500::SELF_TEST_Y_GYRO);  // Y-axis gyro self-test results
+    selfTest[5] = readMPURegister(MPU6500::SELF_TEST_Z_GYRO);  // Z-axis gyro self-test results
 
     // Retrieve factory self-test value from self-test code reads
     factoryTrim[0] = (float)(2620/1<<FS)*(pow( 1.01 , ((float)selfTest[0] - 1.0) )); // FT[Xa] factory trim calculation

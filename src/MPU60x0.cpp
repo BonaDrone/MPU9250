@@ -171,9 +171,9 @@ void MPU60x0::selfTest(float * tolerances) // Should return percent deviation fr
     writeMPURegister(ACCEL_CONFIG, 0xF0); // Enable self test on all three axes and set accelerometer range to +/- 8 g
     writeMPURegister(GYRO_CONFIG,  0xE0); // Enable self test on all three axes and set gyro range to +/- 250 degrees/s
     delay(250);  // Delay a while to let the device execute the self-test
-    rawData[0] = readMPURegister(SELF_TEST_X); // X-axis self-test results
-    rawData[1] = readMPURegister(SELF_TEST_Y); // Y-axis self-test results
-    rawData[2] = readMPURegister(SELF_TEST_Z); // Z-axis self-test results
+    rawData[0] = readMPURegister(SELF_TEST_X_ACCEL); // X-axis self-test results
+    rawData[1] = readMPURegister(SELF_TEST_Y_ACCEL); // Y-axis self-test results
+    rawData[2] = readMPURegister(SELF_TEST_Z_ACCEL); // Z-axis self-test results
     rawData[3] = readMPURegister(SELF_TEST_A); // Mixed-axis self-test results
     // Extract the acceleration test results first
     selfTest[0] = (rawData[0] >> 3) | (rawData[3] & 0x30) >> 4 ; // XA_TEST result is a five-bit unsigned integer

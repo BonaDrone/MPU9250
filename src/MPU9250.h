@@ -40,8 +40,8 @@ typedef enum {
 
 } Mmode_t;
 
-// MPU9250 is MPU6500 plus magnetometer
-class MPU9250 : public MPU6500 {
+// Should probably subclass from MPU6500
+class MPU9250 : public MPUIMU {
 
     public: 
 
@@ -93,56 +93,23 @@ class MPU9250 : public MPU6500 {
         // for registers not listed in above document; the MPU9250 and MPU9150 are virtually identical but 
         // the latter has a different register map
         
-        // Magnetometer Registers
-        const uint8_t WHO_AM_I_AK8963   = 0x00; 
-        const uint8_t INFO              = 0x01;
-        const uint8_t AK8963_ST1        = 0x02; 
-        const uint8_t AK8963_XOUT_L     = 0x03; 
-        const uint8_t AK8963_XOUT_H     = 0x04;
-        const uint8_t AK8963_YOUT_L     = 0x05;
-        const uint8_t AK8963_YOUT_H     = 0x06;
-        const uint8_t AK8963_ZOUT_L     = 0x07;
-        const uint8_t AK8963_ZOUT_H     = 0x08;
-        const uint8_t AK8963_ST2        = 0x09; 
-        const uint8_t AK8963_CNTL       = 0x0A;  
-        const uint8_t AK8963_ASTC       = 0x0C; 
-        const uint8_t AK8963_I2CDIS     = 0x0F;
-        const uint8_t AK8963_ASAX       = 0x10;
-        const uint8_t AK8963_ASAY       = 0x11;
-        const uint8_t AK8963_ASAZ       = 0x12;
-
-        const uint8_t SELF_TEST_X_ACCEL = 0x0D;
-        const uint8_t SELF_TEST_Y_ACCEL = 0x0E;    
-        const uint8_t SELF_TEST_Z_ACCEL = 0x0F;
-
-        const uint8_t SELF_TEST_A       = 0x10;
-
-        const uint8_t GYRO_CONFIG       = 0x1B;
-        const uint8_t ACCEL_CONFIG2     = 0x1D;
-        const uint8_t LP_ACCEL_ODR      = 0x1E;
-        const uint8_t WOM_THR           = 0x1F;   
-
-        const uint8_t MOT_DUR           = 0x20;  
-        const uint8_t ZMOT_THR          = 0x21;  
-        const uint8_t ZRMOT_DUR         = 0x22;  
-
-        const uint8_t XG_OFFSET_H       = 0x13; 
-        const uint8_t XG_OFFSET_L       = 0x14;
-        const uint8_t YG_OFFSET_H       = 0x15;
-        const uint8_t YG_OFFSET_L       = 0x16;
-        const uint8_t ZG_OFFSET_H       = 0x17;
-        const uint8_t ZG_OFFSET_L       = 0x18;
-        const uint8_t XA_OFFSET_H       = 0x77;
-        const uint8_t XA_OFFSET_L       = 0x78;
-        const uint8_t YA_OFFSET_H       = 0x7A;
-        const uint8_t YA_OFFSET_L       = 0x7B;
-        const uint8_t ZA_OFFSET_H       = 0x7D;
-        const uint8_t ZA_OFFSET_L       = 0x7E;
-
-        const uint8_t I2C_SLV0_EN       = 0x80;
-
-        const uint8_t I2C_READ_FLAG     = 0x80;
-        const uint8_t I2C_MST_EN        = 0x20;
+        // Magnetometer legister map
+        static const uint8_t WHO_AM_I_AK8963   = 0x00; 
+        static const uint8_t INFO              = 0x01;
+        static const uint8_t AK8963_ST1        = 0x02; 
+        static const uint8_t AK8963_XOUT_L     = 0x03; 
+        static const uint8_t AK8963_XOUT_H     = 0x04;
+        static const uint8_t AK8963_YOUT_L     = 0x05;
+        static const uint8_t AK8963_YOUT_H     = 0x06;
+        static const uint8_t AK8963_ZOUT_L     = 0x07;
+        static const uint8_t AK8963_ZOUT_H     = 0x08;
+        static const uint8_t AK8963_ST2        = 0x09; 
+        static const uint8_t AK8963_CNTL       = 0x0A;  
+        static const uint8_t AK8963_ASTC       = 0x0C; 
+        static const uint8_t AK8963_I2CDIS     = 0x0F;
+        static const uint8_t AK8963_ASAX       = 0x10;
+        static const uint8_t AK8963_ASAY       = 0x11;
+        static const uint8_t AK8963_ASAZ       = 0x12;
 
         uint8_t readAK8963Register(uint8_t subAddress);
         
