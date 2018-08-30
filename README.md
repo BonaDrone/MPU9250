@@ -14,6 +14,7 @@ by removing code requiring components other than the MPU sensors
 
 The following sensors are currently supported:
 
+* MPU6000
 * MPU6050
 * MPU9250
 * MPU6500
