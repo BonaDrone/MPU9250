@@ -36,9 +36,9 @@ MPU_Error_t MPU6000::begin(void)
     delay(100);
     writeMPURegister(PWR_MGMT_1, INV_CLK_PLL);
     delay(15);
-    writeMPURegister(GYRO_CONFIG, 0x00);//_gScale << 3);
+    writeMPURegister(GYRO_CONFIG, _gScale << 3);
     delay(15);
-    writeMPURegister(ACCEL_CONFIG, 0x00);//_aScale << 3);
+    writeMPURegister(ACCEL_CONFIG, _aScale << 3);
     delay(15);
     writeMPURegister(CONFIG, 0); // no DLPF bits
     delay(15);

@@ -158,8 +158,8 @@ void MPUIMU::calibrate(void)
     // Configure gyro and accelerometer for bias calculation
     writeMPURegister(CONFIG, 0x01);      // Set low-pass filter to 188 Hz
     writeMPURegister(SMPLRT_DIV, 0x00);  // Set sample rate to 1 kHz
-    writeMPURegister(GYRO_CONFIG, 0x00);  // Set gyro full-scale to 250 degrees per second, maximum sensitivity
-    writeMPURegister(ACCEL_CONFIG, 0x00); // Set accelerometer full-scale to 2 g, maximum sensitivity
+    writeMPURegister(GYRO_CONFIG, _gScale << 3);  
+    writeMPURegister(ACCEL_CONFIG, _aScale << 3); 
 
     uint16_t  gyrosensitivity  = 131;   // = 131 LSB/degrees/sec
     uint16_t  accelsensitivity = 16384;  // = 16384 LSB/g
