@@ -22,7 +22,8 @@
 
 #include <CrossPlatformSPI.h>
 
-MPU6500::MPU6500(Ascale_t ascale, Gscale_t gscale) : MPUIMU(ascale, gscale)
+MPU6500::MPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) : 
+    MPUIMU(ascale, gscale, sampleRateDivisor)
 {
 }
 
@@ -42,7 +43,7 @@ MPU_Error_t MPU6500::begin(void)
     delay(15);
     writeMPURegister(CONFIG, 0); // no DLPF bits
     delay(15);
-    writeMPURegister(SMPLRT_DIV, 0); 
+    writeMPURegister(SMPLRT_DIV, _sampleRateDivisor); 
     delay(100);
 
     // Data ready interrupt configuration

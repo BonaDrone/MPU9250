@@ -38,7 +38,7 @@ class MPU60x0 : public MPUIMU {
 
     protected:
 
-        MPU60x0(Ascale_t ascale, Gscale_t gscale);
+        MPU60x0(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
     private:
 

@@ -195,12 +195,14 @@ class MPUIMU {
 
         Ascale_t _aScale;
         Gscale_t _gScale;
+        uint8_t  _sampleRateDivisor;
+
         float   _aRes;
         float   _gRes;
         float _accelBias[3];
         float _gyroBias[3];
 
-        MPUIMU(Ascale_t ascale, Gscale_t gscale);
+        MPUIMU(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
         float    getAres(Ascale_t ascale);
         float    getGres(Gscale_t gscale);

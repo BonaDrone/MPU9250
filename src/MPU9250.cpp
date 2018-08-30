@@ -26,7 +26,7 @@
 
 MPU9250::MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, 
         Mmode_t mmode, uint8_t sampleRateDivisor, bool passthru) : 
-    MPUIMU(ascale, gscale)
+    MPUIMU(ascale, gscale, sampleRateDivisor)
 {
     _mRes = getMres(mscale);
     _mScale = mscale;

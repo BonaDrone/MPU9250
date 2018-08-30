@@ -22,13 +22,14 @@
 
 #include "MPU.h"
 
-MPUIMU::MPUIMU(Ascale_t ascale, Gscale_t gscale)
+MPUIMU::MPUIMU(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor)
 {
     _aRes = getAres(ascale);
     _gRes = getGres(gscale);
 
     _aScale = ascale;
     _gScale = gscale;
+    _sampleRateDivisor = sampleRateDivisor;
 }
 
 float MPUIMU::getGres(Gscale_t gscale) 
@@ -157,7 +158,7 @@ void MPUIMU::calibrate(void)
 
     // Configure gyro and accelerometer for bias calculation
     writeMPURegister(CONFIG, 0x01);      // Set low-pass filter to 188 Hz
-    writeMPURegister(SMPLRT_DIV, 0x00);  // Set sample rate to 1 kHz
+    writeMPURegister(SMPLRT_DIV, _sampleRateDivisor);  // Set sample rate to 1 kHz
     writeMPURegister(GYRO_CONFIG, _gScale << 3);  
     writeMPURegister(ACCEL_CONFIG, _aScale << 3); 
 

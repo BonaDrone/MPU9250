@@ -29,7 +29,8 @@ bool MPU60x0::checkNewData(void)
     return MPUIMU::checkNewData();
 }
 
-MPU60x0::MPU60x0(Ascale_t ascale, Gscale_t gscale) : MPUIMU(ascale, gscale)
+MPU60x0::MPU60x0(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) : 
+    MPUIMU(ascale, gscale, sampleRateDivisor)
 {
 }
 
