@@ -29,6 +29,10 @@ MPU6000::MPU6000(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) :
 
 MPU_Error_t MPU6000::begin(void)
 {
+    if (getId() != MPU_ADDRESS) {
+        return MPU_ERROR_IMU_ID;
+    }
+
     writeMPURegister(PWR_MGMT_1, 0x80);
     delay(100);
     writeMPURegister(SIGNAL_PATH_RESET, 0x80);
