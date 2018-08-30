@@ -16,20 +16,20 @@
    GNU General Public License for more details.
    You should have received a copy of the GNU General Public License
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
-*/
+   */
 
 #include "MPU6000.h"
 
 #include "CrossPlatformSPI.h"
 
 MPU6000::MPU6000(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) : 
-    MPU60x0(ascale, gscale, sampleRateDivisor)
+    MPU6xx0(ascale, gscale, sampleRateDivisor)
 {
 }
 
 MPU_Error_t MPU6000::begin(void)
 {
-   writeMPURegister(PWR_MGMT_1, 0x80);
+    writeMPURegister(PWR_MGMT_1, 0x80);
     delay(100);
     writeMPURegister(SIGNAL_PATH_RESET, 0x80);
     delay(100);
@@ -56,7 +56,7 @@ MPU_Error_t MPU6000::begin(void)
     _accelBias[0] = 0;
     _accelBias[1] = 0;
     _accelBias[2] = 0;
-    
+
     return MPU_ERROR_NONE;
 }
 
@@ -69,5 +69,3 @@ void MPU6000::readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest
 {
     cpspi_readRegisters(subAddress, count, dest);
 }
-
-

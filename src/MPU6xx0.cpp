@@ -1,5 +1,5 @@
   /* 
-   MPU60x0.cpp: Implementation of MPU60x0 classes
+   MPU6xx0.cpp: Implementation of MPU6xx0 classes
 
    Copyright (C) 2018 Simon D. Levy
 
@@ -20,21 +20,21 @@
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "MPU60x0.h"
+#include "MPU6xx0.h"
 
 #include <math.h>
 
-bool MPU60x0::checkNewData(void)
+bool MPU6xx0::checkNewData(void)
 {
     return MPUIMU::checkNewData();
 }
 
-MPU60x0::MPU60x0(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) : 
+MPU6xx0::MPU6xx0(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) : 
     MPUIMU(ascale, gscale, sampleRateDivisor)
 {
 }
 
-MPU_Error_t MPU60x0::begin(void)
+MPU_Error_t MPU6xx0::begin(void)
 {
     if (getId() != MPU_ADDRESS) {
         return MPU_ERROR_IMU_ID;
@@ -55,7 +55,7 @@ MPU_Error_t MPU60x0::begin(void)
     return MPU_ERROR_NONE;
 }
 
-void MPU60x0::readGyrometer(float & gx, float & gy, float & gz)
+void MPU6xx0::readGyrometer(float & gx, float & gy, float & gz)
 {
     MPUIMU::readGyrometer(gx, gy, gz);
 
@@ -64,7 +64,7 @@ void MPU60x0::readGyrometer(float & gx, float & gy, float & gz)
     gz -= _gyroBias[2];   
 }
 
-float MPU60x0::readTemperature()
+float MPU6xx0::readTemperature()
 {
     int16_t t = MPUIMU::readRawTemperature();
     return ((float) t) / 340. + 36.53; // Temperature in degrees Centigrade
@@ -73,7 +73,7 @@ float MPU60x0::readTemperature()
 
 
 // Configure the motion detection control for low power accelerometer mode
-void MPU60x0::lowPowerAccelOnly()
+void MPU6xx0::lowPowerAccelOnly()
 {
     // The sensor has a high-pass filter necessary to invoke to allow the sensor motion detection algorithms work properly
     // Motion detection occurs on free-fall (acceleration below a threshold for some time for all axes), motion (acceleration
@@ -123,7 +123,7 @@ void MPU60x0::lowPowerAccelOnly()
 
 }
 
-void MPU60x0::init(void)
+void MPU6xx0::init(void)
 {
     // wake up device-don't need this here if using calibration function below
     //  writeMPURegister(PWR_MGMT_1, 0x00); // Clear sleep mode bit (6), enable all sensors
@@ -162,7 +162,7 @@ void MPU60x0::init(void)
 }
 
 // Accelerometer and gyroscope self test; check calibration wrt factory settings
-void MPU60x0::selfTest(float * tolerances) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
+void MPU6xx0::selfTest(float * tolerances) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
 {
     uint8_t rawData[4];
     uint8_t selfTest[6];

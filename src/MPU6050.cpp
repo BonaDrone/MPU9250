@@ -23,7 +23,7 @@
 #include "CrossPlatformI2C_Core.h"
 
 MPU6050::MPU6050(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) : 
-    MPU60x0(ascale, gscale, sampleRateDivisor)
+    MPU6xx0(ascale, gscale, sampleRateDivisor)
 {
 }
 
@@ -31,7 +31,7 @@ MPU_Error_t MPU6050::begin(uint8_t bus)
 {
     _i2c = cpi2c_open(MPU_ADDRESS, bus);
 
-    return MPU60x0::begin();
+    return MPU6xx0::begin();
 }
 
 void MPU6050::writeMPURegister(uint8_t subAddress, uint8_t data)

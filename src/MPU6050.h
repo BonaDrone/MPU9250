@@ -18,9 +18,9 @@
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "MPU60x0.h"
+#include "MPU6xx0.h"
 
-class MPU6050 : public MPU60x0 {
+class MPU6050 : public MPU6xx0 {
 
     public:
 

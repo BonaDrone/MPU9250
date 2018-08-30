@@ -1,5 +1,5 @@
 /* 
-   MPU60x0.h: Header MPU60x0 classes
+   MPU6xx0.h: Header for MPU6xx0 classes
 
    Copyright (C) 2018 Simon D. Levy
 
@@ -22,7 +22,7 @@
 
 #include "MPU.h"
 
-class MPU60x0 : public MPUIMU {
+class MPU6xx0 : public MPUIMU {
 
     public:
 
@@ -38,7 +38,7 @@ class MPU60x0 : public MPUIMU {
 
     protected:
 
-        MPU60x0(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
+        MPU6xx0(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
     private:
 
