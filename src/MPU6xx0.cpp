@@ -40,13 +40,10 @@ MPU_Error_t MPU6xx0::begin(void)
         return MPU_ERROR_IMU_ID;
     }
 
-    float tolerances[6]; 
-    selfTest(tolerances); 
-    for (uint8_t k=0; k<6; ++k) {
-        if (tolerances[k] >= 1.0f) {
-            return MPU_ERROR_SELFTEST;
-        }
+    if (!selfTest()) {
+        return MPU_ERROR_SELFTEST;
     }
+
 
     calibrate();
 
@@ -161,8 +158,9 @@ void MPU6xx0::init(void)
     writeMPURegister(INT_ENABLE, 0x01);  // Enable data ready (bit 0) interrupt
 }
 
-// Accelerometer and gyroscope self test; check calibration wrt factory settings
-void MPU6xx0::selfTest(float * tolerances) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
+// Accelerometer and gyroscope self test; check calibration wrt factory settings.
+// Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass.
+bool MPU6xx0::selfTest(void)
 {
     uint8_t rawData[4];
     uint8_t selfTest[6];
@@ -200,7 +198,18 @@ void MPU6xx0::selfTest(float * tolerances) // Should return percent deviation fr
 
     // Report results as a ratio of (STR - FT)/FT; the change from Factory Trim of the Self-Test Response
     // To get to percent, must multiply by 100 and subtract result from 100
+    float tolerances[6];
     for (int i = 0; i < 6; i++) {
         tolerances[i] = 100.0 + 100.0 * ((float)selfTest[i] - factoryTrim[i]) / factoryTrim[i]; // Report percent differences
     }
+
+    // Check results
+    for (uint8_t k=0; k<6; ++k) {
+        if (tolerances[k] >= 14.f) {
+            return false;
+        }
+    }
+
+    // Success!
+    return true;
 }

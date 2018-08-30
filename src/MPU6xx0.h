@@ -42,7 +42,7 @@ class MPU6xx0 : public MPUIMU {
 
     private:
 
-        void     selfTest(float * tolerances);
+        bool     selfTest(void);
 
         void     init(void);
 }; 
