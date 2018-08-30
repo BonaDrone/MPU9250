@@ -39,20 +39,31 @@ MPU_Error_t MPU6000::begin(void)
 
     writeMPURegister(PWR_MGMT_1, 0x80);
     delay(100);
+
     writeMPURegister(SIGNAL_PATH_RESET, 0x80);
     delay(100);
-    writeMPURegister(PWR_MGMT_1, 0);
+
+    writeMPURegister(PWR_MGMT_1, 0x00);
     delay(100);
     writeMPURegister(PWR_MGMT_1, INV_CLK_PLL);
     delay(15);
+
     writeMPURegister(GYRO_CONFIG, _gScale << 3);
     delay(15);
     writeMPURegister(ACCEL_CONFIG, _aScale << 3);
     delay(15);
+
     writeMPURegister(CONFIG, 0); // no DLPF bits
     delay(15);
+
     writeMPURegister(SMPLRT_DIV, _sampleRateDivisor); 
     delay(100);
+
+    _accelBias[0] = 0;
+    _accelBias[1] = 0;
+    _accelBias[2] = 0;
+
+    //calibrate();
 
     // Data ready interrupt configuration
     writeMPURegister(INT_PIN_CFG, 0x10);  
@@ -60,10 +71,6 @@ MPU_Error_t MPU6000::begin(void)
 
     writeMPURegister(INT_ENABLE, 0x01); 
     delay(15);
-
-    _accelBias[0] = 0;
-    _accelBias[1] = 0;
-    _accelBias[2] = 0;
 
     return MPU_ERROR_NONE;
 }

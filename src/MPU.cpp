@@ -133,10 +133,6 @@ int16_t MPUIMU::readRawTemperature(void)
 // of the at-rest readings and then loads the resulting offsets into accelerometer and gyro bias registers.
 void MPUIMU::calibrate(void)
 {  
-    uint8_t data[12]; // data array to hold accelerometer and gyro x, y, z, data
-    uint16_t ii, packet_count, fifo_count;
-    int32_t gyro_bias[3]  = {0, 0, 0}, accel_bias[3] = {0, 0, 0};
-
     // reset device
     writeMPURegister(PWR_MGMT_1, 0x80); // Write a one to bit 7 reset bit; toggle reset device
     delay(100);
@@ -171,12 +167,14 @@ void MPUIMU::calibrate(void)
     delay(40); // accumulate 40 samples in 40 milliseconds = 480 bytes
 
     // At end of sample accumulation, turn off FIFO sensor read
+    uint8_t data[12]; // data array to hold accelerometer and gyro x, y, z, data
     writeMPURegister(FIFO_EN, 0x00);        // Disable gyro and accelerometer sensors for FIFO
     readMPURegisters(FIFO_COUNTH, 2, &data[0]); // read FIFO sample count
-    fifo_count = ((uint16_t)data[0] << 8) | data[1];
-    packet_count = fifo_count/12;// How many sets of full gyro and accelerometer data for averaging
+    uint16_t fifo_count = ((uint16_t)data[0] << 8) | data[1];
+    uint16_t packet_count = fifo_count/12;// How many sets of full gyro and accelerometer data for averaging
 
-    for (ii = 0; ii < packet_count; ii++) {
+    int32_t gyro_bias[3]  = {0, 0, 0}, accel_bias[3] = {0, 0, 0};
+    for (int k=0; k< packet_count; k++) {
         int16_t accel_temp[3] = {0, 0, 0}, gyro_temp[3] = {0, 0, 0};
         readMPURegisters(FIFO_R_W, 12, &data[0]); // read data for averaging
         accel_temp[0] = (int16_t) (((int16_t)data[0] << 8) | data[1]  ) ;  // Form signed 16-bit integer for each sample in FIFO
@@ -233,8 +231,8 @@ void MPUIMU::calibrate(void)
     uint32_t mask = 1uL; // Define mask for temperature compensation bit 0 of lower byte of accelerometer bias registers
     uint8_t mask_bit[3] = {0, 0, 0}; // Define array to hold mask bit for each accelerometer bias axis
 
-    for(ii = 0; ii < 3; ii++) {
-        if((accel_bias_reg[ii] & mask)) mask_bit[ii] = 0x01; // If temperature compensation bit is set, record that fact in mask_bit
+    for(int k=0; k< 3; k++) {
+        if((accel_bias_reg[k] & mask)) mask_bit[k] = 0x01; // If temperature compensation bit is set, record that fact in mask_bit
     }
 
     // Construct total accelerometer bias, including calculated average accelerometer bias from above
