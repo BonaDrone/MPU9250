@@ -130,7 +130,7 @@ class MPU9250 : public MPUIMU {
 
     private:
 
-        void    selfTest(float tolerances[6]);
+        bool    selfTest(void);
 
         uint8_t getAK8963CID(void);
         float   getMres(Mscale_t mscale);

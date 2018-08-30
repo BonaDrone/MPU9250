@@ -67,12 +67,8 @@ MPU_Error_t MPU9250::runTests(void)
 
     reset(); // start by resetting MPU9250
 
-    float tolerances[6]; 
-    selfTest(tolerances); 
-    for (uint8_t k=0; k<6; ++k) {
-        if (tolerances[k] >= 1.0f) {
-            return MPU_ERROR_SELFTEST;
-        }
+    if (!selfTest()) {
+        return MPU_ERROR_SELFTEST;
     }
 
     // Calibrate gyro and accelerometers, load biases in bias registers.
@@ -286,7 +282,8 @@ void MPU9250::calibrateMagnetometer(void)
 
 
 // Accelerometer and gyroscope self test; check calibration wrt factory settings
-void MPU9250::selfTest(float  tolerances[6]) // Should return percent deviation from factory trim values, +/- 14 or less deviation is a pass
+// Checks percent deviation from factory trim values, +/- 14 or less deviation is a pass
+bool MPU9250::selfTest(void)
 {
     uint8_t rawData[6] = {0, 0, 0, 0, 0, 0};
     uint8_t selfTest[6];
@@ -364,10 +361,21 @@ void MPU9250::selfTest(float  tolerances[6]) // Should return percent deviation 
 
     // Report results as a ratio of (STR - FT)/FT; the change from Factory Trim of the Self-Test Response
     // To get percent, must multiply by 100
+    float tolerances[6];
     for (int i = 0; i < 3; i++) {
         tolerances[i]   = 100.0f*((float)(aSTAvg[i] - aAvg[i]))/factoryTrim[i] - 100.0f;   // Report percent differences
         tolerances[i+3] = 100.0f*((float)(gSTAvg[i] - gAvg[i]))/factoryTrim[i+3] - 100.0f; // Report percent differences
     }
+
+    // Check results
+    for (uint8_t k=0; k<6; ++k) {
+        if (tolerances[k] >= 14.f) {
+            return false;
+        }
+    }
+
+    // Success!
+    return true;
 }
 
 void MPU9250::readGyrometer(float & gx, float & gy, float & gz)
