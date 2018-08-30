@@ -39,10 +39,9 @@ class MPU6xx0 : public MPUIMU {
     protected:
 
         MPU6xx0(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
+        bool     selfTest(void);
 
     private:
-
-        bool     selfTest(void);
 
         void     init(void);
 }; 
