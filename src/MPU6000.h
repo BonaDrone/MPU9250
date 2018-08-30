@@ -18,9 +18,9 @@
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "MPU6xx0.h"
+#include "MPU6x00.h"
 
-class MPU6000 : public MPU6xx0 {
+class MPU6000 : public MPU6x00 {
 
     public:
 
@@ -29,8 +29,6 @@ class MPU6000 : public MPU6xx0 {
         MPU_Error_t begin(void);
 
     protected:
-
-        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
 }; 

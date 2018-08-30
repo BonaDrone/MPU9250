@@ -1,5 +1,5 @@
   /* 
-   MPU6500.h: Class declaration for MPU6500
+   MPU6x00.h: Superclass declaration for MPU6000 and MPU6500
 
    Copyright (C) 2018 Simon D. Levy
 
@@ -18,28 +18,17 @@
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "MPU6x00.h"
+#include "MPU6xx0.h"
 
-class MPU6500 : public MPU6x00 {
-
-    friend class MPU9250; // eventually should probably subclass MPU9250 from MPU6500
+class MPU6x00 : public MPU6xx0 {
 
     public:
 
-        MPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor=0);
-
-        MPU_Error_t begin(void);
-
-        bool checkNewData(void);
-
-        void readGyrometer(float & gx, float & gy, float & gz);
+        MPU6x00(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor=0);
 
     protected:
 
-        // Register map
-        static const uint8_t SELF_TEST_X_GYRO  = 0x00;                  
-        static const uint8_t SELF_TEST_Y_GYRO  = 0x01;
-        static const uint8_t SELF_TEST_Z_GYRO  = 0x02;
+        MPU_Error_t begin(void);
 
-        virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 }; 
