@@ -26,7 +26,7 @@ class MPU6500 : public MPUIMU {
 
     public:
 
-        MPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
+        MPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor=0);
 
         MPU_Error_t begin(void);
 
