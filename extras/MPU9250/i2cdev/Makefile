@@ -16,26 +16,26 @@
 #   You should have received a copy of the GNU General Public License
 #   along with MPU.  If not, see <http://www.gnu.org/licenses/>.
   
-# Change this to whereever you installed CrossPlatformI2C
-CPI2C = $(HOME)/CrossPlatformI2C/
+# Change this to whereever you installed CrossPlatformDataBus
+CPDB = $(HOME)/CrossPlatformDataBus
 
 ALL = MasterTest PassthruTest
 
 MPUSRC = ../../../src/
 
-I2CINC = $(CPI2C)/src
-I2CSRC = $(CPI2C)/extras/i2cdev/src
+I2CINC = $(CPDB)/src
+I2CSRC = $(CPDB)/extras/i2c/i2cdev/src/
 
 all: $(ALL)
 
-MasterTest: MasterTest.o MPU.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
-	g++ -std=c++11 -o MasterTest MasterTest.o MPU.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+MasterTest: MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+	g++ -std=c++11 -o MasterTest MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
 
 MasterTest.o: MasterTest.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c MasterTest.cpp
 
-PassthruTest: PassthruTest.o MPU.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
-	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU.o MPU9250.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+PassthruTest: PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
 
 PassthruTest.o: PassthruTest.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c PassthruTest.cpp
@@ -45,6 +45,12 @@ MPU.o: $(MPUSRC)/MPU.cpp
 
 MPU9250.o: $(MPUSRC)/MPU9250.cpp 
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU9250.cpp
+
+MPU9250_Master.o: $(MPUSRC)/MPU9250_Master.cpp 
+	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_Master.cpp
+
+MPU9250_Passthru.o: $(MPUSRC)/MPU9250_Passthru.cpp 
+	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_Passthru.cpp
 
 MPU9250_I2C.o: $(MPUSRC)/MPU9250_I2C.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_I2C.cpp

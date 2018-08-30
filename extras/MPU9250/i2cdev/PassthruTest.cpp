@@ -62,16 +62,19 @@ void setup()
 
         case MPU_ERROR_IMU_ID:
             error("Bad IMU device ID");
+            break;
         case MPU_ERROR_MAG_ID:
             error("Bad magnetometer device ID");
+            break;
         case MPU_ERROR_SELFTEST:
-            error("Failed self-test");
+            //error("Failed self-test");
+            break;
         default:
             printf("MPU6050 online!\n");
     }
 
-    printf("Mag Calibration: Wave device in a figure eight until done!\n");
-    imu.calibrateMagnetometer();
+    //printf("Mag Calibration: Wave device in a figure eight until done!\n");
+    //imu.calibrateMagnetometer();
 }
 
 void loop()
@@ -100,7 +103,7 @@ void loop()
 
         msec_prev = msec_curr;
 
-        printf("ax = %d  ay = %d  az = %d mg\n", (int)(1000*ax), (int)(1000*ay), (int)(1000*az));
+        printf("\nax = %d  ay = %d  az = %d mg\n", (int)(1000*ax), (int)(1000*ay), (int)(1000*az));
         printf("gx = %+2.2f  gy = %+2.2f  gz = %+2.2f deg/s\n", gx, gy, gz);
         printf("mx = %d  my = %d  mz = %d mG\n", (int)mx, (int)my, (int)mz);
 
