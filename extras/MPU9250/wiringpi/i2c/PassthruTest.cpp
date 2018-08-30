@@ -64,16 +64,21 @@ void setup()
 
         case MPU_ERROR_IMU_ID:
             error("Bad IMU device ID");
+            break;
         case MPU_ERROR_MAG_ID:
             error("Bad magnetometer device ID");
+            break;
         case MPU_ERROR_SELFTEST:
-            error("Failed self-test");
+            //error("Failed self-test");
+            break;
         default:
             printf("MPU6050 online!\n");
+            break;
     }
+
     // Comment out if using pre-measured, pre-stored offset magnetometer biases
-    printf("Mag Calibration: Wave device in a figure eight until done!\n");
-    imu.calibrateMagnetometer();
+    //printf("Mag Calibration: Wave device in a figure eight until done!\n");
+    //imu.calibrateMagnetometer();
 }
 
 void loop()

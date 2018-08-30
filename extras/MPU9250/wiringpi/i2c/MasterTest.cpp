@@ -69,12 +69,16 @@ void setup()
 
         case MPU_ERROR_IMU_ID:
             error("Bad IMU device ID");
+            break;
         case MPU_ERROR_MAG_ID:
             error("Bad magnetometer device ID");
+            break;
         case MPU_ERROR_SELFTEST:
-            error("Failed self-test");
+            //error("Failed self-test");
+            break;
         default:
             printf("MPU6050 online!\n");
+            break;
     }
 
     wiringPiISR(intPin, INT_EDGE_RISING, &myinthandler);// define interrupt for intPin output of MPU9250

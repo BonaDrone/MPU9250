@@ -385,7 +385,7 @@ uint8_t MPU9250::readAK8963Register(uint8_t subAddress)
 
 uint8_t MPU9250::getAK8963CID()
 {
-    return readAK8963Register(WHO_AM_I_AK8963);
+    return readAK8963Register(AK8963_WHO_AM_I);
 }
 
 void MPU9250::gyroMagSleep()

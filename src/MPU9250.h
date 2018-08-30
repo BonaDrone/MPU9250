@@ -94,8 +94,8 @@ class MPU9250 : public MPUIMU {
         // the latter has a different register map
         
         // Magnetometer legister map
-        static const uint8_t WHO_AM_I_AK8963   = 0x00; 
-        static const uint8_t INFO              = 0x01;
+        static const uint8_t AK8963_WHO_AM_I   = 0x00; 
+        static const uint8_t AK8963_INFO       = 0x01;
         static const uint8_t AK8963_ST1        = 0x02; 
         static const uint8_t AK8963_XOUT_L     = 0x03; 
         static const uint8_t AK8963_XOUT_H     = 0x04;
