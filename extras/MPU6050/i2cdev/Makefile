@@ -16,15 +16,15 @@
 #   You should have received a copy of the GNU General Public License
 #   along with MPU.  If not, see <http://www.gnu.org/licenses/>.
   
-# Change this to whereever you installed CrossPlatformI2C
-CPI2C = $(HOME)/CrossPlatformI2C/
+# Change this to whereever you installed CrossPlatformDataBus
+CPDB = $(HOME)/CrossPlatformDataBus
 
 ALL = Basic
 
 MPUSRC = ../../../src
 
-I2CINC = $(CPI2C)/src
-I2CSRC = $(CPI2C)/extras/i2cdev/src
+I2CINC = $(CPDB)/src
+I2CSRC = $(CPDB)/extras/i2c/i2cdev/src/
 
 all: $(ALL)
 

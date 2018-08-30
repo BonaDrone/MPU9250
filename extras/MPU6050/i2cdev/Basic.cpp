@@ -77,7 +77,7 @@ void loop()
     if (millis()-millisPrev > 500) { 
 
         // Print acceleration values in milligs!
-        printf("X-acceleration: %f mg ", 1000*ax);
+        printf("\nX-acceleration: %f mg ", 1000*ax);
         printf("Y-acceleration: %f mg ", 1000*ay);
         printf("Z-acceleration: %f mg\n", 1000*az);
 
