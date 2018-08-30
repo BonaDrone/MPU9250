@@ -18,9 +18,9 @@
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <stdio.h>
-#include <MPU9250.h>
+#include <MPU9250_Passthru.h>
 #include <wiringPi.h>
+#include <stdio.h>
 
 /*
    MPU9250 Configuration
