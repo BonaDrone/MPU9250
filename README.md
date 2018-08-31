@@ -52,3 +52,9 @@ NVIDIA Jetson users should install I<sup>2</sup>C support by running the command
 <pre>
   sudo apt-get install libi2c-dev i2c-tools
 </pre>
+
+## Design Principles
+
+As shown in the class hiearchy diagram below, the MPU library makes extensive use of C++ inheritance to share common code:
+
+<img src="extras/media/mpu.png">
