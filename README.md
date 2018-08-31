@@ -41,6 +41,12 @@ development board, I<sup>2</sup>C
 
 * NVIDIA Jetson TX1, I<sup>2</sup>C
 
+* Omnibus F3 flight controller (MPU6000)
+
+* Alienflight F3 V1 flight controller (MPU6050)
+
+* SPRacing F3 flight controller (MPU6500)
+
 RaspberryPi users should download and install
 [WiringPi](http://wiringpi.com/), then cd to one of the example folders (e.g., <b>extras/code/wiringpi/MPU6050</b>
 and type <tt>sudo make run</tt>.
