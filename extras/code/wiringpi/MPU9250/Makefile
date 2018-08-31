@@ -24,8 +24,8 @@ ALL = MasterTest PassthruTest SPITest
 MPUSRC = ../../../../src
 
 CPDBINC = $(CPDB)/src
-I2CSRC = $(CPDB)/extras/i2c/wiringpi/src/
-SPISRC = $(CPDB)/extras/i2c/wiringpi/src/
+I2CSRC = $(CPDB)/extras/i2c/wiringpi/src
+SPISRC = $(CPDB)/extras/spi/wiringpi/src
 
 all: $(ALL)
 
@@ -71,8 +71,8 @@ WiringPiSPI.o: $(SPISRC)/WiringPiSPI.cpp
 WiringPiI2C.o: $(I2CSRC)/WiringPiI2C.cpp 
 	g++ -std=c++11 -Wall -I$(CPDBINC) -c $(I2CSRC)/WiringPiI2C.cpp
 
-main.o: ../../../main.cpp 
-	g++ -std=c++11 -Wall -c ../../../main.cpp
+main.o: ../../main.cpp 
+	g++ -std=c++11 -Wall -c ../../main.cpp
 
 run: MasterTest
 	./MasterTest
