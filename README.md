@@ -42,7 +42,7 @@ development board, I<sup>2</sup>C
 
 * Raspberry Pi Zero with [PXFMini](http://erlerobotics.com/blog/product/pxfmini/) autopilot shield, SPI 
 
-* NVIDIA Jetson TX1, I<sup>2</sup>C (fails tolerance self-test)
+* NVIDIA Jetson TX1, I<sup>2</sup>C
 
 RaspberryPi users should download and install
 [WiringPi](http://wiringpi.com/), then cd to one of the example folders (e.g., <b>extras/MPU6050/wiringpi</b>
