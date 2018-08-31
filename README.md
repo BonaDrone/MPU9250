@@ -1,4 +1,4 @@
-This repository comes from a few different Arduino sketches created by [Kris Winer](https://github.com/kriswiner) 
+This repository derives from a few different Arduino sketches created by [Kris Winer](https://github.com/kriswiner) 
 to support the Invensense MPU line of Internal Measurement Unit (IMU) sensors.  
 
 Here's what I changed:
