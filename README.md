@@ -14,22 +14,19 @@ by removing code requiring components other than the MPU sensors
 
 The following sensors are currently supported:
 
-* MPU6000
-* MPU6050
-* MPU9250
-* MPU6500
+* MPU6000 
+* MPU6050 
+* MPU6500 
+* MPU9250 
 
 To use this library you will also need to clone the cross-platform support
 [library](https://github.com/simondlevy/CrossPlatformDataBus).
 
-The MPU6050 supports communication via the I<sup>2</sup>C bus.  The MPU6500
-supports communication via the SPI bus.  The MPU9250 supports communication via
-either bus.  With I<sup>2</sup>C you can run the MPU9250 in &ldquo;master
-mode&rdquo;, meaning that you access both sensors (MPU6500
-accelerometer/gyrometer, AK8963 magnetometer) at once, or in
-&ldquo;pass-through mode&rdquo; allowing you to communicate directly with the
-magnetometer for more efficient data acquisition.  With the SPI bus you get
-only master mode.  
+The MPU6000 and 6500 communicate over the SPI buss. The MPU6050 communicates
+over the I<sup>2</sup>C bus.  The MPU9250 is a bit more complicated: in
+<i>master mode</i> you access both sensors (MPU6500 IMU, AK8963 magnetometer)
+at once, over the I<sup>2</sup>C or SPI bus. In <i>pass-through mode</i> you
+communicate directly with the IMU and magnetometer over the I<sup>2</sup>C.
 
 I have tested this library on the following hardware:
 
@@ -58,3 +55,6 @@ NVIDIA Jetson users should install I<sup>2</sup>C support by running the command
 As shown in the class hiearchy diagram below, the MPU library makes extensive use of C++ inheritance to share common code:
 
 <img src="extras/media/mpu.png" width=700>
+
+Because the MPU9250 contains an MPU6500, the MPU9250 is allowed to be a &ldquo;friend&rdquo; class of the MPU6500,
+sharing some of the latter's code.
