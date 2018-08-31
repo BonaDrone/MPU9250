@@ -24,12 +24,12 @@ ALL = Basic
 MPUSRC = ../../../../src
 
 I2CINC = $(CPDB)/src
-I2CSRC = $(CPDB)/extras/i2c/i2cdev/src/
+I2CSRC = $(CPDB)/extras/i2c/i2cdev/src
 
 all: $(ALL)
 
-Basic: Basic.o MPU.o MPU6xx0.o MPU6050.o I2CDevI2C.o main.o
-	g++ -std=c++11 -o Basic Basic.o MPU.o MPU6xx0.o MPU6050.o I2CDevI2C.o main.o
+Basic: Basic.o MPU.o MPU6xx0.o MPU6050.o I2CDevI2C.o main.o timing.o
+	g++ -std=c++11 -o Basic Basic.o MPU.o MPU6xx0.o MPU6050.o I2CDevI2C.o main.o timing.o
 
 Basic.o: Basic.cpp 
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c Basic.cpp
@@ -46,8 +46,11 @@ MPU.o: $(MPUSRC)/MPU.cpp  $(MPUSRC)/MPU.h
 I2CDevI2C.o: $(I2CSRC)/I2CDevI2C.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/I2CDevI2C.cpp
 
-main.o: main.cpp 
-	g++ -std=c++11 -Wall -c main.cpp
+main.o: ../../main.cpp 
+	g++ -std=c++11 -Wall -c ../../main.cpp
+
+timing.o: ../timing.cpp 
+	g++ -std=c++11 -Wall -c ../timing.cpp
 
 run: Basic
 	./Basic

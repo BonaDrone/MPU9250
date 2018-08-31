@@ -58,8 +58,8 @@ MPU9250_I2C.o: $(MPUSRC)/MPU9250_I2C.cpp
 I2CDevI2C.o: $(I2CSRC)/I2CDevI2C.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/I2CDevI2C.cpp
 
-timing.o: timing.cpp
-	g++ -std=c++11 -Wall -c timing.cpp
+timing.o: ../timing.cpp
+	g++ -std=c++11 -Wall -c ../timing.cpp
 
 main.o: ../../main.cpp 
 	g++ -std=c++11 -Wall -c ../../main.cpp

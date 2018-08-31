@@ -1,4 +1,4 @@
-#   Makefile for MPU9250 I2CDEV examples
+#   Makefile for MPU9250 WiringPi examples
 #  
 #   Copyright (C) 2018 Simon D. Levy
 #
@@ -19,12 +19,13 @@
 # Change this to whereever you installed CrossPlatformDataBus
 CPDB = $(HOME)/CrossPlatformDataBus
 
-ALL = MasterTest PassthruTest
+ALL = MasterTest PassthruTest SPITest
 
-MPUSRC = ../../../../../src
+MPUSRC = ../../../../src
 
-I2CINC = $(CPDB)/src
+CPDBINC = $(CPDB)/src
 I2CSRC = $(CPDB)/extras/i2c/wiringpi/src/
+SPISRC = $(CPDB)/extras/i2c/wiringpi/src/
 
 all: $(ALL)
 
@@ -32,13 +33,19 @@ MasterTest: MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_I2C.o WiringPi
 	g++ -std=c++11 -o MasterTest MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_I2C.o WiringPiI2C.o main.o -lwiringPi
 
 MasterTest.o: MasterTest.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c MasterTest.cpp
+	g++ -std=c++11 -Wall -I$(CPDBINC) -I$(MPUSRC) -c MasterTest.cpp
 
 PassthruTest: PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o MPU9250_I2C.o WiringPiI2C.o main.o
 	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o MPU9250_I2C.o WiringPiI2C.o main.o -lwiringPi
 
 PassthruTest.o: PassthruTest.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c PassthruTest.cpp
+	g++ -std=c++11 -Wall -I$(CPDBINC) -I$(MPUSRC) -c PassthruTest.cpp
+
+SPITest: SPITest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_SPI.o WiringPiSPI.o main.o
+	g++ -std=c++11 -o SPITest SPITest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_SPI.o WiringPiSPI.o main.o -lwiringPi
+
+SPITest.o: SPITest.cpp 
+	g++ -std=c++11 -Wall -I$(CPDBINC) -I$(MPUSRC) -c SPITest.cpp
 
 MPU.o: $(MPUSRC)/MPU.cpp 
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU.cpp
@@ -47,16 +54,22 @@ MPU9250.o: $(MPUSRC)/MPU9250.cpp
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU9250.cpp
 
 MPU9250_I2C.o: $(MPUSRC)/MPU9250_I2C.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_I2C.cpp
+	g++ -std=c++11 -Wall -I$(CPDBINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_I2C.cpp
 
 MPU9250_Master.o: $(MPUSRC)/MPU9250_Master.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_Master.cpp
+	g++ -std=c++11 -Wall -I$(CPDBINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_Master.cpp
 
 MPU9250_Passthru.o: $(MPUSRC)/MPU9250_Passthru.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_Passthru.cpp
+	g++ -std=c++11 -Wall -I$(CPDBINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_Passthru.cpp
+
+MPU9250_SPI.o: $(MPUSRC)/MPU9250_SPI.cpp 
+	g++ -std=c++11 -Wall -D_SPI -I$(CPDBINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_SPI.cpp
+
+WiringPiSPI.o: $(SPISRC)/WiringPiSPI.cpp 
+	g++ -std=c++11 -Wall -I$(CPDBINC) -c $(SPISRC)/WiringPiSPI.cpp
 
 WiringPiI2C.o: $(I2CSRC)/WiringPiI2C.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/WiringPiI2C.cpp
+	g++ -std=c++11 -Wall -I$(CPDBINC) -c $(I2CSRC)/WiringPiI2C.cpp
 
 main.o: ../../../main.cpp 
 	g++ -std=c++11 -Wall -c ../../../main.cpp
