@@ -21,7 +21,7 @@ CPSPI = $(HOME)/CrossPlatformSPI/
 
 ALL = SPITest
 
-MPUSRC = ../../../src
+MPUSRC = ../../../../../src
 
 SPIINC = $(CPSPI)/src
 SPISRC = $(CPSPI)/extras/wiringpi/src

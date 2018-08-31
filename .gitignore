@@ -1,8 +1,8 @@
-extras/MPU9250/wiringpi/i2c/MasterTest
-extras/MPU9250/wiringpi/i2c/PassthruTest
-extras/MPU6050/*/Basic
-extras/MPU9250/*/MasterTest
-extras/MPU9250/*/PassthruTest
+extras/code/MPU9250/wiringpi/i2c/MasterTest
+extras/code/MPU9250/wiringpi/i2c/PassthruTest
+extras/code/MPU6050/*/Basic
+extras/code/MPU9250/*/MasterTest
+extras/code/MPU9250/*/PassthruTest
 *.o
 *.so
 *.swp

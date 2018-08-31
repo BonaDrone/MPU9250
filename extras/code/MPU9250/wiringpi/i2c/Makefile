@@ -21,21 +21,21 @@ CPDB = $(HOME)/CrossPlatformDataBus
 
 ALL = MasterTest PassthruTest
 
-MPUSRC = ../../../src/
+MPUSRC = ../../../../../src
 
 I2CINC = $(CPDB)/src
-I2CSRC = $(CPDB)/extras/i2c/i2cdev/src/
+I2CSRC = $(CPDB)/extras/i2c/wiringpi/src/
 
 all: $(ALL)
 
-MasterTest: MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
-	g++ -std=c++11 -o MasterTest MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+MasterTest: MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_I2C.o WiringPiI2C.o main.o
+	g++ -std=c++11 -o MasterTest MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_I2C.o WiringPiI2C.o main.o -lwiringPi
 
 MasterTest.o: MasterTest.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c MasterTest.cpp
 
-PassthruTest: PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
-	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o MPU9250_I2C.o I2CDevI2C.o main.o timing.o
+PassthruTest: PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o MPU9250_I2C.o WiringPiI2C.o main.o
+	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o MPU9250_I2C.o WiringPiI2C.o main.o -lwiringPi
 
 PassthruTest.o: PassthruTest.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c PassthruTest.cpp
@@ -46,23 +46,20 @@ MPU.o: $(MPUSRC)/MPU.cpp
 MPU9250.o: $(MPUSRC)/MPU9250.cpp 
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU9250.cpp
 
+MPU9250_I2C.o: $(MPUSRC)/MPU9250_I2C.cpp 
+	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_I2C.cpp
+
 MPU9250_Master.o: $(MPUSRC)/MPU9250_Master.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_Master.cpp
 
 MPU9250_Passthru.o: $(MPUSRC)/MPU9250_Passthru.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_Passthru.cpp
 
-MPU9250_I2C.o: $(MPUSRC)/MPU9250_I2C.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU9250_I2C.cpp
+WiringPiI2C.o: $(I2CSRC)/WiringPiI2C.cpp 
+	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/WiringPiI2C.cpp
 
-I2CDevI2C.o: $(I2CSRC)/I2CDevI2C.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/I2CDevI2C.cpp
-
-timing.o: timing.cpp
-	g++ -std=c++11 -Wall -c timing.cpp
-
-main.o: ../../main.cpp 
-	g++ -std=c++11 -Wall -c ../../main.cpp
+main.o: ../../../main.cpp 
+	g++ -std=c++11 -Wall -c ../../../main.cpp
 
 run: MasterTest
 	./MasterTest

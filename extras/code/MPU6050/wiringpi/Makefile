@@ -23,7 +23,7 @@ CPDB = $(HOME)/CrossPlatformDataBus/
 
 ALL = Basic
 
-MPUSRC = ../../../src
+MPUSRC = ../../../../src
 
 I2CINC = $(CPDB)/src
 I2CSRC = $(CPDB)/extras/i2c/wiringpi/src
