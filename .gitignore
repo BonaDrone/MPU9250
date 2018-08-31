@@ -1,3 +1,4 @@
+extras/code/MPU9250/wiringpi/spi/SPITest
 extras/code/MPU9250/wiringpi/i2c/MasterTest
 extras/code/MPU9250/wiringpi/i2c/PassthruTest
 extras/code/MPU6050/*/Basic

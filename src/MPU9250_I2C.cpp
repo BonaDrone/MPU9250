@@ -21,8 +21,6 @@
 #include "MPU9250.h"
 #include "CrossPlatformI2C.h"
 
-#include <math.h>
-
 // One ifdef needed to support delay() cross-platform
 #if defined(ARDUINO)
 #include <Arduino.h>
@@ -31,7 +29,6 @@
 #else
 extern void delay(uint32_t msec);
 #endif
-
 
 MPU_Error_t MPU9250::begin(uint8_t bus)
 {
