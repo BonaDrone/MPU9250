@@ -1,5 +1,5 @@
 /* 
-   MPU9250_Master_I2C.h: I^2C support for MPU9250 master-modeclass
+   MPU9250_Master_SPI.h: SPI support for MPU9250 master-modeclass
 
    Copyright (C) 2018 Simon D. Levy
 
@@ -20,13 +20,13 @@
 
 #include "MPU9250_Master.h"
 
-class MPU9250_Master_I2C : public MPU9250_Master {
+class MPU9250_Master_SPI : public MPU9250_Master {
 
     public:
 
-        MPU9250_Master_I2C(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor=0);
+        MPU9250_Master_SPI(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor=0);
 
-        MPU_Error_t begin(uint8_t bus=1);
+        MPU_Error_t begin(void);
 
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 
@@ -35,10 +35,4 @@ class MPU9250_Master_I2C : public MPU9250_Master {
         virtual void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * data) override;
 
         virtual void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) override;
-
-
-    private:
-
-        // Cross-platform support
-        uint8_t  _i2c;
 };
