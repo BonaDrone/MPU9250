@@ -19,7 +19,7 @@
 
   
 # Change this to whereever you installed CrossPlatformDataBus
-CPDB = $(HOME)/CrossPlatformDataBus/
+CPDB = $(HOME)/CrossPlatformDataBus
 
 ALL = Basic
 

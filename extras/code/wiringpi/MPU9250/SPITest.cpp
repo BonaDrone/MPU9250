@@ -19,7 +19,7 @@
 */
 
 #include <stdio.h>
-#include <MPU9250_Master.h>
+#include <MPU9250_Master_SPI.h>
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
 
@@ -48,7 +48,7 @@ static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;
 static const uint8_t intPin = 0;   //  MPU9250 interrupt
 
 // Instantiate MPU9250 class in master mode
-static MPU9250_Master imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
+static MPU9250_Master_SPI imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
 
 void setup()
 {
