@@ -33,6 +33,8 @@ MPU_Error_t MPU9250_Passthru::begin(uint8_t i2cbus)
 {
     MPU9250::begin(i2cbus);
 
+    _i2c = cpi2c_open(MPU_ADDRESS, i2cbus);
+
     _mag = cpi2c_open(AK8963_ADDRESS);
 
     return runTests();
@@ -56,3 +58,33 @@ void MPU9250_Passthru::readAK8963Registers(uint8_t subAddress, uint8_t count, ui
 {
     readRegisters(_mag, subAddress, count, dest);
 }
+
+MPU_Error_t MPU9250::begin(uint8_t bus)
+{
+    _mpu = cpi2c_open(MPU_ADDRESS, bus);
+
+    return runTests();
+}
+
+void MPU9250_Passthru::readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * data)
+{
+    cpi2c_readRegisters(address, subAddress, count, data);
+}
+
+
+void MPU9250_Passthru::writeRegister(uint8_t address, uint8_t subAddress, uint8_t data)
+{
+    cpi2c_writeRegister(address, subAddress, data);
+}
+
+void MPU9250_Passthru::writeMPURegister(uint8_t subAddress, uint8_t data)
+{
+    cpi2c_writeRegister(_i2c, subAddress, data);
+}
+
+void MPU9250_Passthru::readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest)
+{
+    cpi2c_readRegisters(_i2c, subAddress, count, dest);
+}
+
+

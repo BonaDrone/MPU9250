@@ -83,12 +83,6 @@ class MPU9250 : public MPUIMU {
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
 
-        virtual void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest);
-
-        virtual uint8_t readRegister(uint8_t address, uint8_t subAddress);
-
-        virtual void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data);
-
         // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 
         // for registers not listed in above document; the MPU9250 and MPU9150 are virtually identical but 
         // the latter has a different register map
@@ -124,9 +118,9 @@ class MPU9250 : public MPUIMU {
         float   _fuseROMz;
         float   _magCalibration[3];
 
-        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
-
-        virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+        //virtual void writeMPURegsiter(uint8_t subAddress, uint8_t data) = 0;
+        virtual void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) = 0;
+        virtual void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
 
     private:
 

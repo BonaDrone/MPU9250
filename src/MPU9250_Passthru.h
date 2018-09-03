@@ -34,14 +34,25 @@ class MPU9250_Passthru : public MPU9250 {
 
         bool checkNewMagData(void);
 
+    protected:
+
+        virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
+
+        virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+
+        virtual void writeRegister(uint8_t address, uint8_t subAddress, uint8_t data) override;
+
+        virtual void readRegisters(uint8_t address, uint8_t subAddress, uint8_t count, uint8_t * dest) override;
+
+        uint8_t _mag;
+
     private:
+
+        // Cross-platform support
+        uint8_t  _i2c;
 
         virtual void writeAK8963Register(uint8_t subAddress, uint8_t data) override;
 
         virtual void readAK8963Registers(uint8_t subAddress, uint8_t count, uint8_t* dest) override;
-
-    protected:
-
-        uint8_t _mag;
 
 }; // class MPU9250_Passthru

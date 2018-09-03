@@ -468,13 +468,3 @@ void MPU9250::initAK8963(Mscale_t mscale, Mmode_t Mmode, float * magCalibration)
     writeAK8963Register(AK8963_CNTL, mscale << 4 | Mmode); // Set magnetometer data resolution and sample ODR
     delay(10);
 }
-
-void MPU9250::writeMPURegister(uint8_t subAddress, uint8_t data)
-{
-    writeRegister(_mpu, subAddress, data);
-}
-
-void MPU9250::readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * data)
-{
-    readRegisters(_mpu, subAddress, count, data);
-}
