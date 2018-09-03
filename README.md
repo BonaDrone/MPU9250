@@ -60,7 +60,7 @@ NVIDIA Jetson users should install I<sup>2</sup>C support by running the command
 
 As shown in the class hiearchy diagram below, the MPU library makes extensive use of C++ inheritance to share common code:
 
-<img src="extras/media/mpu.png" width=700>
+<img src="extras/media/mpu2.png" width=700>
 
 Because the MPU9250 contains an MPU6500, the MPU9250 is allowed to be a &ldquo;friend&rdquo; class of the MPU6500,
 sharing some of the latter's code.
