@@ -1,5 +1,5 @@
 /* 
-   MasterTest.cpp: example of how to use MPU9250 in master mode
+   Master_I2CTest.cpp: example of how to use MPU9250 in master mode
 
    Copyright (C) 2018 Simon D. Levy
 
@@ -20,7 +20,7 @@
    along with MPU.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <MPU9250_Master.h>
+#include <MPU9250_Master_I2C.h>
 #include <stdio.h>
 
 extern void delay(uint32_t msec);
@@ -48,7 +48,7 @@ static const Mmode_t  MMODE     = M_100Hz;
 static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;         
 
 // Instantiate MPU9250 class in master mode
-static MPU9250_Master imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
+static MPU9250_Master_I2C imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
 
 void setup()
 {
