@@ -27,7 +27,7 @@
 #include <Wire.h>   
 #endif
 
-#include "MPU9250_Master.h"
+#include "MPU9250_Master_I2C.h"
 
 /*
    MPU9250 Configuration
@@ -61,7 +61,7 @@ static void myinthandler()
 }
 
 // Instantiate MPU9250 class in master mode
-static MPU9250_Master imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
+static MPU9250_Master_I2C imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
 
 static void error(const char * errmsg) 
 {
