@@ -38,10 +38,10 @@ sampleRate: (1 + sampleRate) is a simple divisor of the fundamental 1000 kHz rat
 sampleRate = 0x00 means 1 kHz sample rate for both accel and gyro, 0x04 means 200 Hz, etc.
  */
 
-static const Gscale_t GSCALE    = GFS_250DPS;
-static const Ascale_t ASCALE    = AFS_2G;
-static const Mscale_t MSCALE    = MFS_16BITS;
-static const Mmode_t  MMODE     = M_100Hz;
+static const MPUIMU::Gscale_t GSCALE     = MPUIMU::GFS_250DPS;
+static const MPUIMU::Ascale_t ASCALE     = MPUIMU::AFS_2G;
+static const MPU9250::Mscale_t MSCALE    = MPU9250::MFS_16BITS;
+static const MPU9250::Mmode_t MMODE      = MPU9250::M_100Hz;
 static const uint8_t SAMPLE_RATE_DIVISOR = 0x04;         
 
 // Pin definitions
@@ -67,13 +67,13 @@ void setup()
     // Start the MPU9250
     switch (imu.begin()) {
 
-        case MPU_ERROR_IMU_ID:
+        case MPUIMU::ERROR_IMU_ID:
             error("Bad IMU device ID");
             break;
-        case MPU_ERROR_MAG_ID:
+        case MPUIMU::ERROR_MAG_ID:
             error("Bad magnetometer device ID");
             break;
-        case MPU_ERROR_SELFTEST:
+        case MPUIMU::ERROR_SELFTEST:
             //error("Failed self-test");
             break;
         default:
