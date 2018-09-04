@@ -26,8 +26,8 @@
 #include <string.h>
 #include <errno.h>
 
-static const Gscale_t GSCALE = GFS_250DPS;
-static const Ascale_t ASCALE = AFS_2G;
+static const MPUIMU::Gscale_t GSCALE = MPUIMU::GFS_250DPS;
+static const MPUIMU::Ascale_t ASCALE = MPUIMU::AFS_2G;
 
 static MPU6050 imu(ASCALE, GSCALE);;
 
@@ -45,9 +45,9 @@ void setup()
 {
     switch (imu.begin(0)) {
 
-        case MPU_ERROR_IMU_ID:
+        case MPUIMU::ERROR_IMU_ID:
             error("Bad device ID");
-        case MPU_ERROR_SELFTEST:
+        case MPUIMU::ERROR_SELFTEST:
             error("Failed self-test");
         default:
             printf("MPU6050 online!\n");
