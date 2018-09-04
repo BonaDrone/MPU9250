@@ -36,7 +36,7 @@ MPU9250_Master_SPI::MPU9250_Master_SPI(Ascale_t ascale, Gscale_t gscale, Mscale_
 {
 }
 
-MPU_Error_t MPU9250_Master_SPI::begin(void)
+MPUIMU::Error_t MPU9250_Master_SPI::begin(void)
 {
     return runTests();
 }

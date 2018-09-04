@@ -58,17 +58,17 @@ void MPU9250::readAccelOffsets(uint8_t data[12], int32_t accel_bias_reg[3])
     accel_bias_reg[2] = (int32_t) (((int16_t)data[0] << 8) | data[1]);
 }
 
-MPU_Error_t MPU9250::runTests(void) 
+MPUIMU::Error_t MPU9250::runTests(void) 
 { 
     // Read the WHO_AM_I register, this is a good test of communication
     if (getId() != 0x71) {
-        return MPU_ERROR_IMU_ID;
+        return ERROR_IMU_ID;
     }
 
     reset(); // start by resetting MPU9250
 
     if (!selfTest()) {
-        return MPU_ERROR_SELFTEST;
+        return ERROR_SELFTEST;
     }
 
     // Calibrate gyro and accelerometers, load biases in bias registers.
@@ -79,13 +79,13 @@ MPU_Error_t MPU9250::runTests(void)
 
     // check AK8963 WHO AM I register, expected value is 0x48 (decimal 72)
     if (getAK8963CID() != 0x48) {
-        return MPU_ERROR_MAG_ID;
+        return ERROR_MAG_ID;
     }
 
     // Get magnetometer calibration from AK8963 ROM
     initAK8963(_mScale, _mMode, _magCalibration);
 
-    return MPU_ERROR_NONE;
+    return ERROR_NONE;
 }
 
 float MPU9250::getMres(Mscale_t mscale) {

@@ -26,7 +26,7 @@ class MPU9250_Master_I2C : public MPU9250_Master {
 
         MPU9250_Master_I2C(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor=0);
 
-        MPU_Error_t begin(uint8_t bus=1);
+        Error_t begin(uint8_t bus=1);
 
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 

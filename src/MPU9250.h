@@ -26,24 +26,26 @@
 
 #include "MPU6500.h"
 
-typedef enum {
 
-    MFS_14BITS, // 0.6 mG per LSB
-    MFS_16BITS  // 0.15 mG per LSB
-
-} Mscale_t;
-
-typedef enum {
-
-    M_8Hz   = 0x02,
-    M_100Hz = 0x06
-
-} Mmode_t;
 
 // Should probably subclass from MPU6500
 class MPU9250 : public MPUIMU {
 
     public: 
+
+        typedef enum {
+
+            MFS_14BITS, // 0.6 mG per LSB
+            MFS_16BITS  // 0.15 mG per LSB
+
+        } Mscale_t;
+
+        typedef enum {
+
+            M_8Hz   = 0x02,
+            M_100Hz = 0x06
+
+        } Mmode_t;
 
         void  accelWakeOnMotion(void);
 
@@ -65,13 +67,13 @@ class MPU9250 : public MPUIMU {
 
         MPU9250(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor, bool passthru);
 
-        MPU_Error_t runTests(void);
+        Error_t runTests(void);
 
         static const uint8_t AK8963_ADDRESS  = 0x0C;
 
         uint8_t _mpu;
 
-        MPU_Error_t begin(uint8_t bus=1);
+        Error_t begin(uint8_t bus=1);
 
         void initMPU6500(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor, bool passthru);
 
@@ -86,7 +88,7 @@ class MPU9250 : public MPUIMU {
         // See also MPU-9250 Register Map and Descriptions, Revision 4.0, RM-MPU-9250A-00, Rev. 1.4, 9/9/2013 
         // for registers not listed in above document; the MPU9250 and MPU9150 are virtually identical but 
         // the latter has a different register map
-        
+
         // Magnetometer legister map
         static const uint8_t AK8963_WHO_AM_I   = 0x00; 
         static const uint8_t AK8963_INFO       = 0x01;
@@ -106,7 +108,7 @@ class MPU9250 : public MPUIMU {
         static const uint8_t AK8963_ASAZ       = 0x12;
 
         uint8_t readAK8963Register(uint8_t subAddress);
-        
+
         Mscale_t _mScale;
         Mmode_t  _mMode;
         uint8_t  _sampleRateDivisor;

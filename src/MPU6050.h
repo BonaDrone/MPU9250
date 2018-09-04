@@ -26,7 +26,7 @@ class MPU6050 : public MPU6xx0 {
 
         MPU6050(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor=0);
 
-        MPU_Error_t begin(uint8_t bus=1);
+        Error_t begin(uint8_t bus=1);
 
     protected:
 

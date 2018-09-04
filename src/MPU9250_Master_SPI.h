@@ -26,7 +26,7 @@ class MPU9250_Master_SPI : public MPU9250_Master {
 
         MPU9250_Master_SPI(Ascale_t ascale, Gscale_t gscale, Mscale_t mscale, Mmode_t mmode, uint8_t sampleRateDivisor=0);
 
-        MPU_Error_t begin(void);
+        Error_t begin(void);
 
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 

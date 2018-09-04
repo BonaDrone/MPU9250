@@ -30,8 +30,8 @@
 #define NOSTOP false
 #endif
 
-static const Ascale_t ASCALE = AFS_2G;
-static const Gscale_t GSCALE = GFS_250DPS;
+static const MPUIMU::Ascale_t ASCALE = MPUIMU::AFS_2G;
+static const MPUIMU::Gscale_t GSCALE = MPUIMU::GFS_250DPS;
 
 static MPU6050 imu(ASCALE, GSCALE);;
 
@@ -71,9 +71,9 @@ void setup()
 
     switch (imu.begin()) {
 
-        case MPU_ERROR_IMU_ID:
+        case MPUIMU::ERROR_IMU_ID:
             error("Bad device ID");
-        case MPU_ERROR_SELFTEST:
+        case MPUIMU::ERROR_SELFTEST:
             error("Failed self-test");
         default:
             Serial.println("MPU6050 online!\n");

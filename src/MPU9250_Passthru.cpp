@@ -29,7 +29,7 @@ MPU9250_Passthru::MPU9250_Passthru(Ascale_t ascale, Gscale_t gscale, Mscale_t ms
 {
 }
 
-MPU_Error_t MPU9250_Passthru::begin(uint8_t i2cbus)
+MPUIMU::Error_t MPU9250_Passthru::begin(uint8_t i2cbus)
 {
     MPU9250::begin(i2cbus);
 
@@ -59,7 +59,7 @@ void MPU9250_Passthru::readAK8963Registers(uint8_t subAddress, uint8_t count, ui
     readRegisters(_mag, subAddress, count, dest);
 }
 
-MPU_Error_t MPU9250::begin(uint8_t bus)
+MPUIMU::Error_t MPU9250::begin(uint8_t bus)
 {
     _mpu = cpi2c_open(MPU_ADDRESS, bus);
 

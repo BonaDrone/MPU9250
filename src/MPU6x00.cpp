@@ -27,14 +27,14 @@ MPU6x00::MPU6x00(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) :
 {
 }
 
-MPU_Error_t MPU6x00::begin(void)
+MPUIMU::Error_t MPU6x00::begin(void)
 {
     //if (getId() != MPU_ADDRESS) {
-    //    return MPU_ERROR_IMU_ID;
+    //    return ERROR_IMU_ID;
     //}
 
     //if (!selfTest()) {
-    //    return MPU_ERROR_SELFTEST;
+    //    return ERROR_SELFTEST;
     //}
 
     cpspi_writeRegister(PWR_MGMT_1, 0x80);
@@ -72,7 +72,7 @@ MPU_Error_t MPU6x00::begin(void)
     _accelBias[1] = 0;
     _accelBias[2] = 0;
 
-    return MPU_ERROR_NONE;
+    return ERROR_NONE;
 }
 
 void MPU6x00::writeMPURegister(uint8_t subAddress, uint8_t data)

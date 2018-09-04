@@ -39,42 +39,47 @@ extern "C" { void delay(uint32_t msec); }
 void delay(uint32_t msec);
 #endif
 
-typedef enum {
-
-    INV_CLK_INTERNAL,
-    INV_CLK_PLL
-
-} Clock_e;
-
-typedef enum {
-
-    AFS_2G,
-    AFS_4G,  
-    AFS_8G,  
-    AFS_16G 
-
-} Ascale_t;
-
-typedef enum {
-
-    GFS_250DPS,
-    GFS_500DPS,
-    GFS_1000DPS,
-    GFS_2000DPS
-
-} Gscale_t;
-
-typedef enum {
-
-    MPU_ERROR_NONE,
-    MPU_ERROR_CONNECT,
-    MPU_ERROR_IMU_ID,
-    MPU_ERROR_MAG_ID,
-    MPU_ERROR_SELFTEST
-
-} MPU_Error_t;
 
 class MPUIMU {
+
+    public:
+
+        typedef enum {
+
+            INV_CLK_INTERNAL,
+            INV_CLK_PLL
+
+        } Clock_e;
+
+        typedef enum {
+
+            AFS_2G,
+            AFS_4G,  
+            AFS_8G,  
+            AFS_16G 
+
+        } Ascale_t;
+
+        typedef enum {
+
+            GFS_250DPS,
+            GFS_500DPS,
+            GFS_1000DPS,
+            GFS_2000DPS
+
+        } Gscale_t;
+
+        typedef enum {
+
+            ERROR_NONE,
+            ERROR_CONNECT,
+            ERROR_IMU_ID,
+            ERROR_MAG_ID,
+            ERROR_SELFTEST
+
+        } Error_t;
+
+        void readAccelerometer(float & ax, float & ay, float & az);
 
     protected:
 
@@ -225,9 +230,5 @@ class MPUIMU {
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) = 0;
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
-
-    public:
-
-        void readAccelerometer(float & ax, float & ay, float & az);
 
 }; // class MPU

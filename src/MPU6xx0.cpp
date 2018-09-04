@@ -34,14 +34,14 @@ MPU6xx0::MPU6xx0(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) :
 {
 }
 
-MPU_Error_t MPU6xx0::begin(void)
+MPUIMU::Error_t MPU6xx0::begin(void)
 {
     if (getId() != MPU_ADDRESS) {
-        return MPU_ERROR_IMU_ID;
+        return ERROR_IMU_ID;
     }
 
     if (!selfTest()) {
-        return MPU_ERROR_SELFTEST;
+        return ERROR_SELFTEST;
     }
 
 
@@ -49,7 +49,7 @@ MPU_Error_t MPU6xx0::begin(void)
 
     init();
 
-    return MPU_ERROR_NONE;
+    return ERROR_NONE;
 }
 
 void MPU6xx0::readGyrometer(float & gx, float & gy, float & gz)

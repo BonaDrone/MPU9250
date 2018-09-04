@@ -36,7 +36,7 @@ MPU9250_Master_I2C::MPU9250_Master_I2C(Ascale_t ascale, Gscale_t gscale, Mscale_
 {
 }
 
-MPU_Error_t MPU9250_Master_I2C::begin(uint8_t bus)
+MPUIMU::Error_t MPU9250_Master_I2C::begin(uint8_t bus)
 {
     _i2c = cpi2c_open(MPU_ADDRESS, bus);
 

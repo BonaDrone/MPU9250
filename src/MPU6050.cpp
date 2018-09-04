@@ -27,7 +27,7 @@ MPU6050::MPU6050(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) :
 {
 }
 
-MPU_Error_t MPU6050::begin(uint8_t bus)
+MPUIMU::Error_t MPU6050::begin(uint8_t bus)
 {
     _i2c = cpi2c_open(MPU_ADDRESS, bus);
 

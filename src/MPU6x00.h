@@ -28,7 +28,7 @@ class MPU6x00 : public MPU6xx0 {
 
     protected:
 
-        MPU_Error_t begin(void);
+        Error_t begin(void);
 
         virtual void writeMPURegister(uint8_t subAddress, uint8_t data) override;
 }; 

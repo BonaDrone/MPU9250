@@ -26,7 +26,7 @@ class MPU6xx0 : public MPUIMU {
 
     public:
 
-        MPU_Error_t begin(void);
+        Error_t begin(void);
 
         bool        checkNewData(void);
 

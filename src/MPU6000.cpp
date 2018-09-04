@@ -26,7 +26,7 @@ MPU6000::MPU6000(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor) : 
 {
 }
 
-MPU_Error_t MPU6000::begin(void)
+MPUIMU::Error_t MPU6000::begin(void)
 {
     return MPU6x00::begin();
 }
