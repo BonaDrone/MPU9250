@@ -209,8 +209,9 @@ class MPUIMU {
 
         MPUIMU(Ascale_t ascale, Gscale_t gscale, uint8_t sampleRateDivisor);
 
-        float    getAres(Ascale_t ascale);
-        float    getGres(Gscale_t gscale);
+        static float getAres(Ascale_t ascale);
+        static float getGres(Gscale_t gscale);
+
         uint8_t  getId(void);
 
         void calibrate(void);
