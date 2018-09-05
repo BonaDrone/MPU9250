@@ -28,6 +28,8 @@ class MPU6000 : public MPU6x00 {
 
         Error_t begin(void);
 
+        void readGyrometer(float & gx, float & gy, float & gz);
+
     protected:
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) override;

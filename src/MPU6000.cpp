@@ -31,6 +31,13 @@ MPUIMU::Error_t MPU6000::begin(void)
     return MPU6x00::begin();
 }
 
+void MPU6000::readGyrometer(float & gx, float & gy, float & gz)
+{
+    MPUIMU::readGyrometer(gx, gy, gz);
+
+    // don't subtract bias!
+}
+
 void MPU6000::readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest)
 {
     cpspi_readRegisters(subAddress, count, dest);

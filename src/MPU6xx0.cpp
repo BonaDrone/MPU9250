@@ -67,8 +67,6 @@ float MPU6xx0::readTemperature()
     return ((float) t) / 340. + 36.53; // Temperature in degrees Centigrade
 }
 
-
-
 // Configure the motion detection control for low power accelerometer mode
 void MPU6xx0::lowPowerAccelOnly()
 {
