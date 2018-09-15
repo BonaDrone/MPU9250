@@ -25,20 +25,21 @@ MPUSRC = ../../../../src/
 
 I2CINC = $(CPDB)/src
 I2CSRC = $(CPDB)/extras/i2c/i2cdev/src
+CPCMN =  $(CPDB)/extras/common
 
 all: $(ALL)
 
-MasterTest: MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_Master_I2C.o I2CDevI2C.o main.o timing.o
-	g++ -std=c++11 -o MasterTest MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_Master_I2C.o I2CDevI2C.o main.o timing.o
+MasterTest: MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_Master_I2C.o I2CDevI2C.o main.o timing.o errmsg.o
+	g++ -std=c++11 -o MasterTest MasterTest.o MPU.o MPU9250.o MPU9250_Master.o MPU9250_Master_I2C.o I2CDevI2C.o main.o timing.o errmsg.o
 
 MasterTest.o: MasterTest.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c MasterTest.cpp
+	g++ -std=c++11 -Wall -I$(CPCMN) -I$(MPUSRC) -c MasterTest.cpp
 
-PassthruTest: PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o I2CDevI2C.o main.o timing.o
-	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o I2CDevI2C.o main.o timing.o
+PassthruTest: PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o I2CDevI2C.o main.o timing.o errmsg.o
+	g++ -std=c++11 -o PassthruTest PassthruTest.o MPU.o MPU9250.o MPU9250_Passthru.o I2CDevI2C.o main.o timing.o errmsg.o
 
 PassthruTest.o: PassthruTest.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c PassthruTest.cpp
+	g++ -std=c++11 -Wall -I$(CPCMN) -I$(MPUSRC) -c PassthruTest.cpp
 
 MPU.o: $(MPUSRC)/MPU.cpp 
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU.cpp
@@ -58,11 +59,14 @@ MPU9250_Master_I2C.o: $(MPUSRC)/MPU9250_Master_I2C.cpp
 I2CDevI2C.o: $(I2CSRC)/I2CDevI2C.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/I2CDevI2C.cpp
 
-timing.o: ../timing.cpp
-	g++ -std=c++11 -Wall -c ../timing.cpp
+main.o: $(CPCMN)/main.cpp 
+	g++ -std=c++11 -Wall -c $(CPCMN)/main.cpp
 
-main.o: ../../main.cpp 
-	g++ -std=c++11 -Wall -c ../../main.cpp
+timing.o: $(CPCMN)/timing.cpp 
+	g++ -std=c++11 -Wall -I$(CPCMN) -c $(CPCMN)/timing.cpp
+
+errmsg.o: $(CPCMN)/errmsg.cpp 
+	g++ -std=c++11 -Wall -I$(CPCMN) -c $(CPCMN)/errmsg.cpp
 
 run: MasterTest
 	./MasterTest

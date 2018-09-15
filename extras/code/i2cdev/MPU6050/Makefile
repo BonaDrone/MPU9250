@@ -25,6 +25,7 @@ MPUSRC = ../../../../src
 
 I2CINC = $(CPDB)/src
 I2CSRC = $(CPDB)/extras/i2c/i2cdev/src
+CPCMN =  $(CPDB)/extras/common
 
 all: $(ALL)
 
@@ -46,11 +47,11 @@ MPU.o: $(MPUSRC)/MPU.cpp  $(MPUSRC)/MPU.h
 I2CDevI2C.o: $(I2CSRC)/I2CDevI2C.cpp 
 	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/I2CDevI2C.cpp
 
-main.o: ../../main.cpp 
-	g++ -std=c++11 -Wall -c ../../main.cpp
+main.o: $(CPCMN)/main.cpp 
+	g++ -std=c++11 -Wall -c $(CPCMN)/main.cpp
 
-timing.o: ../timing.cpp 
-	g++ -std=c++11 -Wall -c ../timing.cpp
+timing.o: $(CPCMN)/timing.cpp 
+	g++ -std=c++11 -Wall -I$(CPCMN) -c $(CPCMN)/timing.cpp
 
 run: Basic
 	./Basic

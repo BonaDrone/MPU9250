@@ -22,6 +22,7 @@
 
 #include <MPU9250_Master_I2C.h>
 #include <stdio.h>
+#include <errmsg.h>
 
 extern void delay(uint32_t msec);
 extern uint32_t micros(void);
@@ -52,19 +53,17 @@ static MPU9250_Master_I2C imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR
 
 void setup()
 {
-    void error(const char * msg);
-
     // Start the MPU9250
     switch (imu.begin(0)) {
 
         case MPUIMU::ERROR_IMU_ID:
-            error("Bad IMU device ID");
+            errmsg("Bad IMU device ID");
             break;
         case MPUIMU::ERROR_MAG_ID:
-            error("Bad magnetometer device ID");
+            errmsg("Bad magnetometer device ID");
             break;
         case MPUIMU::ERROR_SELFTEST:
-            //error("Failed self-test");
+            //errmsg("Failed self-test");
             break;
         default:
             printf("MPU6050 online!\n");
