@@ -21,6 +21,7 @@
 */
 
 #include "MPU6050.h"
+
 #include <wiringPi.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -28,17 +29,12 @@
 #include <errno.h>
 
 #include <wiringPiI2C.h>
+#include <errmsg.h>
 
 static const MPUIMU::Gscale_t GSCALE = MPUIMU::GFS_250DPS;
 static const MPUIMU::Ascale_t ASCALE = MPUIMU::AFS_2G;
 
 static MPU6050 imu(ASCALE, GSCALE);;
-
-static void error(const char * errmsg) 
-{
-    fprintf(stderr, "%s\n", errmsg);
-    exit(1);
-}
 
 void setup()
 {
@@ -55,9 +51,9 @@ void setup()
     switch (imu.begin()) {
 
         case MPUIMU::ERROR_IMU_ID:
-            error("Bad device ID");
+            errmsg("Bad device ID");
         case MPUIMU::ERROR_SELFTEST:
-            error("Failed self-test");
+            errmsg("Failed self-test");
         default:
             printf("MPU6050 online!\n");
     }

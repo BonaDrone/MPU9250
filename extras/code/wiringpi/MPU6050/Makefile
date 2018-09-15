@@ -25,31 +25,36 @@ ALL = Basic
 
 MPUSRC = ../../../../src
 
-I2CINC = $(CPDB)/src
-I2CSRC = $(CPDB)/extras/i2c/wiringpi/src
+CPSRC  = $(CPDB)/src
+CPEXT  = $(CPDB)/extras
+CPCMN  = $(CPEXT)/common
+I2CSRC = $(CPEXT)/i2c/wiringpi/src
 
 all: $(ALL)
 
-Basic: Basic.o MPU.o MPU6xx0.o MPU6050.o WiringPiI2C.o main.o
-	g++ -std=c++11 -o Basic Basic.o MPU.o MPU6xx0.o MPU6050.o WiringPiI2C.o main.o -lwiringPi
+Basic: Basic.o MPU.o MPU6xx0.o MPU6050.o WiringPiI2C.o main.o errmsg.o
+	g++ -std=c++11 -o Basic Basic.o MPU.o MPU6xx0.o MPU6050.o WiringPiI2C.o main.o errmsg.o -lwiringPi
 
 Basic.o: Basic.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c Basic.cpp
+	g++ -std=c++11 -Wall -I$(CPCMN) -I$(MPUSRC) -c Basic.cpp
 
 MPU.o:  $(MPUSRC)/MPU.cpp  $(MPUSRC)/MPU.h
 	g++ -std=c++11 -Wall -I$(MPUSRC) -c $(MPUSRC)/MPU.cpp
 
 MPU6xx0.o:  $(MPUSRC)/MPU6xx0.cpp  $(MPUSRC)/MPU6xx0.h
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU6xx0.cpp
+	g++ -std=c++11 -Wall -I$(I2CSRC) -I$(MPUSRC) -c $(MPUSRC)/MPU6xx0.cpp
 
 MPU6050.o:  $(MPUSRC)/MPU6050.cpp  $(MPUSRC)/MPU6050.h
-	g++ -std=c++11 -Wall -I$(I2CINC) -I$(MPUSRC) -c $(MPUSRC)/MPU6050.cpp
+	g++ -std=c++11 -Wall -I$(CPSRC) -I$(MPUSRC) -c $(MPUSRC)/MPU6050.cpp
 
 WiringPiI2C.o: $(I2CSRC)/WiringPiI2C.cpp 
-	g++ -std=c++11 -Wall -I$(I2CINC) -c $(I2CSRC)/WiringPiI2C.cpp
+	g++ -std=c++11 -Wall -I$(CPSRC) -c $(I2CSRC)/WiringPiI2C.cpp
 
-main.o: ../../main.cpp 
-	g++ -std=c++11 -Wall -c ../../main.cpp
+main.o: $(CPCMN)/main.cpp 
+	g++ -std=c++11 -Wall -c $(CPCMN)/main.cpp
+
+errmsg.o: $(CPCMN)/errmsg.cpp 
+	g++ -std=c++11 -Wall -c $(CPCMN)/errmsg.cpp
 
 run: Basic
 	./Basic
