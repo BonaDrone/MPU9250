@@ -21,6 +21,7 @@
 #include <MPU9250_Passthru.h>
 #include <wiringPi.h>
 #include <stdio.h>
+#include <errmsg.h>
 
 /*
    MPU9250 Configuration
@@ -51,8 +52,6 @@ static MPU9250_Passthru imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR);
 
 void setup()
 {
-    void error(const char * errmsg);
-
     // Setup WirinPi
     wiringPiSetup();
 
@@ -62,13 +61,13 @@ void setup()
     switch (imu.begin()) {
 
         case MPUIMU::ERROR_IMU_ID:
-            error("Bad IMU device ID");
+            errmsg("Bad IMU device ID");
             break;
         case MPUIMU::ERROR_MAG_ID:
-            error("Bad magnetometer device ID");
+            errmsg("Bad magnetometer device ID");
             break;
         case MPUIMU::ERROR_SELFTEST:
-            //error("Failed self-test");
+            //errmsg("Failed self-test");
             break;
         default:
             printf("MPU6050 online!\n");

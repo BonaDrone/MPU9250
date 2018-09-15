@@ -22,6 +22,7 @@
 #include <MPU9250_Master_SPI.h>
 #include <wiringPi.h>
 #include <wiringPiSPI.h>
+#include <errmsg.h>
 
 /*
    MPU9250 Configuration
@@ -52,8 +53,6 @@ static MPU9250_Master_SPI imu(ASCALE, GSCALE, MSCALE, MMODE, SAMPLE_RATE_DIVISOR
 
 void setup()
 {
-    void error(const char * errmsg);
-
     // Setup WirinPi
     wiringPiSetup();
 
@@ -64,11 +63,11 @@ void setup()
     switch (imu.begin()) {
 
         case MPUIMU::ERROR_IMU_ID:
-            error("Bad IMU device ID");
+            errmsg("Bad IMU device ID");
         case MPUIMU::ERROR_MAG_ID:
-            error("Bad magnetometer device ID");
+            errmsg("Bad magnetometer device ID");
         case MPUIMU::ERROR_SELFTEST:
-            error("Failed self-test");
+            errmsg("Failed self-test");
         default:
             printf("MPU6050 online!\n");
     }
