@@ -232,4 +232,6 @@ class MPUIMU {
 
         virtual void readMPURegisters(uint8_t subAddress, uint8_t count, uint8_t * dest) = 0;
 
+        static float getRes(uint8_t scale, float vals[4]);
+
 }; // class MPU
